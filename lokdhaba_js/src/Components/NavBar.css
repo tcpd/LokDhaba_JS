@@ -1,10 +1,5 @@
-.content {
-  margin: 15px;
+.nav-item {
   font: 14px "Helvetica Neue",Helvetica,Arial, sans-serif;
   line-height: 1.42857143;
-  color: #333;
-}
-
-a {
-  color: #337ab7 !important;
+  padding: 5px;
 }

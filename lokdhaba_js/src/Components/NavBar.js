@@ -1,22 +1,46 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-class NavBar extends Component {
+import './NavBar.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+export default class NavBar extends Component {
+  constructor(props){
+        super(props);
+        this.showHomePage = this.showHomePage.bind(this);
+      }
+
+  showHomePage(){
+
+  }
+
   render() {
     return (
-       <div className="container-fluid">
-        <div className="row">
-            <ul className="nav nav-tabs">
-              <li className="col-xs-1 active"><Link to="">Home</Link></li>
-              <li className="col-xs-2"><Link to="">Data Visualization</Link></li>
-              <li className="col-xs-2"><Link to="">Browse Data</Link></li>
-              <li className="col-xs-2"><Link to="">Data Download</Link></li>
-              <li className="col-xs-2"><Link to="">Documentation</Link></li>
-              <li className="col-xs-1"><Link to="">About</Link></li>
-              <li className="col-xs-2"><Link to="">Incumbency Profile</Link></li>
-            </ul>
-        </div>
-      </div>
+      <nav class="navbar navbar-expand-sm bg-light">
+      //<a class="navbar-brand"><img height="100%" width="auto" src="./Assets/logo.png"></a>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#" onClick={this.showHomePage()}>Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Data Visualization</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Browse Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Data Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Documentation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Incumbency Profile</a>
+          </li>
+        </ul>
+      </nav>
     )
   }
 }
-export default NavBar;

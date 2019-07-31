@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 class HomePage extends Component {
   render() {
     return (
-      <div>
+      <div className="content">
         <p> Welcome to Lok Dhaba!
             </p><p> Lok Dhaba is a repository of Indian election results - both Vidhan Sabha (state level) and Lok Sabha
                 (national level) - beginning 1962.</p>

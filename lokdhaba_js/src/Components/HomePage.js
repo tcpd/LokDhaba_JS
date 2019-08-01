@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-class HomePage extends Component {
+export default class HomePage extends Component {
   render() {
     return (
       <div className="content">
@@ -27,4 +27,3 @@ class HomePage extends Component {
     )
   }
 }
-export default HomePage;

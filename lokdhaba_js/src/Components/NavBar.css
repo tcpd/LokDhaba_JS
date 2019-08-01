@@ -3,3 +3,17 @@
   line-height: 1.42857143;
   padding: 5px;
 }
+.navbar-brand {
+    float: left;
+    height: 30px;
+    padding: 5px;
+}
+.nav-item a:hover {
+  background-color: #ddd;
+  color: black !important;
+}
+.nav-item.active {
+  background-color: #e0e0e0;
+  color: red !important;
+  border-radius: 5px;
+}

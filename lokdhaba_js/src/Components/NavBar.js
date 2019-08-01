@@ -1,43 +1,48 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import './NavBar.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import $ from 'jquery';
 
 export default class NavBar extends Component {
   constructor(props){
         super(props);
-        this.showHomePage = this.showHomePage.bind(this);
+        this.activateLink = this.activateLink.bind(this);
       }
 
-  showHomePage(){
-
-  }
+activateLink(e){
+   var activeItem = $("li.nav-item.active");
+   activeItem.removeClass("active");
+   $(e.target).parent().addClass("active");
+   this.props.displayPage(e.target.innerText);
+}
 
   render() {
     return (
-      <nav class="navbar navbar-expand-sm bg-light">
-      //<a class="navbar-brand"><img height="100%" width="auto" src="./Assets/logo.png"></a>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="#" onClick={this.showHomePage()}>Home</a>
+      <nav className="navbar navbar-expand-sm bg-light" role="navigation">
+        <div className="navbar-header">
+          <a className="navbar-brand"><img height="100%" width="auto" src={require("../Assets/logo.png")}/></a>
+        </div>
+        <ul className="navbar-nav">
+          <li className="nav-item active">
+            <a className="nav-link" onClick={this.activateLink}>Home</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Data Visualization</a>
+          <li className="nav-item">
+            <a className="nav-link" >Data Visualization</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Browse Data</a>
+          <li className="nav-item">
+            <a className="nav-link" >Browse Data</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Data Download</a>
+          <li className="nav-item">
+            <a className="nav-link" >Data Download</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Documentation</a>
+          <li className="nav-item">
+            <a className="nav-link" onClick={this.activateLink} >Documentation</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
+          <li className="nav-item">
+            <a className="nav-link" onClick={this.activateLink} >About</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Incumbency Profile</a>
+          <li className="nav-item">
+            <a className="nav-link" href="#">Incumbency Profile</a>
           </li>
         </ul>
       </nav>

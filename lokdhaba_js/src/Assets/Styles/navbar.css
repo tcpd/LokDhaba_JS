@@ -11,6 +11,8 @@
 .nav-item a:hover {
   background-color: #ddd;
   color: black !important;
+  border-radius: 5px;
+  cursor: pointer;
 }
 .nav-item.active {
   background-color: #e0e0e0;

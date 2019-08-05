@@ -1,9 +1,5 @@
-form {
-  border-radius: 5px;
-  background: #e0e0e0;
-}
-
 select {
+  width: 100%;
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143;
@@ -19,4 +15,8 @@ option {
   white-space: pre;
   min-height: 1.2em;
   padding: 0px 2px 1px;
+}
+
+option:disabled{
+  background-color: #dddddd;
 }

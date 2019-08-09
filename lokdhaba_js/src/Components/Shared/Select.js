@@ -22,19 +22,19 @@ handleSelection(e){
     var selectedValue = this.state.selectedValue;
     var options = this.props.options.map(function(item) {
           if ("" === item.value) {
-            return <option disabled selected value = {
+            return <option disabled value="DEFAULT" key = {item.value} value = {
               item.value
             } > {
               item.label
             } </option>;
           } else if (selectedValue === item.value) {
-            return <option selected value = {
+            return <option value="DEFAULT" key = {item.value} value = {
               item.value
             } > {
               item.label
             } </option>;
           } else {
-            return <option value = {
+            return <option key = {item.value} value = {
               item.value
             } > {
               item.label

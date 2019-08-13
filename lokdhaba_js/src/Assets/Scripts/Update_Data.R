@@ -23,5 +23,11 @@ st_codes = fread(st_codes_file,na="")
 st_codes %>% toJSON() %>% writeLines("../Data/StateCodes.json")
 
 vs_no = fread(vs_no_file,na="")
+vs_no$Assembly_No = vs_no$sa_no
+vs_no$State_Name = vs_no$state
+vs_no$Year = vs_no$year
 vs_no$key_year = NULL
+vs_no$sa_no = NULL
+vs_no$year= NULL
+vs_no$state=NULL
 vs_no %>% toJSON() %>% writeLines("../Data/VidhanSabhaNumber.json")

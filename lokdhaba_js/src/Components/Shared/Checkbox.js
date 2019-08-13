@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../Assets/Styles/select.css'
+import '../../Assets/Styles/layout.css'
 
 export default class Checkbox extends Component {
   constructor(props){
@@ -19,7 +19,7 @@ export default class Checkbox extends Component {
    var id = this.props.id;
     return (
       <div className="form-group">
-        <input type="checkbox"  id={id} key={id} checked={this.state.checked} onChange={this.handleCheckboxChange}/>
+        <input type="checkbox"  id={id} key={id} checked={this.props.checked} onChange={this.handleCheckboxChange}/>
         <label className="control-label" key={id + "_label"} htmlFor={id}>{label}</label>
       </div>
     )

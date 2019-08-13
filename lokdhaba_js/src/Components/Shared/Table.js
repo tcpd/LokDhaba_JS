@@ -18,7 +18,7 @@ export default class Checkbox extends Component {
    var columns = this.props.columns;
    var data = this.props.data;
     return (
-      <ReactTable columns={columns} data={data}/>
+      <ReactTable columns={columns} data={data} defaultPageSize={100} filterable/>
     )
   }
 }

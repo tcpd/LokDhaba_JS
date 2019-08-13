@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import Select from './Shared/Select.js';
 import Checkbox from './Shared/Checkbox.js';
 import Table from './Shared/Table.js';
 import * as Constants from './Shared/Constants.js'
 import StateCodes from '../Assets/Data/StateCodes.json';
-import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json'
-import VidhanSabhaData from '../Assets/Data/AE_MasterSheet.json'
+import  from '../Assets/Data/VidhanSabhaNumber.json'
+import LokSabhaNumber from '../Assets/Data/LokSabhaNumber.json'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default class BrowseData extends Component {
@@ -16,7 +17,7 @@ export default class BrowseData extends Component {
 
   componentDidMount(){
     var GE_States = StateCodes.map(function(item){ return {value: item.State_Name, label: item.State_Name.replace(/_/g, " ")}});
-    var unique_AE_States = [...new Set(VidhanSabhaNumber.map(x => x.state))];
+    var unique_AE_States = [...new Set(.map(x => x.state))];
     var AE_States = unique_AE_States.map(function(item){ return {value: item, label:item.replace(/_/g, " ")}});
     this.setState({GE_States: GE_States});
     this.setState({AE_States: AE_States});
@@ -35,7 +36,12 @@ export default class BrowseData extends Component {
 
   onStateNameChange = (newValue) => {
     this.setState({stateName: newValue});
-    var assemblies = VidhanSabhaNumber.filter(function(item){return item.state == newValue});
+    let assemblies;
+    if(this.state.electionType === "AE"){
+      assemblies = .filter(function(item){return item.State_Name === newValue});
+    }else if(this.state.electionType === "GE"){
+      assemblies = LokSabhaNumber.filter(function(item){return item.State_Name === newValue});
+    }
     this.setState({stateAssemblies: assemblies});
   }
 
@@ -49,22 +55,27 @@ export default class BrowseData extends Component {
     this.setState({assembliedChecked: assembliedChecked});
     //Call API to get Table Data
     let electionType = this.state.electionType;
-    let stateName = this.state.stateName;
+    let stateName = this.state.stateName.replace('&', "%26");
     let assemblyNumber = [...this.state.assembliedChecked].join(",");
-    const url = `http://localhost:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}`;
+    const url = `http://10.1.17.230:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}`;
     fetch(url, {
      method: "GET"
-    }).then(response => response.json()).then(tableData => {
-     this.setState({tableData: tableData});
+   }).then(response => response.json()).then(resp => {
+     this.setState({tableData: resp.data});
     });
   }
+
+  // toggleAllCheckboxes = (e) => {
+  //   $('[id*="bd_year_selector_"]').checked =  e.target.checked;
+  // }
 
   createAssemblyCheckboxes = () => {
     let checkboxes = [];
     let scope = this;
     var stateAssemblies = scope.state.stateAssemblies;
+    //<Checkbox id={"bd_year_selector_all" }  key={0} label={"Select All"} onChange={scope.toggleAllCheckboxes} />
     stateAssemblies.forEach(function(item){
-      checkboxes.push(<Checkbox id={"bd_year_selector_" + item.sa_no}  key={item.sa_no} label={item.sa_no + " Assembly (" + item.year + ")"} onChange={scope.onAssemblyChecked} />)
+      checkboxes.push(<Checkbox id={"bd_year_selector_" + item.Assembly_No}  key={item.Assembly_No} label={item.Assembly_No + " Assembly (" + item.Year + ")"} onChange={scope.onAssemblyChecked} />)
     });
     return checkboxes;
   }
@@ -79,7 +90,7 @@ export default class BrowseData extends Component {
                               {value: "AE", label:"Assembly Elections"}];
     var columns = [];
     Constants.tableColumns.forEach(function(item){
-      columns.push({Header: item, accessor: item});
+      columns.push({Header: item, accessor: item });
     })
     return (
       <div className="content">
@@ -93,7 +104,7 @@ export default class BrowseData extends Component {
               </form>
             </div>
             <div className="col-xs-9">
-            {assembliedChecked.size > 0  && <Table columns={columns} data={VidhanSabhaData}/>}
+            {assembliedChecked.size > 0  && <Table columns={columns} data={this.state.tableData}/>}
             </div>
           </div>
        </div>

@@ -126,14 +126,14 @@ export default class BrowseData extends Component {
       <div className="content">
         <div className="container-fluid">
           <div className="row">
-            <div className="col-xs-3">
+            <div className="col-xs-3" style={{width: "20%"}}>
               <form className="well">
                 <Select id="bd_electiontype_selector" label="Election Type" options = {electionTypeOptions} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange}/>}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
               </form>
             </div>
-            <div className="col-xs-9">
+            <div className="col-xs-9" style={{width: "80%"}}>
             {assembliesChecked.size > 0  && <Table columns={columns} data={this.state.tableData}/>}
             </div>
           </div>

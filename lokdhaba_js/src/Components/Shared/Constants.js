@@ -25,7 +25,6 @@ export const tableColumns = [
       "Deposit_Lost",
       "Margin",
       "Margin_Percentage",
-      "Rel",
       "ENOP",
       "pid",
       "Normalized_Party",

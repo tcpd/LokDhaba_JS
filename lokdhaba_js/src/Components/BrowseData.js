@@ -56,17 +56,36 @@ export default class BrowseData extends Component {
     this.setState({stateAssemblies: assemblies});
   }
 
-  fetchTableData = () => {
-    let electionType = this.state.electionType;
-    let stateName = this.state.stateName.replace('&', "%26");
-    let assemblyNumber = [...this.state.assembliesChecked].join(",");
-    const url = `http://10.1.17.230:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}`;
-    fetch(url, {
-     method: "GET"
-    }).then(response => response.json()).then(resp => {
-     this.setState({tableData: resp.data});
+  // fetchTableData = () => {
+  //   let electionType = this.state.electionType;
+  //   let stateName = this.state.stateName.replace('&', "%26");
+  //   let assemblyNumber = [...this.state.assembliesChecked].join(",");
+  //   const url = `http://192.168.29.26:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}&PageNo=0&PageSize=100`;
+  //   fetch(url, {
+  //    method: "GET"
+  //   }).then(response => response.json()).then(resp => {
+  //    this.setState({tableData: resp.data});
+  //   });
+  // }
+
+  fetchTableData = (pageSize = 100, page = 0, sorted = null , filtered = null) => {
+    return new Promise((resolve, reject) => {
+      let electionType = this.state.electionType;
+      let stateName = this.state.stateName.replace('&', "%26");
+      let assemblyNumber = [...this.state.assembliesChecked].join(",");
+      const url = `http://192.168.29.26:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}&PageNo=${page}&PageSize=${pageSize}`;
+      fetch(url, {
+        method: "GET"
+      }).then(response => response.json()).then(resp => {
+        this.setState({tableData: resp.data});
+        const res = {
+          rows: resp.data,
+          pages: resp.pages
+        };
+        setTimeout(() => resolve(res), 500);
+      });
     });
-  }
+};
 
   onAssemblyChecked = (key, checked) => {
     var assembliesChecked = this.state.assembliesChecked;
@@ -86,6 +105,10 @@ export default class BrowseData extends Component {
       assemblies.add(key);
     }else{
       assemblies.delete(key);
+      // var checkboxes  = $('[id*="bd_year_selector_"]');
+      // for(var i=0, n=checkboxes.length; i<n; i++) {
+      //   checkboxes[i].checked = checked;
+      // }
     }
     this.setState({assembliesChecked: assemblies});
     this.setState({allChecked: checked});
@@ -134,7 +157,7 @@ export default class BrowseData extends Component {
               </form>
             </div>
             <div className="col-xs-9" style={{width: "80%"}}>
-            {assembliesChecked.size > 0  && <Table columns={columns} data={this.state.tableData}/>}
+            {assembliesChecked.size > 0  && <Table columns={columns} data={this.state.tableData} fetchData={this.fetchTableData}/>}
             </div>
           </div>
        </div>

@@ -68,18 +68,26 @@ export default class BrowseData extends Component {
   //   });
   // }
 
-  fetchTableData = (pageSize = 100, page = 0, sorted = null , filtered = null) => {
+  fetchTableData = (pageSize = 100, page = 0, sorted = [] , filtered = []) => {
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName.replace('&', "%26");
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
-      const url = `http://192.168.29.26:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}&PageNo=${page}&PageSize=${pageSize}`;
+      const url = `http://10.1.17.220:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}&PageNo=${page}&PageSize=${pageSize}`;
       fetch(url, {
         method: "GET"
       }).then(response => response.json()).then(resp => {
-        this.setState({tableData: resp.data});
+        let filteredData = resp.data;
+        if(filtered.length) {
+          filteredData = filtered.reduce((filteredSoFar, nextFilter) => {
+            return filteredSoFar.filter(row => {
+              return (row[nextFilter.id] + "").includes(nextFilter.value);
+            });
+          }, filteredData);
+        }
+        this.setState({tableData: filteredData});
         const res = {
-          rows: resp.data,
+          rows: filteredData,
           pages: resp.pages
         };
         setTimeout(() => resolve(res), 500);

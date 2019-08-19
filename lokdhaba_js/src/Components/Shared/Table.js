@@ -38,6 +38,7 @@ export default class Table extends Component {
                      pageSizeOptions={[5, 10, 20, 25, 50, 100]}
                      manual
                      onFetchData={this.fetchData}
+                     minRows={1}
                      />
     );
   }

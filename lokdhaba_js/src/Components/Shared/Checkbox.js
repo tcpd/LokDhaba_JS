@@ -14,10 +14,16 @@ export default class Checkbox extends Component {
    this.props.onChange(e.target.id.split("_").slice(-1)[0], e.target.checked);
  }
 
+ componentWillUpdate(nextProps, nextState) {
+   if (nextProps.checked === false && this.state.checked) {
+     this.setState({checked: false});
+   }
+ }
+
  render() {
    var label = this.props.label;
    var id = this.props.id;
-   var isChecked = this.props.checked ? this.props.checked : this.state.checked
+   var isChecked = this.props.checked ? this.props.checked : this.state.checked;
     return (
       <div className="form-group">
         <input type="checkbox"  id={id} key={id} checked={isChecked} onChange={this.handleCheckboxChange}/>

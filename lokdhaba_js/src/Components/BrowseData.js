@@ -24,6 +24,9 @@ export default class BrowseData extends Component {
   }
 
   onElectionTypeChange = (newValue) => {
+    if (newValue !== this.state.electionType) {
+      this.setState({stateName: ""});
+    }
     this.setState({electionType: newValue});
     let stateOptions;
     if(newValue === "GE"){
@@ -35,13 +38,14 @@ export default class BrowseData extends Component {
   }
 
   onStateNameChange = (newValue) => {
+    this.setState({assembliesChecked: new Set()});
+    this.setState({allChecked: false});
     this.setState({stateName: newValue});
     let assemblies;
     if(this.state.electionType === "AE"){
       assemblies = VidhanSabhaNumber.filter(function(item){return item.State_Name === newValue});
     }else if(this.state.electionType === "GE"){
       if(newValue === "all"){
-        this.setState({allChecked: true});
         assemblies = [...new Set(LokSabhaNumber.map(s => s.Assembly_No))]
         .map(Assembly_No => {
           return {
@@ -56,38 +60,29 @@ export default class BrowseData extends Component {
     this.setState({stateAssemblies: assemblies});
   }
 
-  // fetchTableData = () => {
-  //   let electionType = this.state.electionType;
-  //   let stateName = this.state.stateName.replace('&', "%26");
-  //   let assemblyNumber = [...this.state.assembliesChecked].join(",");
-  //   const url = `http://192.168.29.26:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}&PageNo=0&PageSize=100`;
-  //   fetch(url, {
-  //    method: "GET"
-  //   }).then(response => response.json()).then(resp => {
-  //    this.setState({tableData: resp.data});
-  //   });
-  // }
-
   fetchTableData = (pageSize = 100, page = 0, sorted = [] , filtered = []) => {
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName.replace('&', "%26");
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
-      const url = `http://10.1.17.220:5000/data/api/v1.0/getDerivedData?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}&PageNo=${page}&PageSize=${pageSize}`;
+      const url = `http://10.1.19.77:5000/data/api/v2.0/getDerivedData`; //?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}&PageNo=${page}&PageSize: pageSize=${pageSize}`;
       fetch(url, {
-        method: "GET"
+        method: "POST",
+        headers: new Headers({
+          "content-type": "application/json"
+        }),
+        body: JSON.stringify({ElectionType : electionType,
+                              StateName: stateName,
+                              AssemblyNo: assemblyNumber,
+                              PageNo: page,
+                              PageSize: pageSize,
+                              Filters: filtered,
+                              SortOptions: sorted
+                              })
       }).then(response => response.json()).then(resp => {
-        let filteredData = resp.data;
-        if(filtered.length) {
-          filteredData = filtered.reduce((filteredSoFar, nextFilter) => {
-            return filteredSoFar.filter(row => {
-              return (row[nextFilter.id] + "").includes(nextFilter.value);
-            });
-          }, filteredData);
-        }
-        this.setState({tableData: filteredData});
+        this.setState({tableData: resp.data});
         const res = {
-          rows: filteredData,
+          rows: resp.data,
           pages: resp.pages
         };
         setTimeout(() => resolve(res), 500);
@@ -97,30 +92,17 @@ export default class BrowseData extends Component {
 
   onAssemblyChecked = (key, checked) => {
     var assembliesChecked = this.state.assembliesChecked;
+    if(key === "all"){
+      assembliesChecked.clear();
+      this.setState({allChecked: checked});
+    }
     if(checked){
       assembliesChecked.add(key);
     }else{
       assembliesChecked.delete(key);
     }
     this.setState({assembliesChecked: assembliesChecked});
-    this.fetchTableData();
-  }
-
-  toggleAllCheckboxes = (key, checked) => {
-    var assemblies = this.state.assembliesChecked;
-    assemblies.clear();
-    if(checked){
-      assemblies.add(key);
-    }else{
-      assemblies.delete(key);
-      // var checkboxes  = $('[id*="bd_year_selector_"]');
-      // for(var i=0, n=checkboxes.length; i<n; i++) {
-      //   checkboxes[i].checked = checked;
-      // }
-    }
-    this.setState({assembliesChecked: assemblies});
-    this.setState({allChecked: checked});
-    this.fetchTableData();
+    assembliesChecked.size > 0 && this.fetchTableData();
   }
 
   createAssemblyCheckboxes = () => {
@@ -128,17 +110,12 @@ export default class BrowseData extends Component {
     let scope = this;
     var isChecked = this.state.allChecked;
     var stateAssemblies = scope.state.stateAssemblies;
-    checkboxes.push(<Checkbox id={"bd_year_selector_all" }  key={0} label={"Select All"} checked={isChecked} onChange={scope.toggleAllCheckboxes}/>)
+    checkboxes.push(<Checkbox id={"bd_year_selector_all" }  key={0} label={"Select All"} checked={isChecked} onChange={scope.onAssemblyChecked}/>)
     stateAssemblies.forEach(function(item){
-      checkboxes.push(<Checkbox id={"bd_year_selector_" + item.Assembly_No} checked={isChecked} key={item.Assembly_No} label={item.Assembly_No + " Assembly (" + item.Year + ")"} onChange={scope.onAssemblyChecked} />)
+      var checked = scope.state.assembliesChecked.has(item.Assembly_No.toString()) ? true: isChecked;
+      checkboxes.push(<Checkbox id={"bd_year_selector_" + item.Assembly_No} checked={checked} key={item.Assembly_No} label={item.Assembly_No + " Assembly (" + item.Year + ")"} onChange={scope.onAssemblyChecked} />)
     });
     return checkboxes;
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    if (nextState.stateName !== this.state.stateName) {
-      this.setState({allChecked: false});
-    }
   }
 
   render() {

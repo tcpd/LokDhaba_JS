@@ -63,7 +63,7 @@ export default class BrowseData extends Component {
   fetchTableData = (pageSize = 100, page = 0, sorted = [] , filtered = []) => {
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;
-      let stateName = this.state.stateName.replace('&', "%26");
+      let stateName = this.state.stateName;
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
       const url = `http://10.1.19.77:5000/data/api/v2.0/getDerivedData`; //?ElectionType=${electionType}&StateName=${stateName}&AssemblyNo=${assemblyNumber}&PageNo=${page}&PageSize: pageSize=${pageSize}`;
       fetch(url, {

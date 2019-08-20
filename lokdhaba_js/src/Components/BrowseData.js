@@ -186,7 +186,7 @@ export default class BrowseData extends Component {
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange}/>}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
                 {assembliesChecked.size > 0 && !isDataDownloadable && <Button variant="primary" onClick={this.showTemsAndConditionsPopup}> Download </Button>}
-
+                {showTemsAndConditionsPopup && <Modal id="tems_and_conditions_popup" show={showTemsAndConditionsPopup} body={<p>BODY!!</p>} heading={<p>Terms and Conditions</p>} handleClose={this.CloseTemsAndConditionsPopup} onSubmit={this.downloadData} />}
                 {isDataDownloadable && <CSVLink data={csvData} filename={filename}>Download Data</CSVLink>}
                 </form>
             </div>

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { CSVLink, CSVDownload } from "react-csv";
-import $ from 'jquery';
 import Select from './Shared/Select.js';
 import Checkbox from './Shared/Checkbox.js';
-import Modal from './Shared/Modal.js';
+import Popup from './Shared/Popup.js';
 import Table from './Shared/Table.js';
 import * as Constants from './Shared/Constants.js'
 import StateCodes from '../Assets/Data/StateCodes.json';
@@ -15,7 +14,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 export default class BrowseData extends Component {
   constructor(props){
         super(props);
-        this.state = {electionType: "", stateName: "", GE_States: [], AE_States: [], stateOptions: [], stateAssemblies: [], assembliesChecked: new Set(), tableData: [], allChecked: false, showTemsAndConditionsPopup: false, csvData: [], isDataDownloadable: false};
+        this.state = {electionType: "",
+                      stateName: "",
+                      GE_States: [],
+                      AE_States: [],
+                      stateOptions: [],
+                      stateAssemblies: [],
+                      assembliesChecked: new Set(),
+                      tableData: [],
+                      allChecked: false,
+                      showTemsAndConditionsPopup: false,
+                      csvData: [],
+                      isDataDownloadable: false};
       }
 
   componentDidMount(){
@@ -26,14 +36,16 @@ export default class BrowseData extends Component {
     this.setState({AE_States: AE_States});
   }
 
+  onAcceptTermsAndConditions = (key, checked) => {
+    this.setState({isDataDownloadable : checked});
+  }
+
   CloseTemsAndConditionsPopup = () => {
     this.setState({showTemsAndConditionsPopup : false});
   }
 
  showTemsAndConditionsPopup = () => {
     this.setState({showTemsAndConditionsPopup : true});
-    this.fetchDownloadData();
-    this.setState({isDataDownloadable : true});
   }
 
   downloadData = () => {
@@ -81,7 +93,7 @@ export default class BrowseData extends Component {
     let electionType = this.state.electionType;
     let stateName = this.state.stateName;
     let assemblyNumber = [...this.state.assembliesChecked].join(",");
-    const url = `http://10.1.19.77:5000/data/api/v1.0/DataDownload`;
+    const url = `http://192.168.29.26:5000/data/api/v1.0/DataDownload`;
     fetch(url, {
       method: "POST",
       headers: new Headers({
@@ -93,8 +105,6 @@ export default class BrowseData extends Component {
                             Filters: []
                             })
       }).then(response => response.json()).then(resp => {
-        debugger;
-        console.log(resp.data);
         this.setState({csvData: resp.data});
       });
   }
@@ -104,7 +114,7 @@ export default class BrowseData extends Component {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
-      const url = `http://10.1.19.77:5000/data/api/v2.0/getDerivedData`;
+      const url = `http://192.168.29.26:5000/data/api/v2.0/getDerivedData`;
       fetch(url, {
         method: "POST",
         headers: new Headers({
@@ -163,7 +173,6 @@ export default class BrowseData extends Component {
     var assembliesChecked = this.state.assembliesChecked;
     var stateOptions = this.state.stateOptions;
     var csvData = this.state.csvData;
-    var csvHeaders = this.state.csvHeaders;
     var isDataDownloadable = this.state.isDataDownloadable;
     var showTemsAndConditionsPopup = this.state.showTemsAndConditionsPopup;
     var electionTypeOptions = [{value: "", label: "Select Election Type"},
@@ -175,7 +184,45 @@ export default class BrowseData extends Component {
     })
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${date}.csv`
+    var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${date}.csv`;
+    const modalBody = <div><p>Lok Dhaba is an online web interface provided by the Trivedi Centre for
+        Political Data. In these terms of use of the data provided by the Centre, 'Data'
+        includes all visualizations, texts, graphics and compilations of data and other
+        material presented within the application. The users are free to download,
+        display or include the data in other products for non-commercial purposes at no
+        cost subject to the following limitations:</p>
+        <ul>
+        <li>The user must include the citation for data they use in the manner indicated
+        through 'How to Cite' information mentioned on the top of this web page. The
+        user must not claim or imply that the Trivedi Centre for Political Data endorses
+        the user's use of the data or use of the Centre's logo(s) or trademarks(s) in
+        conjunction with the same.</li>
+        <li>The Centre makes no warranties with respect to the data and the user must
+        agree that the Centre shall not be held responsible or liable to the user for
+        any errors, omissions, misstatements and/or misrepresentations of the data
+        though the user is encouraged to report the same to us (following the procedure
+        elaborated upon within the 'Contact us' tab).</li>
+        <li>The Centre may record visits to Lok Dhaba without collecting the personal
+        information of the users. The records shall be used for statistical reports
+        only.</li>
+        <li>The user must agree that the use of Data presented within the application can
+        be seen as the acknowledgement of unconditionally accepting the Terms of Use
+        presented by the Centre.</li>
+        </ul>
+        <center><Checkbox id={"dd_accept_condition" } label={"I accept the terms and conditions mentioned here."} checked={this.state.isDataDownloadable} onChange={this.onAcceptTermsAndConditions}/></center>
+        </div>
+    var buttonClass = isDataDownloadable ? "btn-lg" : "btn-lg disabled";
+    const modalFooter = <div>
+                        <Button  className="btn-lg" variant="secondary" onClick={this.CloseTemsAndConditionsPopup}>
+                          Cancel
+                        </Button>
+                        <CSVLink className={buttonClass} data={csvData} filename={filename}>
+                          <Button className={buttonClass} variant="primary" onClick={this.downloadData}>
+                            Download
+                          </Button>
+                        </CSVLink>
+                      </div>
+
     return (
       <div className="content">
         <div className="container-fluid">
@@ -185,15 +232,14 @@ export default class BrowseData extends Component {
                 <Select id="bd_electiontype_selector" label="Election Type" options = {electionTypeOptions} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange}/>}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
-                {assembliesChecked.size > 0 && !isDataDownloadable && <Button variant="primary" onClick={this.showTemsAndConditionsPopup}> Download </Button>}
-                {showTemsAndConditionsPopup && <Modal id="tems_and_conditions_popup" show={showTemsAndConditionsPopup} body={<p>BODY!!</p>} heading={<p>Terms and Conditions</p>} handleClose={this.CloseTemsAndConditionsPopup} onSubmit={this.downloadData} />}
-                {isDataDownloadable && <CSVLink data={csvData} filename={filename}>Download Data</CSVLink>}
+                {assembliesChecked.size > 0 && <Button className="btn-lg" variant="primary" onClick={this.showTemsAndConditionsPopup}> Download Data</Button>}
                 </form>
             </div>
             <div className="col-xs-9" style={{width: "80%"}}>
             {assembliesChecked.size > 0  && <Table columns={columns} data={this.state.tableData} fetchData={this.fetchTableData}/>}
             </div>
           </div>
+          { showTemsAndConditionsPopup && <Popup id="tems_and_conditions_popup" show={showTemsAndConditionsPopup} body={modalBody} heading={<p>Terms and Conditions</p>} footer={modalFooter}  handleClose={this.CloseTemsAndConditionsPopup}/>}
        </div>
     </div>
     )

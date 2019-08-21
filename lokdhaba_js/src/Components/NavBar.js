@@ -33,9 +33,6 @@ activateLink(e){
             <a className="nav-link" onClick={this.activateLink}>Browse Data</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" >Data Download</a>
-          </li>
-          <li className="nav-item">
             <a className="nav-link" onClick={this.activateLink}>Documentation</a>
           </li>
           <li className="nav-item">

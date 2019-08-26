@@ -1,20 +1,30 @@
 import React, { Component } from 'react';
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+var _ = require('lodash');
 
 export default class Table extends Component {
   constructor(props){
         super(props);
         this.state = {loading: false, pages: 0, data: this.props.data};
-        this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
+        this.filtering = false;
+        this.fetchDataWithDebounce = _.debounce(this.fetchData, 1500);
       }
 
- handleCheckboxChange(e){
-   this.setState({ checked: e.target.checked });
-   this.props.onChange(e.target.value);
- }
+fetchStrategy = (tableState) => {
+    if(this.filtering) {
+      return this.fetchDataWithDebounce(tableState)
+    } else {
+      return this.fetchData(tableState);
+    }
+  }
 
- fetchData = (state, instance) =>  {
+  onFilteredChange = (column, value) => {
+    this.filtering = true;
+  }
+
+ fetchData = (state) =>  {
+  this.filtering = false
   this.setState({ loading: true });
   this.props.fetchData(state.pageSize, state.page, state.sorted, state.filtered).then(
     res => {
@@ -37,7 +47,8 @@ export default class Table extends Component {
                      showPaginationBottom={true}
                      pageSizeOptions={[5, 10, 20, 25, 50, 100]}
                      manual
-                     onFetchData={this.fetchData}
+                     onFetchData={this.fetchStrategy}
+                     onFilteredChange={this.onFilteredChange}
                      minRows={1}
                      />
     );

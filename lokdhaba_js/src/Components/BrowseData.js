@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 import Select from './Shared/Select.js';
 import Checkbox from './Shared/Checkbox.js';
 import Popup from './Shared/Popup.js';
@@ -23,9 +23,10 @@ export default class BrowseData extends Component {
                       assembliesChecked: new Set(),
                       tableData: [],
                       allChecked: false,
-                      showTemsAndConditionsPopup: false,
+                      showTermsAndConditionsPopup: false,
                       csvData: [],
-                      isDataDownloadable: false};
+                      isDataDownloadable: false,
+                      filters: []};
       }
 
   componentDidMount(){
@@ -38,18 +39,21 @@ export default class BrowseData extends Component {
 
   onAcceptTermsAndConditions = (key, checked) => {
     this.setState({isDataDownloadable : checked});
+    if(checked){
+      this.fetchDownloadData();
+    }
   }
 
-  CloseTemsAndConditionsPopup = () => {
-    this.setState({showTemsAndConditionsPopup : false});
+  CancelTermsAndConditionsPopup = () => {
+    this.setState({isDataDownloadable : false});
   }
 
- showTemsAndConditionsPopup = () => {
-    this.setState({showTemsAndConditionsPopup : true});
+  CloseTermsAndConditionsPopup = () => {
+    this.setState({showTermsAndConditionsPopup : false});
   }
 
-  downloadData = () => {
-    this.setState({isDataDownloadable: true});
+ showTermsAndConditionsPopup = () => {
+    this.setState({showTermsAndConditionsPopup : true});
   }
 
   onElectionTypeChange = (newValue) => {
@@ -64,6 +68,7 @@ export default class BrowseData extends Component {
       stateOptions = [{value: "", label: "Select State"}].concat(this.state.AE_States);
     }
     this.setState({stateOptions: stateOptions});
+    this.setState({isDataDownloadable : false});
   }
 
   onStateNameChange = (newValue) => {
@@ -87,13 +92,15 @@ export default class BrowseData extends Component {
       }
     }
     this.setState({stateAssemblies: assemblies});
+    this.setState({isDataDownloadable : false});
   }
 
   fetchDownloadData = () =>{
     let electionType = this.state.electionType;
     let stateName = this.state.stateName;
+    let filters = this.state.filters;
     let assemblyNumber = [...this.state.assembliesChecked].join(",");
-    const url = `http://192.168.29.26:5000/data/api/v1.0/DataDownload`;
+    const url = `http://10.1.21.11:5000/data/api/v1.0/DataDownload`;
     fetch(url, {
       method: "POST",
       headers: new Headers({
@@ -102,7 +109,7 @@ export default class BrowseData extends Component {
       body: JSON.stringify({ElectionType : electionType,
                             StateName: stateName,
                             AssemblyNo: assemblyNumber,
-                            Filters: []
+                            Filters: filters
                             })
       }).then(response => response.json()).then(resp => {
         this.setState({csvData: resp.data});
@@ -114,7 +121,8 @@ export default class BrowseData extends Component {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
-      const url = `http://192.168.29.26:5000/data/api/v2.0/getDerivedData`;
+      const url = `http://10.1.21.11:5000/data/api/v2.0/getDerivedData`;
+      this.setState({filters: filtered});
       fetch(url, {
         method: "POST",
         headers: new Headers({
@@ -152,6 +160,7 @@ export default class BrowseData extends Component {
     }
     this.setState({assembliesChecked: assembliesChecked});
     assembliesChecked.size > 0 && this.fetchTableData();
+    this.setState({isDataDownloadable : false});
   }
 
   createAssemblyCheckboxes = () => {
@@ -174,14 +183,11 @@ export default class BrowseData extends Component {
     var stateOptions = this.state.stateOptions;
     var csvData = this.state.csvData;
     var isDataDownloadable = this.state.isDataDownloadable;
-    var showTemsAndConditionsPopup = this.state.showTemsAndConditionsPopup;
+    var showTermsAndConditionsPopup = this.state.showTermsAndConditionsPopup;
     var electionTypeOptions = [{value: "", label: "Select Election Type"},
                               {value: "GE", label:"General Elections"},
                               {value: "AE", label:"Assembly Elections"}];
-    var columns = [];
-    Constants.tableColumns.forEach(function(item){
-      columns.push({Header: item, accessor: item });
-    })
+    var columns = Constants.tableColumns;
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${date}.csv`;
@@ -213,11 +219,11 @@ export default class BrowseData extends Component {
         </div>
     var buttonClass = isDataDownloadable ? "btn-lg" : "btn-lg disabled";
     const modalFooter = <div>
-                        <Button  className="btn-lg" variant="secondary" onClick={this.CloseTemsAndConditionsPopup}>
+                        <Button  className="btn-lg" variant="secondary" onClick={this.CancelTermsAndConditionsPopup}>
                           Cancel
                         </Button>
                         <CSVLink className={buttonClass} data={csvData} filename={filename}>
-                          <Button className={buttonClass} variant="primary" onClick={this.downloadData}>
+                          <Button className={buttonClass} variant="primary" onClick={this.CloseTermsAndConditionsPopup}>
                             Download
                           </Button>
                         </CSVLink>
@@ -232,21 +238,16 @@ export default class BrowseData extends Component {
                 <Select id="bd_electiontype_selector" label="Election Type" options = {electionTypeOptions} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange}/>}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
-                {assembliesChecked.size > 0 && <Button className="btn-lg" variant="primary" onClick={this.showTemsAndConditionsPopup}> Download Data</Button>}
+                {assembliesChecked.size > 0 && <Button className="btn-lg" variant="primary" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
                 </form>
             </div>
             <div className="col-xs-9" style={{width: "80%"}}>
             {assembliesChecked.size > 0  && <Table columns={columns} data={this.state.tableData} fetchData={this.fetchTableData}/>}
             </div>
           </div>
-          { showTemsAndConditionsPopup && <Popup id="tems_and_conditions_popup" show={showTemsAndConditionsPopup} body={modalBody} heading={<p>Terms and Conditions</p>} footer={modalFooter}  handleClose={this.CloseTemsAndConditionsPopup}/>}
+          { showTermsAndConditionsPopup && <Popup id="tems_and_conditions_popup" show={showTermsAndConditionsPopup} body={modalBody} heading={<p>Terms and Conditions</p>} footer={modalFooter}  handleClose={this.CloseTermsAndConditionsPopup}/>}
        </div>
     </div>
     )
   }
 }
-
-
-//{showTemsAndConditionsPopup && <Modal id="tems_and_conditions_popup" show={showTemsAndConditionsPopup} body={<p>BODY!!</p>} heading={<p>Terms and Conditions</p>} handleClose={this.CloseTemsAndConditionsPopup} onSubmit={this.downloadData} />}
-//{isDataDownloadable && <CSVLink data={csvData} filename={"test-data.csv"}>Download Data</CSVLink>}
-//{isDataDownloadable && <a href="" onClick={this.downloadData}>Download Data</a>}

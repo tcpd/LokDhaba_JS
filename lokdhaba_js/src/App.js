@@ -4,6 +4,7 @@ import About from './Components/About';
 import NavBar from './Components/NavBar';
 import Documentation from './Components/Documentation'
 import BrowseData from './Components/BrowseData'
+import DataVisualization from './Components/DataVisualization'
 class App extends Component {
   constructor(props){
         super(props);
@@ -25,6 +26,7 @@ class App extends Component {
           { activePage==="About" && <About />}
           { activePage==="Documentation" && <Documentation />}
           { activePage==="Browse Data" && <BrowseData />}
+          { activePage==="Data Visualization" && <DataVisualization />}
         </div>
     )
   }

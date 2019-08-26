@@ -27,7 +27,7 @@ activateLink(e){
             <a className="nav-link" onClick={this.activateLink}>Home</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" >Data Visualization</a>
+            <a className="nav-link" onClick={this.activateLink}>Data Visualization</a>
           </li>
           <li className="nav-item">
             <a className="nav-link" onClick={this.activateLink}>Browse Data</a>

@@ -37,6 +37,12 @@ export default class BrowseData extends Component {
     this.setState({AE_States: AE_States});
   }
 
+  componentWillUpdate(nextProps, nextState) {
+    if (nextState.filters !== this.state.filters) {
+      this.setState({isDataDownloadable: false});
+    }
+  }
+
   onAcceptTermsAndConditions = (key, checked) => {
     this.setState({isDataDownloadable : checked});
     if(checked){
@@ -46,6 +52,7 @@ export default class BrowseData extends Component {
 
   CancelTermsAndConditionsPopup = () => {
     this.setState({isDataDownloadable : false});
+    this.setState({showTermsAndConditionsPopup : false});
   }
 
   CloseTermsAndConditionsPopup = () => {

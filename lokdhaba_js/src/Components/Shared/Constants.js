@@ -11,6 +11,7 @@ export const tableColumns = [
       Cell: row => (<div style={{ textAlign: "right" }}>{row.value}</div>)
     },
     {
+      minWidth: 160,
       Header: "Candidate",
       accessor: "Candidate"
     },
@@ -23,6 +24,7 @@ export const tableColumns = [
       accessor: "Party"
     },
     {
+      minWidth: 160,
       Header: "Constituency Name",
       accessor: "Constituency_Name"
     },

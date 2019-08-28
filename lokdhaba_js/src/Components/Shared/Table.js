@@ -37,6 +37,26 @@ fetchStrategy = (tableState) => {
     );
   }
 
+getTdProps = (state, rowInfo, column, instance) => {
+  return{
+    onClick: (e, handleOriginal) => {
+      debugger;
+      let oldFilters = instance.state.filtered;
+      if(oldFilters.find(f => f.id === column.id)){
+        oldFilters = oldFilters.filter(x => x.id !== column.id);
+      }
+      oldFilters = oldFilters.concat([{"id": column.id, "value": rowInfo.row[column.id].toString()}]);
+      instance.state.filtered = oldFilters;
+      instance.fireFetchData();
+
+      if (handleOriginal) {
+        handleOriginal()
+      }
+    }
+   }
+  }
+
+
  render() {
    var columns = this.props.columns;
    var data  = this.props.data;
@@ -50,6 +70,8 @@ fetchStrategy = (tableState) => {
                      onFetchData={this.fetchStrategy}
                      onFilteredChange={this.onFilteredChange}
                      minRows={1}
+                     className="-striped -highlight"
+                     getTdProps= {this.getTdProps}
                      />
     );
   }

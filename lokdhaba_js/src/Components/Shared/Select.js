@@ -19,7 +19,7 @@ handleSelection(e){
     var id = this.props.id;
     var name = label.replace(/\s/g, '');
     var placeholder = 'Select ' + label;
-    var selectedValue = this.state.selectedValue;
+    var selectedValue = this.props.selectedValue !== undefined? this.props.selectedValue: this.state.selectedValue;
     var options = this.props.options.map(function(item) {
           if ("" === item.value) {
             return <option disabled value="DEFAULT" key = {item.value} value = {

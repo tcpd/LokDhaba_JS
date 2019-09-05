@@ -1,0 +1,122 @@
+[
+  {
+    "title": "Chart: Voter Turnout",
+    "type": "Chart",
+    "optionslabel": "Select turnout for",
+    "modulename": "voterTurnoutChart",
+    "alloptionschecked": true,
+    "vizComponent": "VoterTurnoutChart"
+  },
+  {
+    "title": "Chart: Party vote share (contested)",
+    "type": "Chart",
+    "optionslabel": "Select voteshare for",
+    "modulename": "cvoteShareChart",
+    "alloptionschecked": false
+  },
+  {
+    "title": "Chart: Party vote share (all seats)",
+    "type": "Chart",
+    "optionslabel": "Select voteshare for",
+    "modulename": "tvoteShareChart",
+    "alloptionschecked": false
+  },
+  {
+    "title": "Chart: Party seat share",
+    "type": "Chart",
+    "optionslabel": "Select seatshare for",
+    "modulename": "seatShareChart",
+    "alloptionschecked": false
+  },
+  {
+    "title": "Chart: Party strike rate",
+    "type": "Chart",
+    "optionslabel": "Select voteshare for",
+    "modulename": "strikeRateChart",
+    "alloptionschecked": false
+  },
+  {
+    "title": "Chart: Parties contested and represented",
+    "type": "Chart",
+    "optionslabel": "Select",
+    "modulename": "partiesPresentedChart",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Chart: Candidates contested /deposit lost",
+    "type": "Chart",
+    "optionslabel": "Select",
+    "modulename": "contestedDepositSavedChart",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Constituency type",
+    "type": "Map",
+    "optionslabel": "Select Constituency type",
+    "modulename": "winnerCasteMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Number of candidates",
+    "type": "Map",
+    "optionslabel": "Select number of candidates",
+    "modulename": "numCandidatesMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Voter Turnout",
+    "type": "Map",
+    "optionslabel": "Select range",
+    "modulename": "voterTurnoutMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Winners by Party",
+    "type": "Map",
+    "optionslabel": "Select parties",
+    "modulename": "winnerMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Winners by Gender",
+    "type": "Map",
+    "optionslabel": "Selct gender type",
+    "modulename": "winnerGenderMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Victory Margin",
+    "type": "Map",
+    "optionslabel": "Select margins",
+    "modulename": "winnerMarginMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Vote share of winners",
+    "type": "Map",
+    "optionslabel": "Select voteshare range",
+    "modulename": "winnerVoteShareMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Party-wise positions",
+    "type": "Map",
+    "optionslabel": "Select positions",
+    "modulename": "partyPositionsMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: Party-wise VoteShare",
+    "type": "Map",
+    "optionslabel": "Select voteshare range",
+    "modulename": "partyVoteShareMap",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Map: NOTA Vote",
+    "type": "Map",
+    "optionslabel": "Select range",
+    "modulename": "notaTurnoutMap",
+    "alloptionschecked": true
+  }
+]

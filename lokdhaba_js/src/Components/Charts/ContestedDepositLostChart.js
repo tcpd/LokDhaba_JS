@@ -3,47 +3,37 @@ import createPlotlyComponent from 'react-plotlyjs';
 import Plotly from 'plotly.js/dist/plotly-cartesian';
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
-export default class VoterTurnoutChart extends Component {
+export default class ContestedDepositLostChart extends Component {
   render() {
     var vizData = this.props.data;
     var dataFilterOptions = this.props.dataFilterOptions;
-    var electionType = this.props.electionType === "GE" ? "LokSabha" : "Vidhan Sabha";
     var stateName = this.props.stateName.replace(/_/g, " ");
+    var electionType = this.props.electionType === "GE" ? "LokSabha" : "Vidhan Sabha";
     var x_labels = vizData.map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
     var data = [];
-    if(dataFilterOptions.has("male")){
-      var y_male = vizData.map(x => x.male);
+    if(dataFilterOptions.has("TotalCandidates")){
+      var y_contested = vizData.map(x => x.Total_Candidates);
       var trace = {
                     type: 'bar',
                     x: x_labels,
-                    y: y_male,
-                    name: 'male'
+                    y: y_contested,
+                    name: 'Total Candidates'
                   }
       data.push(trace);
     }
-    if(dataFilterOptions.has("female")){
-      var y_female = vizData.map(x => x.female);
+    if(dataFilterOptions.has("DepositLost")){
+      var y_represented = vizData.map(x => x.Deposit_Lost);
       var trace = {
                     type: 'bar',
                     x: x_labels,
-                    y: y_female,
-                    name: 'female'
+                    y: y_represented,
+                    name: 'Deposit Lost'
                   }
       data.push(trace);
     }
-    if(dataFilterOptions.has("total")){
-      var y_total = vizData.map(x => x.total);
-      var trace = {
-                    type: 'bar',
-                    x: x_labels,
-                    y: y_total,
-                    name: 'total'
-                  }
-      data.push(trace);
-    }
-    var title = `Voter turnout across years in ${electionType}`;
+    var title = `Contested and deposit lost across years in ${electionType}`;
     if(stateName !== ""){
-      title = `Voter turnout across years in ${stateName} ${electionType}`
+      title = `Contested and deposit lost across years in ${stateName} ${electionType}`
     }
 
     let layout = {
@@ -52,7 +42,7 @@ export default class VoterTurnoutChart extends Component {
         title: 'Year(Assembly Number)'
       },
       yaxis:{
-        title: 'Turnout in %'
+        title: 'Number of Candidates'
       }
     };
     let config = {

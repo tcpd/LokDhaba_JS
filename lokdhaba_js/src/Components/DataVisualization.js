@@ -5,6 +5,11 @@ import ChartsMapsCodes from '../Assets/Data/ChartsMapsCodes.json';
 import Checkbox from './Shared/Checkbox.js';
 import Select from './Shared/Select.js';
 import VoterTurnoutChart from './Charts/VoterTurnoutChart.js';
+import PartiesPresentedChart from './Charts/PartiesPresentedChart.js';
+import PartyVoteShareChart from './Charts/PartyVoteShareChart.js';
+import PartySeatShareChart from './Charts/PartySeatShareChart.js';
+import PartyStrikeRateChart from './Charts/PartyStrikeRateChart.js';
+import ContestedDepositLostChart from './Charts/ContestedDepositLostChart.js';
 import * as Constants from './Shared/Constants.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
@@ -45,6 +50,8 @@ export default class DataVisualization extends Component {
 
  onVisualizationChange = (newValue) => {
    this.setState({year: ""});
+   this.setState({vizOptionsSelected: new Set()});
+   this.setState({showVisualization: false});
    var visualizationType = ChartsMapsCodes.filter(function(item){return item.modulename === newValue})[0].type;
    this.setState({visualization: newValue});
    this.setState({visualizationType: visualizationType}, () => {
@@ -57,6 +64,8 @@ export default class DataVisualization extends Component {
  onStateNameChange = (newValue) => {
    this.setState({visualization: ""});
    this.setState({visualizationType: ""});
+   this.setState({vizOptionsSelected: new Set()});
+   this.setState({showVisualization: false});
    this.setState({stateName: newValue});
  }
 
@@ -94,7 +103,7 @@ export default class DataVisualization extends Component {
                            VizType: visualizationType,
                            AssemblyNo: assemblyNumber,
                            Party: party,
-                           Legends: legends
+                           Legends: [...legends]
                            })
      }).then(response => response.json()).then(resp => {
           this.setState({vizData: resp.data});
@@ -173,7 +182,7 @@ export default class DataVisualization extends Component {
        this.setState({chartMapOptions: resp.data});
        var checked = ChartsMapsCodes.filter(function(item) {return item.modulename === visualization})[0].alloptionschecked;
        if(checked){
-         this.setState({vizOptionsSelected: new Set(resp.data)}, () => {
+         this.setState({vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, "")))}, () => {
            this.fetchVisualizationData();
          });
        }
@@ -187,13 +196,14 @@ export default class DataVisualization extends Component {
    }else{
      vizOptionsSelected.delete(key);
    }
-   this.setState({vizOptionsSelected: vizOptionsSelected});
-   if(vizOptionsSelected.size > 0){
-      this.fetchVisualizationData();
-      this.setState({showVisualization : true});
-    }else{
-      this.setState({showVisualization : false});
-    }
+   this.setState({vizOptionsSelected: vizOptionsSelected}, () => {
+     if(vizOptionsSelected.size > 0){
+        this.fetchVisualizationData();
+        this.setState({showVisualization : true});
+      }else{
+        this.setState({showVisualization : false});
+      }
+   });
  }
 
  createOptionsCheckboxes = () => {
@@ -204,8 +214,8 @@ export default class DataVisualization extends Component {
    var label = ChartsMapsCodes.filter(function(item) {return item.modulename === scope.state.visualization})[0].optionslabel;
    var chartMapOptions = scope.state.chartMapOptions;
    chartMapOptions.forEach(function(item){
-     var checked = vizOptionsSelected.has(item);
-     checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item} checked={checked} key={item} label={item} onChange={scope.chartMapOptionChecked} />)
+     var checked = vizOptionsSelected.has(item.replace(/_/g, ""));
+     checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item.replace(/_/g, "")} checked={checked} key={item.replace(/_/g, "")} label={item.replace(/_/g, " ")} onChange={scope.chartMapOptionChecked} />)
    });
    if(checkboxes.length > 0){
      return <div>
@@ -218,7 +228,26 @@ export default class DataVisualization extends Component {
  renderVisualization = () => {
    var data = this.state.vizData;
    var dataFilterOptions = this.state.vizOptionsSelected;
-   return <VoterTurnoutChart data={data} dataFilterOptions={dataFilterOptions}/>;
+   var electionType = this.state.electionType;
+   var stateName = this.state.stateName;
+   var visualization = this.state.visualization;
+   switch(visualization){
+     case "voterTurnoutChart":
+        return <VoterTurnoutChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
+     case "partiesPresentedChart":
+        return <PartiesPresentedChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
+     case "tvoteShareChart":
+     case "cvoteShareChart":
+        return <PartyVoteShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
+     case "seatShareChart":
+        return <PartySeatShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
+     case "strikeRateChart":
+        return <PartyStrikeRateChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
+     case "contestedDepositSavedChart":
+        return <ContestedDepositLostChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
+     default:
+        return;
+   }
  }
 
  onPartyChange = (newValue) => {

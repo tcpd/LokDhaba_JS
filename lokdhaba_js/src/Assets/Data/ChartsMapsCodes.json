@@ -12,42 +12,48 @@
     "type": "Chart",
     "optionslabel": "Select voteshare for",
     "modulename": "cvoteShareChart",
-    "alloptionschecked": false
+    "alloptionschecked": false,
+    "vizComponent": "PartyVoteShareChart"
   },
   {
     "title": "Chart: Party vote share (all seats)",
     "type": "Chart",
     "optionslabel": "Select voteshare for",
     "modulename": "tvoteShareChart",
-    "alloptionschecked": false
+    "alloptionschecked": false,
+    "vizComponent": "PartyVoteShareChart"
   },
   {
     "title": "Chart: Party seat share",
     "type": "Chart",
     "optionslabel": "Select seatshare for",
     "modulename": "seatShareChart",
-    "alloptionschecked": false
+    "alloptionschecked": false,
+    "vizComponent": "PartySeatShareChart"
   },
   {
     "title": "Chart: Party strike rate",
     "type": "Chart",
     "optionslabel": "Select voteshare for",
     "modulename": "strikeRateChart",
-    "alloptionschecked": false
+    "alloptionschecked": false,
+    "vizComponent": "PartyStrikeRateChart"
   },
   {
     "title": "Chart: Parties contested and represented",
     "type": "Chart",
     "optionslabel": "Select",
     "modulename": "partiesPresentedChart",
-    "alloptionschecked": true
+    "alloptionschecked": true,
+    "vizComponent": "PartiesPresentedChart"
   },
   {
     "title": "Chart: Candidates contested /deposit lost",
     "type": "Chart",
     "optionslabel": "Select",
     "modulename": "contestedDepositSavedChart",
-    "alloptionschecked": true
+    "alloptionschecked": true,
+    "vizComponent": "ContestedDepositLostChart"
   },
   {
     "title": "Map: Constituency type",

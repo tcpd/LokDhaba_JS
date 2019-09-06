@@ -3,46 +3,37 @@ import createPlotlyComponent from 'react-plotlyjs';
 import Plotly from 'plotly.js/dist/plotly-cartesian';
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
-export default class PartiesPresentedChart extends Component {
+export default class PartySeatShareChart extends Component {
   render() {
     var vizData = this.props.data;
     var dataFilterOptions = this.props.dataFilterOptions;
     var stateName = this.props.stateName.replace(/_/g, " ");
     var electionType = this.props.electionType === "GE" ? "LokSabha" : "Vidhan Sabha";
-    var x_labels = vizData.map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
     var data = [];
-    if(dataFilterOptions.has("PartiesContested")){
-      var y_contested = vizData.map(x => x.Parties_Contested);
+    var parties = new Set(vizData.map(x => x.Party));
+    parties.forEach(function(party){
+      var y_contested = vizData.filter(x => x.Party === party).map(x => x.Seats);
+      var x_labels = vizData.filter(x => x.Party === party).map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
       var trace = {
-                    type: 'bar',
+                    type: 'scatter',
+                    mode: 'lines+markers',
                     x: x_labels,
                     y: y_contested,
-                    name: 'Parties Contested'
+                    name: party
                   }
       data.push(trace);
-    }
-    if(dataFilterOptions.has("PartiesRepresented")){
-      var y_represented = vizData.map(x => x.Parties_Represented);
-      var trace = {
-                    type: 'bar',
-                    x: x_labels,
-                    y: y_represented,
-                    name: 'Parties Represented'
-                  }
-      data.push(trace);
-    }
-    var title = `Parties Contested and Represented across years in ${electionType}`;
+    });
+    var title = `Party wise seatshare across years in ${electionType}`;
     if(stateName !== ""){
-      title = `Parties Contested and Represented across years in ${stateName} ${electionType}`
+      title = `Party wise seatshare across years in ${stateName} ${electionType}`
     }
-
     let layout = {
       title: title,
       xaxis: {
         title: 'Year(Assembly Number)'
       },
       yaxis:{
-        title: 'Number of Parties'
+        title: 'Seat share %'
       }
     };
     let config = {

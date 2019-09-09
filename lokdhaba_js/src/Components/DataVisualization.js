@@ -10,6 +10,7 @@ import PartyVoteShareChart from './Charts/PartyVoteShareChart.js';
 import PartySeatShareChart from './Charts/PartySeatShareChart.js';
 import PartyStrikeRateChart from './Charts/PartyStrikeRateChart.js';
 import ContestedDepositLostChart from './Charts/ContestedDepositLostChart.js';
+import ConstituencyTypeMap from './Maps/ConstituencyTypeMap.js';
 import * as Constants from './Shared/Constants.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
@@ -106,7 +107,8 @@ export default class DataVisualization extends Component {
                            Legends: [...legends]
                            })
      }).then(response => response.json()).then(resp => {
-          this.setState({vizData: resp.data});
+          var data = visualizationType === "Map" ? JSON.parse(resp.data) : resp.data;
+          this.setState({vizData: data});
           var checked = ChartsMapsCodes.filter(function(item) {return item.modulename === visualization})[0].alloptionschecked;
           if(checked){
             this.setState({showVisualization: true});
@@ -231,6 +233,7 @@ export default class DataVisualization extends Component {
    var electionType = this.state.electionType;
    var stateName = this.state.stateName;
    var visualization = this.state.visualization;
+   var assemblyNo = this.state.year;
    switch(visualization){
      case "voterTurnoutChart":
         return <VoterTurnoutChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
@@ -245,6 +248,8 @@ export default class DataVisualization extends Component {
         return <PartyStrikeRateChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
      case "contestedDepositSavedChart":
         return <ContestedDepositLostChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
+     case "winnerCasteMap":
+        return <ConstituencyTypeMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
      default:
         return;
    }

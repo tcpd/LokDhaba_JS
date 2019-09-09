@@ -32,3 +32,8 @@ a.disabled, .btn.disabled {
   cursor: not-allowed;
   pointer-events: none;
 }
+
+.leaflet-container {
+    height: 800px;
+    width: 100%;
+}

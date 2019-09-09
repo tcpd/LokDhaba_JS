@@ -7,7 +7,7 @@ export default class VoterTurnoutChart extends Component {
   render() {
     var vizData = this.props.data;
     var dataFilterOptions = this.props.dataFilterOptions;
-    var electionType = this.props.electionType === "GE" ? "LokSabha" : "Vidhan Sabha";
+    var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var stateName = this.props.stateName.replace(/_/g, " ");
     var x_labels = vizData.map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
     var data = [];

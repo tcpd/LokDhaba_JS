@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const baseUrl = "http://10.1.16.97:5000";
+export const baseUrl = "http://10.1.19.54:5000";
 
 export const tableColumns = [
     {

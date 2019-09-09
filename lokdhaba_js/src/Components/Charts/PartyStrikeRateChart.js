@@ -8,7 +8,7 @@ export default class PartyStrikeRateChart extends Component {
     var vizData = this.props.data;
     var dataFilterOptions = this.props.dataFilterOptions;
     var stateName = this.props.stateName.replace(/_/g, " ");
-    var electionType = this.props.electionType === "GE" ? "LokSabha" : "Vidhan Sabha";
+    var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var data = [];
     var parties = new Set(vizData.map(x => x.Party));
     parties.forEach(function(party){

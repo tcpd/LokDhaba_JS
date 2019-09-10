@@ -1,3 +1,7 @@
+/*
+contains html page for about page
+*/
+
 import React, { Component } from 'react';
 export default class About extends Component {
   render() {

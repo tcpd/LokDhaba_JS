@@ -1,3 +1,7 @@
+/*
+css specific to table element
+*/
+
 .rt-thead, .rt-tbody { display: block; }
 
 .rt-tbody {

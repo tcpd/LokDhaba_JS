@@ -1,3 +1,7 @@
+/*
+contains html page for documentation page
+*/
+
 import React, { Component } from 'react';
 export default class Documentation extends Component {
   render() {

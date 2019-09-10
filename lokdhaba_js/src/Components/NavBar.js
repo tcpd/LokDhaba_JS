@@ -1,3 +1,8 @@
+/*
+contains UI elements for the top Navigation bar
+Internally renders the component based on what tab is selected
+*/
+
 import React, { Component } from 'react';
 import '../Assets/Styles/navbar.css'
 import 'bootstrap/dist/css/bootstrap.min.css';

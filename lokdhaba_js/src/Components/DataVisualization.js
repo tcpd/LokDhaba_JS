@@ -48,7 +48,7 @@ export default class DataVisualization extends Component {
 
  componentWillUpdate(nextProps, nextState) {
    if((nextState.visualization !== "" && this.state.visualization !== nextState.visualization && nextState.visualizationType === "Chart")
-        || (this.state.year !== nextState.year && this.state.visualization !== "partyPositionsMap" && this.state.visualization !== "partyVoteShareMap")
+        || (nextState.year !== "" && this.state.year !== nextState.year && this.state.visualization !== "partyPositionsMap" && this.state.visualization !== "partyVoteShareMap")
             || (nextState.party !== "" && this.state.party !== nextState.party && (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap"))){
      this.fetchChartMapOptions(nextState);
    }
@@ -82,6 +82,7 @@ export default class DataVisualization extends Component {
    this.setState({year: ""});
    this.setState({party: ""});
    this.setState({chartMapOptions: []});
+   this.setState({showVisualization: false});
    let newValue = e.target.name;
    var activeItem = $("li.nav-item.active");
    activeItem.removeClass("active");

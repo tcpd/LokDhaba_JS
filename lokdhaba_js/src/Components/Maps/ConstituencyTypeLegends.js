@@ -5,6 +5,8 @@ import '../../Assets/Styles/legend.css';
 class ConstituencyTypeLegends extends MapControl {
   createLeafletElement(props) {}
 
+  componentWillUnmount() {}
+
   componentDidMount() {
     const getColor = d => {
       return d === "General"? "#1F78B4"

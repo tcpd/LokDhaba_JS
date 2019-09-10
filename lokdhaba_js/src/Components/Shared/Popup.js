@@ -1,3 +1,12 @@
+/*
+A popup componnet to display a dialogue
+Accepts following props:
+id: root id for the popup element
+show: boolean to indicate whether the modal is open
+heading, body, footer -> respective components for header, body and footer in the popup
+handleClose: function to call when the user click the cross icon
+*/
+
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';

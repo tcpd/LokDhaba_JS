@@ -1,29 +1,56 @@
 import React from 'react'
-import { Map, GeoJSON, TileLayer, Circle, Rectangle, Popup, LayerGroup, FeatureGroup} from 'react-leaflet';
+import { Map, GeoJSON } from 'react-leaflet';
 import '../../Assets/Styles/layout.css';
 import 'leaflet/dist/leaflet.css';
+import ConstituencyTypeLegends from './ConstituencyTypeLegends';
 
 export default class ConstituencyTypeMap extends React.Component {
 
+  onEachFeature = (feature, layer) => {
+    var popupContent = "";
+    for (var key in feature.properties) {
+      if (feature.properties.hasOwnProperty(key)) {
+        var value = feature.properties[key];
+        popupContent += `<b>${key}:</b> ${value}<br/>`;
+      }
+    }
+    layer.bindPopup(popupContent);
+  }
+
   renderConstituencies = (mapGeoJson) => {
     return mapGeoJson.map(constituency => {
-       let style = { borderColor: '#1A1A1A', color: '#FFF', fillOpacity: "1"};
+       let style = {fillColor: '#FFFFFF00',
+                    weight: 1,
+                    opacity: 1,
+                    color: 'black',
+                    fillOpacity: 0.7};
        switch(constituency.properties.Constituency_Type){
          case "General":
-           style = { borderColor: 'black', color: '#1F78B4', fillOpacity: "1"};
+           style = {fillColor: '#1F78B4',
+                    weight: 1,
+                    opacity: 1,
+                    color: 'black',
+                    fillOpacity: 0.7};
            break;
          case "SC":
-           style = { borderColor: 'black', color: '#A6CEE3', fillOpacity: "1" };
+           style = {fillColor: '#A6CEE3',
+                    weight: 1,
+                    opacity: 1,
+                    color: 'black',
+                    fillOpacity: 0.7};
            break;
          case "ST":
-           style = { borderColor: 'black', color: '#B2DF8A', fillOpacity: "1" };
+           style = {fillColor: '#B2DF8A',
+                    weight: 1,
+                    opacity: 1,
+                    color: 'black',
+                    fillOpacity: 0.7};
            break;
         defualt:
-           style = { borderColor: 'black', color: '#1A1A1A', fillOpacity: "1" };
            break;
         }
         return (
-          <GeoJSON key={constituency.id} data={constituency} style={style} />
+          <GeoJSON key={constituency.id} data={constituency} style={style} onEachFeature={this.onEachFeature}/>
         );
       });
     }
@@ -41,17 +68,17 @@ export default class ConstituencyTypeMap extends React.Component {
        </label>
        </div>
         <Map center={[20.5937, 78.9629]}
-        zoom={5}
-        maxZoom={13}
-        attributionControl={true}
-        zoomControl={true}
-        doubleClickZoom={true}
-        scrollWheelZoom={true}
-        dragging={true}
-        animate={true}
-        easeLinearity={0.35}
-        >
+             zoom={5}
+             maxZoom={13}
+             attributionControl={true}
+             zoomControl={true}
+             doubleClickZoom={true}
+             scrollWheelZoom={false}
+             dragging={true}
+             animate={true}
+             easeLinearity={0.35}>
           {this.renderConstituencies(data.features)}
+          <ConstituencyTypeLegends/>
         </Map>
       </div>
     );

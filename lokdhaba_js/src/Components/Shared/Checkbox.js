@@ -1,3 +1,12 @@
+/*
+Checkbox component to display the checkbox input with label
+Accepts following props:
+id: id for the checkbox input
+label: label to display beside the checkbox
+checked: boolean to indicate if checkbox is checked
+onChange: function to call when checkbox value changes
+*/
+
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../Assets/Styles/layout.css'

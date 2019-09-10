@@ -1,3 +1,13 @@
+/*
+Select componnet for dropdown options
+Accepts following props:
+id: id for the select element
+label: text for the placeholder
+selectedValue: initial selected value in dropdown
+options: dropdown options
+onChange: function to call when selection is made
+*/
+
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../Assets/Styles/select.css'

@@ -1,6 +1,10 @@
+/*
+Holds any constants used across the project
+*/
+
 import React from 'react';
 
-export const baseUrl = "http://10.1.19.54:5000";
+export const baseUrl = "http://10.1.18.245:5000";
 
 export const tableColumns = [
     {

@@ -16,6 +16,12 @@ import PartySeatShareChart from './Charts/PartySeatShareChart.js';
 import PartyStrikeRateChart from './Charts/PartyStrikeRateChart.js';
 import ContestedDepositLostChart from './Charts/ContestedDepositLostChart.js';
 import ConstituencyTypeMap from './Maps/ConstituencyTypeMap.js';
+import NumCandidatesMap from './Maps/NumCandidatesMap.js';
+import VoterTurnoutMap from './Maps/VoterTurnoutMap.js';
+import WinnerGenderMap from './Maps/WinnerGenderMap.js';
+import VictoryMarginMap from './Maps/VictoryMarginMap.js';
+import WinnerVoteShareMap from './Maps/WinnerVoteShareMap.js';
+import NotaTurnoutMap from './Maps/NotaTurnoutMap.js';
 import * as Constants from './Shared/Constants.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
@@ -256,6 +262,20 @@ export default class DataVisualization extends Component {
         return <ContestedDepositLostChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
      case "winnerCasteMap":
         return <ConstituencyTypeMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+     case "numCandidatesMap":
+        return <NumCandidatesMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+     case "voterTurnoutMap":
+        return <VoterTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+     case "winnerGenderMap":
+        return <WinnerGenderMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+     case "winnerMarginMap":
+        return <VictoryMarginMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+     case "winnerVoteShareMap":
+        return < WinnerVoteShareMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+     case "notaTurnoutMap":
+        return < NotaTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+
+
      default:
         return;
    }
@@ -270,6 +290,10 @@ export default class DataVisualization extends Component {
      if(this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap"){
        this.fetchMapYearParties();
      }
+     if(this.state.showVisualization === true){
+       this.setState({showVisualization : false})
+     }
+
    });
  }
 

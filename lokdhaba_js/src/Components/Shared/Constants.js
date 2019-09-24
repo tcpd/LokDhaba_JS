@@ -4,7 +4,7 @@ Holds any constants used across the project
 
 import React from 'react';
 
-export const baseUrl = "http://10.1.18.245:5000";
+export const baseUrl = "http://127.0.0.1:15000";
 
 export const tableColumns = [
     {

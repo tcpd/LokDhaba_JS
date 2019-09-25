@@ -1,0 +1,30 @@
+version: "2"
+services:
+  api:
+    build: LokdhabaApi/
+    container_name : ld_api
+    links:
+      - db
+    ports:
+      - "15000:5000"
+  db:
+    container_name : ld_db
+    image: mysql:8.0.15
+    command: --local-infile=1
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: <mysql root password>
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+  node:
+    container_name : ld_ui
+    build : lokdhaba_js/
+    volumes :
+      - './lokdhaba_js:/app'
+      - '/app/node_modules'
+    ports :
+      - '3001:3000'
+    links :
+      - api
+    

@@ -68,7 +68,7 @@ def module_to_table(argument):
 
 def get_map_data(rep, election, state, data):
     if election == "GE":
-        shp = geopandas.read_file(rep+"/GE/India_PC_TCPD.shp")
+        shp = geopandas.read_file(rep+"/GE/India_PC_Updated.shp")
         left_key = ["STATE_UT","PC_NO"]
         right_key = ["State_Name","Constituency_No"]
     if election == "AE":

@@ -181,6 +181,7 @@ export default class DataVisualization extends Component {
    let stateName = state.stateName;
    let visualization = state.visualization;
    let visualizationType = state.visualizationType;
+   let assemblyNo = state.year;
    const url = Constants.baseUrl + "/data/api/v1.0/getVizLegend";
    fetch(url, {
      method: "POST",
@@ -190,7 +191,8 @@ export default class DataVisualization extends Component {
      body: JSON.stringify({ElectionType : electionType,
                            StateName: stateName,
                            ModuleName: visualization,
-                           VizType: visualizationType
+                           VizType: visualizationType,
+                           AssemblyNo : assemblyNo
                            })
      }).then(response => response.json()).then(resp => {
        this.setState({chartMapOptions: resp.data});
@@ -290,6 +292,7 @@ export default class DataVisualization extends Component {
      if(this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap"){
        this.fetchMapYearParties();
      }
+     
      if(this.state.showVisualization === true){
        this.setState({showVisualization : false})
      }

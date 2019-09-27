@@ -56,3 +56,6 @@ Execution halted
 
 try :
 $Rscript db/tcpd_sql_setup.R (a few moments after db is initialized) 
+
+Running in test enviornment on http://lokdhaba1.ashoka.edu.in:3001/ (please file bugs, improvements, enhancements in issues) 
+

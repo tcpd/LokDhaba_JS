@@ -294,6 +294,9 @@ export default class DataVisualization extends Component {
 
  onPartyChange = (newValue) => {
    this.setState({party: newValue});
+   if(this.state.showVisualization === true){
+     this.setState({showVisualization : false})
+   }
  }
 
  onYearChange = (newValue) => {

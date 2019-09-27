@@ -496,8 +496,15 @@ def get_viz_data():
                 print('an', a_no)
                 get_assembly = " and Assembly_No = %s"
                 query_input.append(a_no)
+            get_map_party = ""
+            if module in ["partyPositionsMap", "partyVoteShareMap"]:
+                party = req.get('Party')
+                print('party',party)
+                get_map_party = " and Party = %s"
+                query_input.append(party)
 
-            sql_parameterized_data_query = get_table + get_election + get_state + get_party + get_assembly
+
+            sql_parameterized_data_query = get_table + get_election + get_state + get_party + get_assembly + get_map_party
             print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
             cursor.execute(sql_parameterized_data_query, tuple(query_input))
 

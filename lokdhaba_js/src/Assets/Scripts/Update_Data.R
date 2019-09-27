@@ -31,3 +31,7 @@ vs_no$sa_no = NULL
 vs_no$year= NULL
 vs_no$state=NULL
 vs_no %>% toJSON() %>% writeLines("../Data/VidhanSabhaNumber.json")
+
+color_file = paste(dir,"colours.csv",sep="/")
+colors = fread(color_file,na="")
+colors %>% toJSON() %>% writeLines("../Data/PartyColourPalette.json")

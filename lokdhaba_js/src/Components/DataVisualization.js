@@ -21,6 +21,7 @@ import VoterTurnoutMap from './Maps/VoterTurnoutMap.js';
 import WinnerGenderMap from './Maps/WinnerGenderMap.js';
 import VictoryMarginMap from './Maps/VictoryMarginMap.js';
 import WinnerVoteShareMap from './Maps/WinnerVoteShareMap.js';
+import WinnerMap from './Maps/WinnerMap.js';
 import NotaTurnoutMap from './Maps/NotaTurnoutMap.js';
 import * as Constants from './Shared/Constants.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -274,7 +275,9 @@ export default class DataVisualization extends Component {
         return <VictoryMarginMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
      case "winnerVoteShareMap":
         return < WinnerVoteShareMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
-     case "notaTurnoutMap":
+        case "winnerMap":
+           return < WinnerMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+        case "notaTurnoutMap":
         return < NotaTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
 
 
@@ -292,7 +295,7 @@ export default class DataVisualization extends Component {
      if(this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap"){
        this.fetchMapYearParties();
      }
-     
+
      if(this.state.showVisualization === true){
        this.setState({showVisualization : false})
      }

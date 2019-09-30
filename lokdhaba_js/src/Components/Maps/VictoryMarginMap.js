@@ -1,5 +1,5 @@
 import React from 'react'
-import { Map, GeoJSON } from 'react-leaflet';
+import { Map, GeoJSON, TileLayer } from 'react-leaflet';
 import '../../Assets/Styles/layout.css';
 import 'leaflet/dist/leaflet.css';
 import VictoryMarginLegends from './VictoryMarginLegends';
@@ -87,6 +87,10 @@ export default class VictoryMarginMap extends React.Component {
              dragging={true}
              animate={true}
              easeLinearity={0.35}>
+             <TileLayer
+               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+             />
           {this.renderConstituencies(data.features)}
           <VictoryMarginLegends/>
         </Map>

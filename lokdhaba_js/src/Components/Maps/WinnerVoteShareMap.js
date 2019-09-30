@@ -1,5 +1,5 @@
 import React from 'react'
-import { Map, GeoJSON } from 'react-leaflet';
+import { Map, GeoJSON, TileLayer } from 'react-leaflet';
 import '../../Assets/Styles/layout.css';
 import 'leaflet/dist/leaflet.css';
 import WinnerVoteShareLegends from './WinnerVoteShareLegends';
@@ -91,19 +91,23 @@ export default class WinnerVoteShareMap extends React.Component {
          {`Constituency wise vote share percentages of winners for ${electionType} in Assembly #${assemblyNo}`}
        </label>
        </div>
-        <Map center={[20.5937, 78.9629]}
-             zoom={5}
-             maxZoom={13}
-             attributionControl={true}
-             zoomControl={true}
-             doubleClickZoom={true}
-             scrollWheelZoom={false}
-             dragging={true}
-             animate={true}
-             easeLinearity={0.35}>
-          {this.renderConstituencies(data.features)}
-          <WinnerVoteShareLegends/>
-        </Map>
+       <Map center={[20.5937, 78.9629]}
+       zoom={5}
+       maxZoom={13}
+       attributionControl={true}
+       zoomControl={true}
+       doubleClickZoom={true}
+       scrollWheelZoom={false}
+       dragging={true}
+       animate={true}
+       easeLinearity={0.35}>
+       <TileLayer
+       attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+       />
+       {this.renderConstituencies(data.features)}
+       <WinnerVoteShareLegends/>
+       </Map>
       </div>
     );
   }

@@ -1,9 +1,10 @@
 import React from 'react'
-import { Map, GeoJSON, TileLayer } from 'react-leaflet';
+import { Map, GeoJSON, TileLayer, withLeaflet } from 'react-leaflet';
 import '../../Assets/Styles/layout.css';
 import 'leaflet/dist/leaflet.css';
 import WinnerLegends from './WinnerLegends';
 import ColPalette from '../../Assets/Data/PartyColourPalette.json';
+import PrintControlDefault from 'react-leaflet-easyprint';
 
 export default class WinnerMap extends React.Component {
 
@@ -65,7 +66,7 @@ export default class WinnerMap extends React.Component {
       var pty = SortedKeys[i];
       sortedLegend[pty] = legend[pty]
     }
-
+    const PrintControl = withLeaflet(PrintControlDefault);
 
 
 
@@ -74,26 +75,29 @@ export default class WinnerMap extends React.Component {
       <div className="my-map" style={{width: "100%", height: "100%"}}>
       <div style={{textAlign: "center"}}>
       <label>
-         {`Constituency wise vote share percentages of winners for ${electionType} in Assembly #${assemblyNo}`}
-       </label>
-       </div>
-        <Map center={[20.5937, 78.9629]}
-             zoom={5}
-             maxZoom={13}
-             attributionControl={true}
-             zoomControl={true}
-             doubleClickZoom={true}
-             scrollWheelZoom={false}
-             dragging={true}
-             animate={true}
-             easeLinearity={0.35}>
-        <TileLayer
-          attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-          {this.renderConstituencies(data.features)}
-          <WinnerLegends Legend = {sortedLegend}/>
-        </Map>
+      {`Constituency wise winning parties for ${electionType} in Assembly #${assemblyNo}`}
+      </label>
+      </div>
+      <Map center={[20.5937, 78.9629]}
+      zoom={5}
+      maxZoom={13}
+      attributionControl={true}
+      zoomControl={true}
+      doubleClickZoom={true}
+      scrollWheelZoom={false}
+      dragging={true}
+      animate={true}
+      easeLinearity={0.35}>
+      <TileLayer
+      attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {this.renderConstituencies(data.features)}
+      <WinnerLegends Legend = {sortedLegend}/>
+
+      <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />
+      <PrintControl position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} title="Export as PNG" exportOnly />
+      </Map>
       </div>
     );
   }

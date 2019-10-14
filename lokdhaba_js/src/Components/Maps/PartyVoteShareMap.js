@@ -1,8 +1,9 @@
 import React from 'react'
-import { Map, GeoJSON, TileLayer } from 'react-leaflet';
+import { Map, GeoJSON, TileLayer, withLeaflet } from 'react-leaflet';
 import '../../Assets/Styles/layout.css';
 import 'leaflet/dist/leaflet.css';
 import PartyVoteShareLegends from './PartyVoteShareLegends';
+import PrintControlDefault from 'react-leaflet-easyprint';
 
 export default class PartyVoteShareMap extends React.Component {
 
@@ -83,6 +84,7 @@ export default class PartyVoteShareMap extends React.Component {
     var data = this.props.data;
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var assemblyNo =this.props.assemblyNo;
+    const PrintControl = withLeaflet(PrintControlDefault);
 
     return (
       <div className="my-map" style={{width: "100%", height: "100%"}}>
@@ -107,6 +109,9 @@ export default class PartyVoteShareMap extends React.Component {
              />
           {this.renderConstituencies(data.features)}
           <PartyVoteShareLegends/>
+          <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />
+          <PrintControl position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} title="Export as PNG" exportOnly />
+          
         </Map>
       </div>
     );

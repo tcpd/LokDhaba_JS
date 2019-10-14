@@ -100,34 +100,37 @@ export default class DataVisualization extends Component {
   }
 
   fetchVisualizationData = () => {
-    let electionType = this.state.electionType;
-    let stateName = this.state.stateName;
-    let visualization = this.state.visualization;
-    let visualizationType = this.state.visualizationType;
-    let assemblyNumber = this.state.year;
-    let party = this.state.party;
-    let legends = this.state.vizOptionsSelected;
-    const url = Constants.baseUrl + "/data/api/v1.0/getVizData";
-    fetch(url, {
-      method: "POST",
-      headers: new Headers({
-        "content-type": "application/json"
-      }),
-      body: JSON.stringify({ElectionType : electionType,
-        StateName: stateName,
-        ModuleName: visualization,
-        VizType: visualizationType,
-        AssemblyNo: assemblyNumber,
-        Party: party,
-        Legends: [...legends]
-      })
-    }).then(response => response.json()).then(resp => {
-      var data = visualizationType === "Map" ? JSON.parse(resp.data) : resp.data;
-      this.setState({vizData: data});
-      var checked = ChartsMapsCodes.filter(function(item) {return item.modulename === visualization})[0].alloptionschecked;
-      if(checked){
-        this.setState({showVisualization: true});
-      }
+    return new Promise((resolve, reject) => {
+      let electionType = this.state.electionType;
+      let stateName = this.state.stateName;
+      let visualization = this.state.visualization;
+      let visualizationType = this.state.visualizationType;
+      let assemblyNumber = this.state.year;
+      let party = this.state.party;
+      let legends = this.state.vizOptionsSelected;
+      const url = Constants.baseUrl + "/data/api/v1.0/getVizData";
+      fetch(url, {
+        method: "POST",
+        headers: new Headers({
+          "content-type": "application/json"
+        }),
+        body: JSON.stringify({ElectionType : electionType,
+          StateName: stateName,
+          ModuleName: visualization,
+          VizType: visualizationType,
+          AssemblyNo: assemblyNumber,
+          Party: party,
+          Legends: [...legends]
+        })
+      }).then(response => response.json()).then(resp => {
+        var data = visualizationType === "Map" ? JSON.parse(resp.data) : resp.data;
+        this.setState({vizData: data});
+        var checked = ChartsMapsCodes.filter(function(item) {return item.modulename === visualization})[0].alloptionschecked;
+        if(checked){
+          this.setState({showVisualization: true});
+        }
+        setTimeout(() => resolve(data), 500);
+      });
     });
   }
 

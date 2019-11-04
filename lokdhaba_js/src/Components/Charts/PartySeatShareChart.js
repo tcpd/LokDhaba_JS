@@ -15,7 +15,7 @@ export default class PartySeatShareChart extends Component {
     parties.forEach(function(party){
       var y_contested = vizData.filter(x => x.Party === party).map(x => x.Seats);
       var x_labels = vizData.filter(x => x.Party === party).map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
-      var party_color = "#FFFFFF00"
+      var party_color = "#808080"
 
       for (var i = 0; i < ColPalette.length; i++) {
         var element = ColPalette[i];

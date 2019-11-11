@@ -20,16 +20,17 @@ class PartyPositionsLegends extends MapControl {
 
     legend.onAdd = () => {
       const div = L.DomUtil.create("div", "info legend");
-      const grades = ["1","2","3",">3"];
+      const grades = this.props.Legend;
       let labels = [];
 
-      for (let i = 0; i < grades.length; i++) {
+      for (let key in grades) {
 
         labels.push(
           '<i style="background:' +
-            getColor(grades[i]) +
+            getColor(key) +
             '"></i> ' +
-            grades[i]
+            key +
+            ' ('+ grades[key] +')'
         );
       }
 

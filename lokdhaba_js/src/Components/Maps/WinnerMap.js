@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Map, GeoJSON, TileLayer, withLeaflet } from 'react-leaflet';
 import '../../Assets/Styles/layout.css';
 import 'leaflet/dist/leaflet.css';
@@ -19,22 +19,21 @@ export default class WinnerMap extends React.Component {
     layer.bindPopup(popupContent);
   }
 
-  renderConstituencies = (mapGeoJson) => {
+  renderConstituencies = (mapGeoJson, dataFilterOptions) => {
     return mapGeoJson.map(constituency => {
 
 
       var color = "#FFFFFF00"
       var constituencyParty = constituency.properties.Party;
-
-      for (var i = 0; i < ColPalette.length; i++) {
-        var element = ColPalette[i];
-
-        if (element.Party == constituencyParty) {
-          color = element.Color;
-          break;
+      if(dataFilterOptions.has(constituencyParty)){
+        for (var i = 0; i < ColPalette.length; i++) {
+          var element = ColPalette[i];
+          if (element.Party == constituencyParty) {
+            color = element.Color;
+            break;
+          }
         }
       }
-
 
       var style = {fillColor: color,
       weight: 1,
@@ -53,22 +52,28 @@ export default class WinnerMap extends React.Component {
     var data = this.props.data;
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var assemblyNo =this.props.assemblyNo;
+    var dataFilterOptions = this.props.dataFilterOptions;
     var parties = data.features.flatMap(X => X.properties.Party);
     var legend = {}
     for (var i = 0; i < parties.length; i++) {
       var pty = parties[i];
-      legend[pty] = legend[pty] ? legend[pty] + 1 : 1;
+      if(dataFilterOptions.has(pty)){
+        legend[pty] = legend[pty] ? legend[pty] + 1 : 1;
+      }
     }
 
     var SortedKeys = Object.keys(legend).sort(function(a,b){return legend[b]-legend[a]})
     var sortedLegend ={}
     for (var i =0; i < SortedKeys.length; i++) {
       var pty = SortedKeys[i];
-      sortedLegend[pty] = legend[pty]
+      if(legend[pty]){
+        sortedLegend[pty] = legend[pty]
+      }
     }
+
+    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
+
     const PrintControl = withLeaflet(PrintControlDefault);
-
-
 
 
     return (
@@ -92,7 +97,7 @@ export default class WinnerMap extends React.Component {
       attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {this.renderConstituencies(data.features)}
+      {leaflet}
       <WinnerLegends Legend = {sortedLegend}/>
 
       <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />

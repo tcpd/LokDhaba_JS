@@ -18,39 +18,42 @@ export default class WinnerGenderMap extends React.Component {
     layer.bindPopup(popupContent);
   }
 
-  renderConstituencies = (mapGeoJson) => {
+  renderConstituencies = (mapGeoJson, dataFilterOptions) => {
     return mapGeoJson.map(constituency => {
        let style = {fillColor: '#FFFFFF00',
                     weight: 1,
                     opacity: 1,
                     color: 'black',
                     fillOpacity: 0.7};
-       switch(constituency.properties.Sex){
-         case "Male":
-           style = {fillColor: '#1F78B4',
-                    weight: 1,
-                    opacity: 1,
-                    color: 'black',
-                    fillOpacity: 0.7};
-           break;
-         case "Female":
-           style = {fillColor: '#A6CEE3',
-                    weight: 1,
-                    opacity: 1,
-                    color: 'black',
-                    fillOpacity: 0.7};
-           break;
-         case "Others":
-           style = {fillColor: '#B2DF8A',
-                    weight: 1,
-                    opacity: 1,
-                    color: 'black',
-                    fillOpacity: 0.7};
-           break;
-        defualt:
-           break;
-        }
-        return (
+       if(dataFilterOptions.has(constituency.properties.Sex)){
+         switch(constituency.properties.Sex){
+           case "Male":
+             style = {fillColor: '#1F78B4',
+                      weight: 1,
+                      opacity: 1,
+                      color: 'black',
+                      fillOpacity: 0.7};
+             break;
+           case "Female":
+             style = {fillColor: '#A6CEE3',
+                      weight: 1,
+                      opacity: 1,
+                      color: 'black',
+                      fillOpacity: 0.7};
+             break;
+           case "Others":
+             style = {fillColor: '#B2DF8A',
+                      weight: 1,
+                      opacity: 1,
+                      color: 'black',
+                      fillOpacity: 0.7};
+             break;
+          defualt:
+             break;
+          }
+
+       }
+         return (
           <GeoJSON key={constituency.id} data={constituency} style={style} onEachFeature={this.onEachFeature}/>
         );
       });
@@ -61,6 +64,25 @@ export default class WinnerGenderMap extends React.Component {
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var assemblyNo =this.props.assemblyNo;
     const PrintControl = withLeaflet(PrintControlDefault);
+    var dataFilterOptions = this.props.dataFilterOptions;
+    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
+
+    var genders = data.features.flatMap(X => X.properties.Sex);
+    var legend = {}
+    for (var i = 0; i < genders.length; i++) {
+      var pty = genders[i];
+      if(dataFilterOptions.has(pty)){
+        legend[pty] = legend[pty] ? legend[pty] + 1 : 1;
+      }
+    }
+
+    var SortedKeys = Object.keys(legend).sort(function(a,b){return legend[b]-legend[a]})
+    var sortedLegend ={}
+    for (var i =0; i < SortedKeys.length; i++) {
+      var pty = SortedKeys[i];
+      sortedLegend[pty] = legend[pty]
+    }
+
 
     return (
       <div className="my-map" style={{width: "100%", height: "100%"}}>
@@ -83,11 +105,11 @@ export default class WinnerGenderMap extends React.Component {
                attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
              />
-          {this.renderConstituencies(data.features)}
-          <WinnerGenderLegends/>
+          {leaflet}
+          <WinnerGenderLegends Legend= {sortedLegend}/>
           <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />
           <PrintControl position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} title="Export as PNG" exportOnly />
-          
+
         </Map>
       </div>
     );

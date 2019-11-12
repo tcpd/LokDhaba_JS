@@ -218,10 +218,15 @@ export default class DataVisualization extends Component {
     }else{
       vizOptionsSelected.delete(key);
     }
+    let visualization = this.state.visualization;
     this.setState({vizOptionsSelected: vizOptionsSelected}, () => {
-      if(vizOptionsSelected.size > 0){
+
+      if(visualization === "cvoteShareChart" || visualization ==="seatShareChart" || visualization === "tvoteShareChart" || visualization === "strikeRateChart" ){
         this.fetchVisualizationData();
         this.setState({showVisualization : true});
+      }else if(vizOptionsSelected.size > 0){
+        this.fetchVisualizationData();
+        this.setState({showVisualization : false});
       }else{
         this.setState({showVisualization : false});
       }
@@ -269,25 +274,25 @@ export default class DataVisualization extends Component {
       case "contestedDepositSavedChart":
       return <ContestedDepositLostChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName}/>;
       case "winnerCasteMap":
-      return <ConstituencyTypeMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return <ConstituencyTypeMap data={data} electionType={electionType} dataFilterOptions={dataFilterOptions} assemblyNo={assemblyNo} stateName={stateName}/>;
       case "numCandidatesMap":
-      return <NumCandidatesMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return <NumCandidatesMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
       case "voterTurnoutMap":
-      return <VoterTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return <VoterTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
       case "winnerGenderMap":
-      return <WinnerGenderMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return <WinnerGenderMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
       case "winnerMarginMap":
-      return <VictoryMarginMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return <VictoryMarginMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
       case "winnerVoteShareMap":
-      return < WinnerVoteShareMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return < WinnerVoteShareMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
       case "partyVoteShareMap":
-      return < PartyVoteShareMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return < PartyVoteShareMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
       case "partyPositionsMap":
-      return < PartyPositionsMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return < PartyPositionsMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
       case "winnerMap":
-      return < WinnerMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return < WinnerMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
       case "notaTurnoutMap":
-      return < NotaTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo}/>;
+      return < NotaTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName}/>;
 
 
      default:

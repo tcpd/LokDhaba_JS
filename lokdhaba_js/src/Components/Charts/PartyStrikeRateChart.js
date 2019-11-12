@@ -48,7 +48,9 @@ export default class PartyStrikeRateChart extends Component {
         title: 'Year(Assembly Number)'
       },
       yaxis:{
-        title: 'Strike Rate %'
+        title: 'Strike Rate %',
+        range: [0, 100],
+        autorange: false
       }
     };
     let config = {

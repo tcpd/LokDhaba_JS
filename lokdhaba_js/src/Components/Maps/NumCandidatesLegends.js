@@ -9,9 +9,9 @@ class NumCandidatesLegends extends MapControl {
 
   componentDidMount() {
     const getColor = d => {
-      return d ==="<5"? "#1F78B4"
-            : d === "5-15" ? "#A6CEE3"
-            : d === ">15" ? "#B2DF8A"
+      return d ==="<5"? "#deebf7"
+            : d === "5-15" ? "#6baed6"
+            : d === ">15" ? "#08306b"
             : "FFFFFF00";
     };
 
@@ -19,16 +19,17 @@ class NumCandidatesLegends extends MapControl {
 
     legend.onAdd = () => {
       const div = L.DomUtil.create("div", "info legend");
-      const grades = ["<5", "5-15", ">15"];
+      const grades = this.props.Legend;//["<5", "5-15", ">15"];
       let labels = [];
 
-      for (let i = 0; i < grades.length; i++) {
+      for (let key in grades) {
 
         labels.push(
           '<i style="background:' +
-            getColor(grades[i]) +
+            getColor(key) +
             '"></i> ' +
-            grades[i]
+            key +
+            ' ('+ grades[key] +')'
         );
       }
 

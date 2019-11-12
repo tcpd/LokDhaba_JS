@@ -18,8 +18,12 @@ export default class NotaTurnoutMap extends React.Component {
     layer.bindPopup(popupContent);
   }
 
-  renderConstituencies = (mapGeoJson) => {
+  renderConstituencies = (mapGeoJson, dataFilterOptions) => {
     return mapGeoJson.map(constituency => {
+      let color = '#FFFFFF00';
+
+
+
       let style = {fillColor: '#FFFFFF00',
       weight: 1,
       opacity: 1,
@@ -29,28 +33,28 @@ export default class NotaTurnoutMap extends React.Component {
       switch(true){
         case (!val):
           break;
-        case (val > 5 ):
+        case (val > 5  && dataFilterOptions.has(">5%")):
           style = {fillColor: '#0570b0',
           weight: 1,
           opacity: 1,
           color: 'black',
           fillOpacity: 0.7};
           break;
-        case (val>=3):
+        case (val>=3 && val<=5 && dataFilterOptions.has("3%-5%")):
           style = {fillColor: '#74a9cf',
           weight: 1,
           opacity: 1,
           color: 'black',
           fillOpacity: 0.7};
           break;
-        case (val >=1):
+        case (val >=1 && val<3 && dataFilterOptions.has("1%-3%")):
           style = {fillColor: '#bdc9e1',
           weight: 1,
           opacity: 1,
           color: 'black',
           fillOpacity: 0.7};
           break;
-        case (val <1):
+        case (val <1 && dataFilterOptions.has("<1%")):
           style = {fillColor: '#f1eef6',
           weight: 1,
           opacity: 1,
@@ -70,7 +74,34 @@ export default class NotaTurnoutMap extends React.Component {
     var data = this.props.data;
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var assemblyNo =this.props.assemblyNo;
+    var dataFilterOptions = this.props.dataFilterOptions;
     const PrintControl = withLeaflet(PrintControlDefault);
+    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
+
+    var notavs = data.features.flatMap(X => X.properties.Nota_Percentage);
+    var legend = {};
+    for (var i = 0; i < notavs.length; i++) {
+      val = notavs[i];
+      if(val >5 && dataFilterOptions.has(">5%") ){
+        legend[">5%"] = legend[">5%"] ? legend[">5%"] + 1 : 1
+      }else if(val <1 && dataFilterOptions.has("<1%") ){
+        legend["<1%"] = legend["<1%"] ? legend["<1%"] + 1 : 1
+      }else if(val >=3 && val<=5 && dataFilterOptions.has("3%-5%") ){
+        legend["3%-5%"] = legend["3%-5%"] ? legend["3%-5%"] + 1 : 1
+      }else if(val >=1 && val<3 && dataFilterOptions.has("1%-3%") ){
+        legend["1%-3%"] = legend["1%-3%"] ? legend["1%-3%"] + 1 : 1
+      }
+    }
+
+    var SortedKeys = ["<1%", "1%-3%", "3%-5%",">5%"];//Object.keys(legend).sort(function(a,b){return legend[b]-legend[a]})
+    var sortedLegend ={}
+    for (var i =0; i < SortedKeys.length; i++) {
+      var val = SortedKeys[i];
+      if(legend[val]){
+        sortedLegend[val] = legend[val]
+      }
+
+    }
 
     return (
       <div className="my-map" style={{width: "100%", height: "100%"}}>
@@ -93,11 +124,11 @@ export default class NotaTurnoutMap extends React.Component {
                attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
              />
-          {this.renderConstituencies(data.features)}
-          <NotaTurnoutLegends/>
+          {leaflet}
+          <NotaTurnoutLegends Legend= {sortedLegend}/>
           <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />
           <PrintControl position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} title="Export as PNG" exportOnly />
-          
+
         </Map>
       </div>
     );

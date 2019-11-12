@@ -20,18 +20,21 @@ class VictoryMarginLegends extends MapControl {
 
     legend.onAdd = () => {
       const div = L.DomUtil.create("div", "info legend");
-      const grades = ["<5%", "5%-10%", "10%-20%", ">20%"];
-      let labels = [];
 
-      for (let i = 0; i < grades.length; i++) {
+      let labels = [];
+      const grades = this.props.Legend;
+      for (let key in grades) {
 
         labels.push(
           '<i style="background:' +
-            getColor(grades[i]) +
+            getColor(key) +
             '"></i> ' +
-            grades[i]
+            key +
+            ' ('+ grades[key] +')'
         );
       }
+
+
 
       div.innerHTML = labels.join("<br>");
       return div;

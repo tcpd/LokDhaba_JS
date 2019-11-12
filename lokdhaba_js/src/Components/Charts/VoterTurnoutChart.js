@@ -52,7 +52,9 @@ export default class VoterTurnoutChart extends Component {
         title: 'Year(Assembly Number)'
       },
       yaxis:{
-        title: 'Turnout in %'
+        title: 'Turnout in %',
+        range: [0, 100],
+        autorange: false
       }
     };
     let config = {

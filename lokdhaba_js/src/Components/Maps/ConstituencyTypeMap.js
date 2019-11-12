@@ -18,38 +18,32 @@ export default class ConstituencyTypeMap extends React.Component {
     layer.bindPopup(popupContent);
   }
 
-  renderConstituencies = (mapGeoJson) => {
+  renderConstituencies = (mapGeoJson,dataFilterOptions) => {
     return mapGeoJson.map(constituency => {
-       let style = {fillColor: '#FFFFFF00',
+
+      let color = '#FFFFFF00';
+
+      if(dataFilterOptions.has(constituency.properties.Constituency_Type)){
+        switch(constituency.properties.Constituency_Type){
+          case "General":
+            color =  '#1F78B4';
+            break;
+          case "SC":
+            color = '#A6CEE3';
+            break;
+          case "ST":
+            color =  '#B2DF8A';
+            break;
+         defualt:
+            break;
+         }
+      }
+      var style= {fillColor: color,
                     weight: 1,
                     opacity: 1,
                     color: 'black',
                     fillOpacity: 0.7};
-       switch(constituency.properties.Constituency_Type){
-         case "General":
-           style = {fillColor: '#1F78B4',
-                    weight: 1,
-                    opacity: 1,
-                    color: 'black',
-                    fillOpacity: 0.7};
-           break;
-         case "SC":
-           style = {fillColor: '#A6CEE3',
-                    weight: 1,
-                    opacity: 1,
-                    color: 'black',
-                    fillOpacity: 0.7};
-           break;
-         case "ST":
-           style = {fillColor: '#B2DF8A',
-                    weight: 1,
-                    opacity: 1,
-                    color: 'black',
-                    fillOpacity: 0.7};
-           break;
-        defualt:
-           break;
-        }
+
         return (
           <GeoJSON key={constituency.id} data={constituency} style={style} onEachFeature={this.onEachFeature}/>
         );
@@ -60,8 +54,26 @@ export default class ConstituencyTypeMap extends React.Component {
     var data = this.props.data;
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var assemblyNo =this.props.assemblyNo;
+    var dataFilterOptions = this.props.dataFilterOptions;
     const PrintControl = withLeaflet(PrintControlDefault);
 
+    var constituencyTypes = data.features.flatMap(X => X.properties.Constituency_Type);
+    var legend = {}
+    for (var i = 0; i < constituencyTypes.length; i++) {
+      var pty = constituencyTypes[i];
+      if(dataFilterOptions.has(pty)){
+        legend[pty] = legend[pty] ? legend[pty] + 1 : 1;
+      }
+    }
+
+    var SortedKeys = Object.keys(legend).sort(function(a,b){return legend[b]-legend[a]})
+    var sortedLegend ={}
+    for (var i =0; i < SortedKeys.length; i++) {
+      var pty = SortedKeys[i];
+      sortedLegend[pty] = legend[pty]
+    }
+
+    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
     return (
       <div className="my-map" style={{width: "100%", height: "100%"}}>
       <div style={{textAlign: "center"}}>
@@ -83,11 +95,11 @@ export default class ConstituencyTypeMap extends React.Component {
                attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
              />
-          {this.renderConstituencies(data.features)}
-          <ConstituencyTypeLegends/>
+          {leaflet}
+          <ConstituencyTypeLegends Legend = {sortedLegend}/>
           <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />
           <PrintControl position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} title="Export as PNG" exportOnly />
-          
+
         </Map>
       </div>
     );

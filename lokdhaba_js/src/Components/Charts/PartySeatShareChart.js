@@ -48,7 +48,9 @@ export default class PartySeatShareChart extends Component {
         title: 'Year(Assembly Number)'
       },
       yaxis:{
-        title: 'Seat share %'
+        title: 'Seat share %',
+        range: [0, 100],
+        autorange: false
       }
     };
     let config = {

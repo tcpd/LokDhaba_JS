@@ -9,7 +9,7 @@ export default class Documentation extends Component {
       <div id="documentation" className="content">
 
       <h1>Documentation</h1>
-      <p>Please refer to the <a href="June10LokDhabaCodebook.pdf">Lok Dhaba Codebook</a> to understand the fields in this
+      <p>Please refer to the <a href="https://lokdhaba.ashoka.edu.in/LokDhaba-Shiny/June10LokDhabaCodebook.pdf">Lok Dhaba Codebook</a> to understand the fields in this
       dataset.</p>
       <h2>Election Data</h2>
       <ul>

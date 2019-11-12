@@ -10,7 +10,7 @@ export default class HomePage extends Component {
         <p> Welcome to Lok Dhaba!
             </p><p> Lok Dhaba is a repository of Indian election results - both Vidhan Sabha (state level) and Lok Sabha
                 (national level) - beginning 1962.</p>
-            <p> The data in Lok Dhaba comes originally from the <a href="https://www.eci.gov.in/statistical-report/statistical-reports/">statistical reports</a> 
+            <p> The data in Lok Dhaba comes originally from the <a href="https://www.eci.gov.in/statistical-report/statistical-reports/">statistical reports </a> 
                 published by the Election Commission of India. We have cleaned and treated the data and organized it
                 in a tabular format (which you can see under the “Browse Data” tab). In addition, we have integrated
                 data from bypolls and assigned each contestant a person ID. The latter lets us track individuals'

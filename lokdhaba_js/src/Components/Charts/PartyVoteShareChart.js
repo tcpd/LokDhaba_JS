@@ -51,7 +51,9 @@ export default class PartyVoteShareChart extends Component {
         title: 'Year(Assembly Number)'
       },
       yaxis:{
-        title: 'Vote share %'
+        title: 'Vote share %',
+        range: [0, 100],
+        autorange: false
       }
     };
     let config = {

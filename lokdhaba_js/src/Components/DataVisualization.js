@@ -221,7 +221,7 @@ export default class DataVisualization extends Component {
     let visualization = this.state.visualization;
     this.setState({vizOptionsSelected: vizOptionsSelected}, () => {
 
-      if(visualization == "cvoteShareChart" || visualization =="seatShareChart" || visualization == "tvoteShareChart" || visualization == "strikeRateChart" ){
+      if(visualization === "cvoteShareChart" || visualization ==="seatShareChart" || visualization === "tvoteShareChart" || visualization === "strikeRateChart" ){
         this.fetchVisualizationData();
         this.setState({showVisualization : true});
       }else if(vizOptionsSelected.size > 0){

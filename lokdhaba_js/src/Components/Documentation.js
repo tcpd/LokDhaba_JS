@@ -1,12 +1,9 @@
-/*
-contains html page for documentation page
-*/
-
 import React, { Component } from 'react';
+
 export default class Documentation extends Component {
   render() {
     return (
-      <div id="documentation" className="content">
+      <div id="documentation" className="text-content">
 
       <h1>Documentation</h1>
       <p>Please refer to the <a href="https://lokdhaba.ashoka.edu.in/LokDhaba-Shiny/June10LokDhabaCodebook.pdf">Lok Dhaba Codebook</a> to understand the fields in this

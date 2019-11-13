@@ -1,12 +1,9 @@
-/*
-contains html page for about page
-*/
-
 import React, { Component } from 'react';
+
 export default class About extends Component {
   render() {
     return (
-      <div id="about" className="content">
+      <div id="about" className="text-content">
         <h1>About</h1>
 
         <p>Lok Dhaba is a project of the <a href="http://tcpd.ashoka.edu.in">Trivedi Center for Political Data</a>, a

@@ -1,8 +1,3 @@
-/*
-contains all the UI elements for browse data page
-internally calls the Table component
-*/
-
 import React, { Component } from 'react';
 import { CSVLink } from "react-csv";
 import Select from './Shared/Select.js';

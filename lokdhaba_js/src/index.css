@@ -1,10 +1,12 @@
+body {
+  font-family: 'IBM Plex Serif', serif;
+  font-size: 16px;
+  color: #333
+}
 .content {
-  margin: 15px;
-  font: 14px "Helvetica Neue",Helvetica,Arial, sans-serif;
-  line-height: 1.42857143;
-  color: #333;
+
 }
 
 a {
-  color: #337ab7 !important;
+  color: #B83027;
 }

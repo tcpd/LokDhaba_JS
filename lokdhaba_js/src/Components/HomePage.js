@@ -1,12 +1,9 @@
-/*
-contains html page for home page
-*/
-
 import React, { Component } from 'react';
+
 export default class HomePage extends Component {
   render() {
     return (
-      <div className="content">
+      <div className="text-content">
         <p> Welcome to Lok Dhaba!
             </p><p> Lok Dhaba is a repository of Indian election results - both Vidhan Sabha (state level) and Lok Sabha
                 (national level) - beginning 1962.</p>

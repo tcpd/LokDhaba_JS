@@ -1,8 +1,3 @@
-/*
-contains all the UI elements for data visualization page
-internally calls the Charts and Maps components
-*/
-
 import React, { Component } from 'react';
 import StateCodes from '../Assets/Data/StateCodes.json';
 import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json';

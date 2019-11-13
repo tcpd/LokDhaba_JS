@@ -115,8 +115,7 @@ for r in fl:
     db_config.append(w[1].strip("\n"))
 
 def connectdb(config):
-    return mysql.connector.connect(host=config[0], database=config[1], user=config[2],
-                                         password=config[3], auth_plugin='mysql_native_password')
+    return mysql.connector.connect(host=config[0], database=config[1], user=config[2], password=config[3], auth_plugin='mysql_native_password',port=32000)
 
 ## Dummy route to check functioning of api
 @app.route('/data/api/v1.0/tasks', methods=['GET'])
@@ -332,6 +331,7 @@ def get_select_options():
                 #print(records)
                 for (row,) in records:
                     options.append(row)
+                options.sort()
                 return(jsonify({'data' : options}))
         if type == "Map":
             a_no = req.get('AssemblyNo')
@@ -359,6 +359,7 @@ def get_select_options():
                 #print(records)
                 for (row,) in records:
                     options.append(row)
+                options.sort()
                 return(jsonify({'data' : options}))
 
 @app.route('/data/api/v1.0/getMapYear', methods=['POST'])

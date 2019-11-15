@@ -1,25 +1,14 @@
-/*
-css specific to navbar element
-*/
-
-.nav-item {
-  font: 14px "Helvetica Neue",Helvetica,Arial, sans-serif;
-  line-height: 1.42857143;
-  padding: 5px;
+.navbar-nav {
+  margin-right: 100px;
 }
-.navbar-brand {
-    float: left;
-    height: 30px;
-    padding: 5px;
+nav {
+  -webkit-box-shadow: 0 8px 6px -6px #999;
+  -moz-box-shadow: 0 8px 6px -6px #999;
+  box-shadow: 0 8px 6px -6px #999;
 }
-.nav-item a:hover {
-  background-color: #ddd;
-  color: black !important;
-  border-radius: 5px;
-  cursor: pointer;
+.nav-link {
+  color: #B83027;
 }
-.nav-item.active {
-  background-color: #e0e0e0;
-  color: red !important;
-  border-radius: 5px;
+.navbar-toggler {
+  border-color: #B83027;
 }

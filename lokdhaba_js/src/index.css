@@ -1,12 +1,14 @@
 body {
   font-family: 'IBM Plex Serif', serif;
   font-size: 16px;
-  color: #333
+  color: #333;
 }
-.content {
-
+.text-content {
+  margin: 40px auto;
+  max-width: 850px;
+  padding: 0 10px;
 }
 
-a {
-  color: #B83027;
+.text-content a {
+  color: #B83027 !important;
 }

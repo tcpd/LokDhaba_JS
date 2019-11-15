@@ -9,7 +9,6 @@ onChange: function to call when selection is made
 */
 
 import React, { Component } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../Assets/Styles/select.css'
 
 export default class Select extends Component {

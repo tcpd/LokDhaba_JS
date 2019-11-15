@@ -1,10 +1,11 @@
 import React from "react";
-import "../Assets/Styles/NotFound.css";
+
+
 
 export default function NotFound() {
   return (
-    <div className="NotFound">
-      <h3>Sorry, page not found!</h3>
+    <div className="content">
+      <h3 style={{paddingTop:"100px", textAlign: "center"}}>Sorry, page not found!</h3>
     </div>
   );
 }

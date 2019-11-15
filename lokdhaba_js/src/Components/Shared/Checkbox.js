@@ -8,7 +8,6 @@ onChange: function to call when checkbox value changes
 */
 
 import React, { Component } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../Assets/Styles/layout.css'
 
 export default class Checkbox extends Component {

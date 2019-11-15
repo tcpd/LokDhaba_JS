@@ -21,7 +21,6 @@ import PartyPositionsMap from './Maps/PartyPositionsMap.js';
 import WinnerMap from './Maps/WinnerMap.js';
 import NotaTurnoutMap from './Maps/NotaTurnoutMap.js';
 import * as Constants from './Shared/Constants.js';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
 
 export default class DataVisualization extends Component {
@@ -330,11 +329,10 @@ render() {
 
  return (
    <div className="content">
-     <div className="container-fluid">
-       <div className="row">
-         <div className="col-xs-3">
+     <div className="vis-content">
+       <div className="flex-container">
            <form className="well">
-            <nav className="navbar navbar-expand-sm bg-light" role="navigation">
+            <nav className="navbar navbar-expand-sm" role="navigation">
               <ul className="navbar-nav">
                 <li className="nav-item active">
                 <a className="nav-link" name={"GE"} onClick={this.onElectionTypeChange}>Lok Sabha</a>
@@ -350,12 +348,11 @@ render() {
              {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} onChange={this.onPartyChange}/>}
              {(( visualizationType === "Chart") || (visualizationType === "Map" && year !== "")) && this.createOptionsCheckboxes()}
            </form>
-         </div>
-         <div className="col-xs-9">
+           <div className="vis">
           {showVisualization && this.renderVisualization()}
-         </div>
+          </div>
+          </div>
         </div>
-      </div>
     </div>
     )
   }

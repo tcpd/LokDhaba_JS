@@ -9,7 +9,9 @@ import StateCodes from '../Assets/Data/StateCodes.json';
 import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json';
 import LokSabhaNumber  from '../Assets/Data/LokSabhaNumber.json'
 import { Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../Assets/Styles/browse-data.css'
+import '../Assets/Styles/table.css'
+
 
 export default class BrowseData extends Component {
   constructor(props){
@@ -238,17 +240,17 @@ export default class BrowseData extends Component {
 
     return (
       <div className="content">
-        <div className="container-fluid">
+        <div className="table-content">
           <div className="row">
             <div className="col-xs-3" style={{width: "20%"}}>
               <form className="well">
                 <Select id="bd_electiontype_selector" label="Election Type" options = {electionTypeOptions} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange}/>}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
-                {assembliesChecked.size > 0 && <Button className="btn-lg" variant="primary" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
+                {assembliesChecked.size > 0 && <Button className="btn-lg" variant="primary" onClick={this.showTermsAndConditionsPopup} style={{backgroundColor: "#B83027"}}> Download Data</Button>}
                 </form>
             </div>
-            <div className="col-xs-9" style={{width: "80%"}}>
+            <div className="col-xs-9 table" style={{width: "80%"}}>
             {assembliesChecked.size > 0  && <Table columns={columns} data={this.state.tableData} fetchData={this.fetchTableData}/>}
             </div>
           </div>

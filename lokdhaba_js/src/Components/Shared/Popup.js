@@ -8,8 +8,6 @@ handleClose: function to call when the user click the cross icon
 */
 
 import React, { Component } from 'react';
-import { Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../Assets/Styles/layout.css'
 
 export default class Popup extends Component {

@@ -21,3 +21,18 @@ body {
 .text-content a {
   color: #B83027 !important;
 }
+button {
+  background-color: #B83027 !important;
+  color: white !important;
+}
+button:hover {
+  background-color: #972016 !important;
+}
+.browse-data {
+  margin: 20px auto;
+  padding: 0 40px;
+}
+.data-vis{
+  margin: 20px auto;
+  padding: 0 40px;
+}

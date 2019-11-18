@@ -35,4 +35,5 @@ a.disabled, .btn.disabled {
 .leaflet-container {
   height: 800px;
   width: 100%;
+  z-index: -1;
 }

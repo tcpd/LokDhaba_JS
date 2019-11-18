@@ -7,104 +7,105 @@ import Table from './Shared/Table.js';
 import * as Constants from './Shared/Constants.js'
 import StateCodes from '../Assets/Data/StateCodes.json';
 import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json';
-import LokSabhaNumber  from '../Assets/Data/LokSabhaNumber.json'
+import LokSabhaNumber from '../Assets/Data/LokSabhaNumber.json'
 import { Button } from 'react-bootstrap';
-import '../Assets/Styles/browse-data.css'
 import '../Assets/Styles/table.css'
 
 
 export default class BrowseData extends Component {
-  constructor(props){
-        super(props);
-        this.state = {electionType: "",
-                      stateName: "",
-                      GE_States: [],
-                      AE_States: [],
-                      stateOptions: [],
-                      stateAssemblies: [],
-                      assembliesChecked: new Set(),
-                      tableData: [],
-                      allChecked: false,
-                      showTermsAndConditionsPopup: false,
-                      csvData: [],
-                      isDataDownloadable: false,
-                      filters: []};
-      }
+  constructor(props) {
+    super(props);
+    this.state = {
+      electionType: "",
+      stateName: "",
+      GE_States: [],
+      AE_States: [],
+      stateOptions: [],
+      stateAssemblies: [],
+      assembliesChecked: new Set(),
+      tableData: [],
+      allChecked: false,
+      showTermsAndConditionsPopup: false,
+      csvData: [],
+      isDataDownloadable: false,
+      filters: []
+    };
+  }
 
-  componentDidMount(){
-    var GE_States = StateCodes.map(function(item){ return {value: item.State_Name, label: item.State_Name.replace(/_/g, " ")}});
+  componentDidMount() {
+    var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
     var unique_AE_States = [...new Set(VidhanSabhaNumber.map(x => x.State_Name))];
-    var AE_States = unique_AE_States.map(function(item){ return {value: item, label:item.replace(/_/g, " ")}});
-    this.setState({GE_States: GE_States});
-    this.setState({AE_States: AE_States});
+    var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
+    this.setState({ GE_States: GE_States });
+    this.setState({ AE_States: AE_States });
   }
 
   componentWillUpdate(nextProps, nextState) {
     if (nextState.filters !== this.state.filters) {
-      this.setState({isDataDownloadable: false});
+      this.setState({ isDataDownloadable: false });
     }
   }
 
   onAcceptTermsAndConditions = (key, checked) => {
-    this.setState({isDataDownloadable : checked});
-    if(checked){
+    this.setState({ isDataDownloadable: checked });
+    if (checked) {
       this.fetchDownloadData();
     }
   }
 
   CancelTermsAndConditionsPopup = () => {
-    this.setState({isDataDownloadable : false});
-    this.setState({showTermsAndConditionsPopup : false});
+    this.setState({ isDataDownloadable: false });
+    this.setState({ showTermsAndConditionsPopup: false });
   }
 
   CloseTermsAndConditionsPopup = () => {
-    this.setState({showTermsAndConditionsPopup : false});
+    this.setState({ showTermsAndConditionsPopup: false });
   }
 
- showTermsAndConditionsPopup = () => {
-    this.setState({showTermsAndConditionsPopup : true});
+  showTermsAndConditionsPopup = () => {
+    this.setState({ showTermsAndConditionsPopup: true });
   }
 
   onElectionTypeChange = (newValue) => {
     if (newValue !== this.state.electionType) {
-      this.setState({stateName: ""});
+      this.setState({ stateName: "" });
     }
-    this.setState({electionType: newValue});
+    this.setState({ electionType: newValue });
     let stateOptions;
-    if(newValue === "GE"){
-      stateOptions = [{value: "", label: "Select State"}, {value: "all", label: "All"}].concat(this.state.GE_States);
-    }else if(newValue === "AE"){
-      stateOptions = [{value: "", label: "Select State"}].concat(this.state.AE_States);
+    if (newValue === "GE") {
+      stateOptions = [{ value: "", label: "Select State" }, { value: "all", label: "All" }].concat(this.state.GE_States);
+    } else if (newValue === "AE") {
+      stateOptions = [{ value: "", label: "Select State" }].concat(this.state.AE_States);
     }
-    this.setState({stateOptions: stateOptions});
-    this.setState({isDataDownloadable : false});
+    this.setState({ stateOptions: stateOptions });
+    this.setState({ isDataDownloadable: false });
   }
 
   onStateNameChange = (newValue) => {
-    this.setState({assembliesChecked: new Set()});
-    this.setState({allChecked: false});
-    this.setState({stateName: newValue});
+    this.setState({ assembliesChecked: new Set() });
+    this.setState({ allChecked: false });
+    this.setState({ stateName: newValue });
     let assemblies;
-    if(this.state.electionType === "AE"){
-      assemblies = VidhanSabhaNumber.filter(function(item){return item.State_Name === newValue});
-    }else if(this.state.electionType === "GE"){
-      if(newValue === "all"){
+    if (this.state.electionType === "AE") {
+      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name === newValue });
+    } else if (this.state.electionType === "GE") {
+      if (newValue === "all") {
         assemblies = [...new Set(LokSabhaNumber.map(s => s.Assembly_No))]
-        .map(Assembly_No => {
-          return {
-            Assembly_No: Assembly_No,
-            Year: LokSabhaNumber.find(s => s.Assembly_No === Assembly_No).Year
-          };
-        });
-      }else{
-        assemblies = LokSabhaNumber.filter(function(item){return item.State_Name === newValue});
+          .map(Assembly_No => {
+            return {
+              Assembly_No: Assembly_No,
+              Year: LokSabhaNumber.find(s => s.Assembly_No === Assembly_No).Year
+            };
+          });
+      } else {
+        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name === newValue });
       }
     }
-    this.setState({stateAssemblies: assemblies});
-    this.setState({isDataDownloadable : false});
+    this.setState({ stateAssemblies: assemblies });
+    this.setState({ isDataDownloadable: false });
   }
 
-  fetchDownloadData = () =>{
+  fetchDownloadData = () => {
     let electionType = this.state.electionType;
     let stateName = this.state.stateName;
     let filters = this.state.filters;
@@ -115,38 +116,40 @@ export default class BrowseData extends Component {
       headers: new Headers({
         "content-type": "application/json"
       }),
-      body: JSON.stringify({ElectionType : electionType,
-                            StateName: stateName,
-                            AssemblyNo: assemblyNumber,
-                            Filters: filters
-                            })
-      }).then(response => response.json()).then(resp => {
-        this.setState({csvData: resp.data});
-      });
+      body: JSON.stringify({
+        ElectionType: electionType,
+        StateName: stateName,
+        AssemblyNo: assemblyNumber,
+        Filters: filters
+      })
+    }).then(response => response.json()).then(resp => {
+      this.setState({ csvData: resp.data });
+    });
   }
 
-  fetchTableData = (pageSize = 100, page = 0, sorted = [] , filtered = []) => {
+  fetchTableData = (pageSize = 100, page = 0, sorted = [], filtered = []) => {
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
       const url = Constants.baseUrl + "/data/api/v2.0/getDerivedData";
-      this.setState({filters: filtered});
+      this.setState({ filters: filtered });
       fetch(url, {
         method: "POST",
         headers: new Headers({
           "content-type": "application/json"
         }),
-        body: JSON.stringify({ElectionType : electionType,
-                              StateName: stateName,
-                              AssemblyNo: assemblyNumber,
-                              PageNo: page,
-                              PageSize: pageSize,
-                              Filters: filtered,
-                              SortOptions: sorted
-                              })
+        body: JSON.stringify({
+          ElectionType: electionType,
+          StateName: stateName,
+          AssemblyNo: assemblyNumber,
+          PageNo: page,
+          PageSize: pageSize,
+          Filters: filtered,
+          SortOptions: sorted
+        })
       }).then(response => response.json()).then(resp => {
-        this.setState({tableData: resp.data});
+        this.setState({ tableData: resp.data });
         const res = {
           rows: resp.data,
           pages: resp.pages
@@ -158,18 +161,18 @@ export default class BrowseData extends Component {
 
   onAssemblyChecked = (key, checked) => {
     var assembliesChecked = this.state.assembliesChecked;
-    if(key === "all"){
+    if (key === "all") {
       assembliesChecked.clear();
-      this.setState({allChecked: checked});
+      this.setState({ allChecked: checked });
     }
-    if(checked){
+    if (checked) {
       assembliesChecked.add(key);
-    }else{
+    } else {
       assembliesChecked.delete(key);
     }
-    this.setState({assembliesChecked: assembliesChecked});
+    this.setState({ assembliesChecked: assembliesChecked });
     assembliesChecked.size > 0 && this.fetchTableData();
-    this.setState({isDataDownloadable : false});
+    this.setState({ isDataDownloadable: false });
   }
 
   createAssemblyCheckboxes = () => {
@@ -177,9 +180,9 @@ export default class BrowseData extends Component {
     let scope = this;
     var isChecked = this.state.allChecked;
     var stateAssemblies = scope.state.stateAssemblies;
-    checkboxes.push(<Checkbox id={"bd_year_selector_all" }  key={0} label={"Select All"} checked={isChecked} onChange={scope.onAssemblyChecked}/>)
-    stateAssemblies.forEach(function(item){
-      var checked = scope.state.assembliesChecked.has(item.Assembly_No.toString()) ? true: isChecked;
+    checkboxes.push(<Checkbox id={"bd_year_selector_all"} key={0} label={"Select All"} checked={isChecked} onChange={scope.onAssemblyChecked} />)
+    stateAssemblies.forEach(function (item) {
+      var checked = scope.state.assembliesChecked.has(item.Assembly_No.toString()) ? true : isChecked;
       checkboxes.push(<Checkbox id={"bd_year_selector_" + item.Assembly_No} checked={checked} key={item.Assembly_No} label={item.Assembly_No + " Assembly (" + item.Year + ")"} onChange={scope.onAssemblyChecked} />)
     });
     return checkboxes;
@@ -193,12 +196,12 @@ export default class BrowseData extends Component {
     var csvData = this.state.csvData;
     var isDataDownloadable = this.state.isDataDownloadable;
     var showTermsAndConditionsPopup = this.state.showTermsAndConditionsPopup;
-    var electionTypeOptions = [{value: "", label: "Select Election Type"},
-                              {value: "GE", label:"General Elections"},
-                              {value: "AE", label:"Assembly Elections"}];
+    var electionTypeOptions = [{ value: "", label: "Select Election Type" },
+    { value: "GE", label: "General Elections" },
+    { value: "AE", label: "Assembly Elections" }];
     var columns = Constants.tableColumns;
     var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
     var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${date}.csv`;
     const modalBody = <div><p>Lok Dhaba is an online web interface provided by the Trivedi Centre for
         Political Data. In these terms of use of the data provided by the Centre, 'Data'
@@ -206,7 +209,7 @@ export default class BrowseData extends Component {
         material presented within the application. The users are free to download,
         display or include the data in other products for non-commercial purposes at no
         cost subject to the following limitations:</p>
-        <ul>
+      <ul>
         <li>The user must include the citation for data they use in the manner indicated
         through 'How to Cite' information mentioned on the top of this web page. The
         user must not claim or imply that the Trivedi Centre for Political Data endorses
@@ -223,40 +226,40 @@ export default class BrowseData extends Component {
         <li>The user must agree that the use of Data presented within the application can
         be seen as the acknowledgement of unconditionally accepting the Terms of Use
         presented by the Centre.</li>
-        </ul>
-        <center><Checkbox id={"dd_accept_condition" } label={"I accept the terms and conditions mentioned here."} checked={this.state.isDataDownloadable} onChange={this.onAcceptTermsAndConditions}/></center>
-        </div>
+      </ul>
+      <center><Checkbox id={"dd_accept_condition"} label={"I accept the terms and conditions mentioned here."} checked={this.state.isDataDownloadable} onChange={this.onAcceptTermsAndConditions} /></center>
+    </div>
     var buttonClass = isDataDownloadable ? "btn-lg" : "btn-lg disabled";
     const modalFooter = <div>
-                        <Button  className="btn-lg" variant="secondary" onClick={this.CancelTermsAndConditionsPopup}>
-                          Cancel
+      <Button className="btn-lg" variant="secondary" onClick={this.CancelTermsAndConditionsPopup}>
+        Cancel
                         </Button>
-                        <CSVLink className={buttonClass} data={csvData} filename={filename}>
-                          <Button className={buttonClass} variant="primary" onClick={this.CloseTermsAndConditionsPopup}>
-                            Download
+      <CSVLink className={buttonClass} data={csvData} filename={filename}>
+        <Button className={buttonClass} variant="primary" onClick={this.CloseTermsAndConditionsPopup}>
+          Download
                           </Button>
-                        </CSVLink>
-                      </div>
+      </CSVLink>
+    </div>
 
     return (
       <div className="content">
-        <div className="table-content">
+        <div className="browse-data">
           <div className="row">
-            <div className="col-xs-3" style={{width: "20%"}}>
+            <div className="col-xs-3 input" style={{ width: "20%" }}>
               <form className="well">
-                <Select id="bd_electiontype_selector" label="Election Type" options = {electionTypeOptions} onChange={this.onElectionTypeChange} />
-                {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange}/>}
+                <Select id="bd_electiontype_selector" label="Election Type" options={electionTypeOptions} onChange={this.onElectionTypeChange} />
+                {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange} />}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
-                {assembliesChecked.size > 0 && <Button className="btn-lg" variant="primary" onClick={this.showTermsAndConditionsPopup} style={{backgroundColor: "#B83027"}}> Download Data</Button>}
-                </form>
+                {assembliesChecked.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
+              </form>
             </div>
-            <div className="col-xs-9 table" style={{width: "80%"}}>
-            {assembliesChecked.size > 0  && <Table columns={columns} data={this.state.tableData} fetchData={this.fetchTableData}/>}
+            <div className="col-xs-9 table" style={{ width: "80%" }}>
+              {assembliesChecked.size > 0 && <Table columns={columns} data={this.state.tableData} fetchData={this.fetchTableData} />}
             </div>
           </div>
-          { showTermsAndConditionsPopup && <Popup id="tems_and_conditions_popup" show={showTermsAndConditionsPopup} body={modalBody} heading={<p>Terms and Conditions</p>} footer={modalFooter}  handleClose={this.CloseTermsAndConditionsPopup}/>}
-       </div>
-    </div>
+          {showTermsAndConditionsPopup && <Popup id="tems_and_conditions_popup" show={showTermsAndConditionsPopup} body={modalBody} heading={<p>Terms and Conditions</p>} footer={modalFooter} handleClose={this.CloseTermsAndConditionsPopup} />}
+        </div>
+      </div>
     )
   }
 }

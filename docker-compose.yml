@@ -1,25 +1,31 @@
 version: "2"
 services:
+  db:
+    container_name: ld_db
+    image: mysql:8.0.15
+    command: '--local-infile=1'
+    ports:
+      - '32000:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - './db/:/docker-entrypoint-initdb.d/:ro'
   api:
-    build: LokdhabaApi/
+    build: ./LokdhabaApi
     container_name : ld_api
+    volumes :
+      - './LokdhabaApi/:/app/'
     links:
       - db
     ports:
       - "15000:5000"
-  db:
-    container_name : ld_db
-    image: mysql:8.0.15
-    command: --local-infile=1
-    ports:
-      - "32000:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: <mysql root password>
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
+      - FLASK_APP=test_app.py
+      - FLASK_DEBUG=1
+    command : flask run --host=0.0.0.0
   node:
     container_name : ld_ui
-    build : lokdhaba_js/
+    build : ./lokdhaba_js
     volumes :
       - './lokdhaba_js:/app'
       - '/app/node_modules'

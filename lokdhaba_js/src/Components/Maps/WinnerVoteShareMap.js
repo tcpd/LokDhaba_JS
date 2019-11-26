@@ -86,9 +86,9 @@ export default class WinnerVoteShareMap extends React.Component {
     var assemblyNo =this.props.assemblyNo;
     const PrintControl = withLeaflet(PrintControlDefault);
     var dataFilterOptions = this.props.dataFilterOptions;
-    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
 
-    var voteShares = data.features.flatMap(X => X.properties.Vote_Share_Percentage);
+
+    var voteShares = data.map(X => X.Vote_Share_Percentage);
     var legend = {};
     for (var i = 0; i < voteShares.length; i++) {
       var val = voteShares[i];
@@ -116,6 +116,30 @@ export default class WinnerVoteShareMap extends React.Component {
       }
 
     }
+
+    var shape = this.props.map;
+    var state = this.props.stateName;
+    if(electionType === "Lok Sabha"){
+      for (var i=0; i<data.length; i++){
+        data[i].key = data[i].State_Name + "_" + data[i].Constituency_No
+      }
+      var joinMap = {
+        geoKey: 'properties.State_Key', //here geoKey can be feature 'id' also
+        dataKey: 'key'
+      };
+    }else{
+      var joinMap = {
+        geoKey: 'properties.ASSEMBLY', //here geoKey can be feature 'id' also
+        dataKey: 'Constituency_No'
+      };
+    }
+
+    var extendGeoJSON = require('extend-geojson-properties');
+
+
+    extendGeoJSON( shape, data, joinMap);
+
+    var leaflet = this.renderConstituencies(shape, dataFilterOptions);
 
 
     return (

@@ -57,7 +57,7 @@ export default class ConstituencyTypeMap extends React.Component {
     var dataFilterOptions = this.props.dataFilterOptions;
     const PrintControl = withLeaflet(PrintControlDefault);
 
-    var constituencyTypes = data.features.flatMap(X => X.properties.Constituency_Type);
+    var constituencyTypes = data.map(X => X.Constituency_Type);
     var legend = {}
     for (var i = 0; i < constituencyTypes.length; i++) {
       var pty = constituencyTypes[i];
@@ -73,7 +73,28 @@ export default class ConstituencyTypeMap extends React.Component {
       sortedLegend[pty] = legend[pty]
     }
 
-    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
+    var shape = this.props.map;
+    var state = this.props.stateName;
+    if(electionType === "Lok Sabha"){
+      for (var i=0; i<data.length; i++){
+        data[i].key = data[i].State_Name + "_" + data[i].Constituency_No
+      }
+      var joinMap = {
+        geoKey: 'properties.State_Key', //here geoKey can be feature 'id' also
+        dataKey: 'key'
+      };
+    }else{
+      var joinMap = {
+        geoKey: 'properties.ASSEMBLY', //here geoKey can be feature 'id' also
+        dataKey: 'Constituency_No'
+      };
+    }
+
+    var extendGeoJSON = require('extend-geojson-properties');
+    extendGeoJSON( shape, data, joinMap);
+
+    var leaflet = this.renderConstituencies(shape, dataFilterOptions);
+
     return (
       <div className="my-map" style={{width: "100%", height: "100%"}}>
       <div style={{textAlign: "center"}}>

@@ -40,7 +40,8 @@ export default class DataVisualization extends Component {
       partyOptions: [],
       showVisualization: false,
       vizOptionsSelected: new Set(),
-      vizData: []
+      vizData: [],
+      mapData :[]
     };
   }
 
@@ -120,7 +121,7 @@ export default class DataVisualization extends Component {
           Legends: [...legends]
         })
       }).then(response => response.json()).then(resp => {
-        var data = visualizationType === "Map" ? JSON.parse(resp.data) : resp.data;
+        var data = resp.data;
         this.setState({ vizData: data });
         var checked = ChartsMapsCodes.filter(function (item) { return item.modulename === visualization })[0].alloptionschecked;
         if (checked) {
@@ -129,6 +130,22 @@ export default class DataVisualization extends Component {
         setTimeout(() => resolve(data), 500);
       });
     });
+  }
+
+  fetchMapData = () => {
+    return new Promise((resolve, reject) => {
+      let electionType = this.state.electionType;
+      let stateName = this.state.stateName;
+      var file = electionType === "GE" ? "/India_PC_json.geojson": "/"+stateName+"_AC_json.geojson"
+      const url = Constants.baseUrl + file;
+      fetch(url, {
+        method: "GET"
+        }).then(response => response.json()).then(resp => {
+          var map = resp.features;
+          this.setState({ mapData: map });
+          setTimeout(() => resolve(map), 500);
+        });
+      });
   }
 
   fetchMapYearParties = () => {
@@ -206,6 +223,9 @@ export default class DataVisualization extends Component {
       if (checked) {
         this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) }, () => {
           this.fetchVisualizationData();
+          if(visualizationType==="Map"){
+            this.fetchMapData();
+          }
         });
       }
     });
@@ -254,6 +274,7 @@ export default class DataVisualization extends Component {
 
   renderVisualization = () => {
     var data = this.state.vizData;
+    var shape = this.state.mapData;
     var dataFilterOptions = this.state.vizOptionsSelected;
     var electionType = this.state.electionType;
     var stateName = this.state.stateName;
@@ -274,25 +295,25 @@ export default class DataVisualization extends Component {
       case "contestedDepositSavedChart":
         return <ContestedDepositLostChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
       case "winnerCasteMap":
-        return <ConstituencyTypeMap data={data} electionType={electionType} dataFilterOptions={dataFilterOptions} assemblyNo={assemblyNo} stateName={stateName} />;
+        return <ConstituencyTypeMap data={data} map={shape} electionType={electionType} dataFilterOptions={dataFilterOptions} assemblyNo={assemblyNo} stateName={stateName} />;
       case "numCandidatesMap":
-        return <NumCandidatesMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return <NumCandidatesMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "voterTurnoutMap":
-        return <VoterTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return <VoterTurnoutMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "winnerGenderMap":
-        return <WinnerGenderMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return <WinnerGenderMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "winnerMarginMap":
-        return <VictoryMarginMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return <VictoryMarginMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "winnerVoteShareMap":
-        return < WinnerVoteShareMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return < WinnerVoteShareMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "partyVoteShareMap":
-        return < PartyVoteShareMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return < PartyVoteShareMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "partyPositionsMap":
-        return < PartyPositionsMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return < PartyPositionsMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "winnerMap":
-        return < WinnerMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return < WinnerMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "notaTurnoutMap":
-        return < NotaTurnoutMap data={data} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+        return < NotaTurnoutMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
 
 
       default:

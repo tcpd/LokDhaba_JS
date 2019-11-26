@@ -73,9 +73,9 @@ export default class PartyPositionsMap extends React.Component {
     var assemblyNo =this.props.assemblyNo;
     const PrintControl = withLeaflet(PrintControlDefault);
     var dataFilterOptions = this.props.dataFilterOptions;
-    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
+    //var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
 
-    var positions = data.features.flatMap(X => X.properties.Position);
+    var positions = data.map(X => X.Position);
     var legend = {};
     for (var i = 0; i < positions.length; i++) {
       val = positions[i];
@@ -100,8 +100,29 @@ export default class PartyPositionsMap extends React.Component {
 
     }
 
+    var shape = this.props.map;
+    var state = this.props.stateName;
+    if(electionType === "Lok Sabha"){
+      for (var i=0; i<data.length; i++){
+        data[i].key = data[i].State_Name + "_" + data[i].Constituency_No
+      }
+      var joinMap = {
+        geoKey: 'properties.State_Key', //here geoKey can be feature 'id' also
+        dataKey: 'key'
+      };
+    }else{
+      var joinMap = {
+        geoKey: 'properties.ASSEMBLY', //here geoKey can be feature 'id' also
+        dataKey: 'Constituency_No'
+      };
+    }
+
+    var extendGeoJSON = require('extend-geojson-properties');
 
 
+    extendGeoJSON( shape, data, joinMap);
+
+    var leaflet = this.renderConstituencies(shape, dataFilterOptions);
 
     return (
       <div className="my-map" style={{width: "100%", height: "100%"}}>

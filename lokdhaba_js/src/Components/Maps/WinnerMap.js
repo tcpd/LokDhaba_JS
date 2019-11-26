@@ -5,8 +5,10 @@ import 'leaflet/dist/leaflet.css';
 import WinnerLegends from './WinnerLegends';
 import ColPalette from '../../Assets/Data/PartyColourPalette.json';
 import PrintControlDefault from 'react-leaflet-easyprint';
+import AllConstituencyBoundaries from '../../Assets/Data/Maps/TCPD_India_all_ac_pc_constituencies.geojson'
 
 export default class WinnerMap extends React.Component {
+
 
   onEachFeature = (feature, layer) => {
     var popupContent = "";
@@ -50,10 +52,12 @@ export default class WinnerMap extends React.Component {
 
   render() {
     var data = this.props.data;
+    var shape = this.props.map;
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
+    var state = this.props.stateName;
     var assemblyNo =this.props.assemblyNo;
     var dataFilterOptions = this.props.dataFilterOptions;
-    var parties = data.features.flatMap(X => X.properties.Party);
+    var parties = data.map(X => X.Party);
     var legend = {}
     for (var i = 0; i < parties.length; i++) {
       var pty = parties[i];
@@ -61,6 +65,7 @@ export default class WinnerMap extends React.Component {
         legend[pty] = legend[pty] ? legend[pty] + 1 : 1;
       }
     }
+
 
     var SortedKeys = Object.keys(legend).sort(function(a,b){return legend[b]-legend[a]})
     var sortedLegend ={}
@@ -71,7 +76,27 @@ export default class WinnerMap extends React.Component {
       }
     }
 
-    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
+    if(electionType === "Lok Sabha"){
+      for (var i=0; i<data.length; i++){
+        data[i].key = data[i].State_Name + "_" + data[i].Constituency_No
+      }
+      var joinMap = {
+        geoKey: 'properties.State_Key', //here geoKey can be feature 'id' also
+        dataKey: 'key'
+      };
+    }else{
+      var joinMap = {
+        geoKey: 'properties.ASSEMBLY', //here geoKey can be feature 'id' also
+        dataKey: 'Constituency_No'
+      };
+    }
+
+    var extendGeoJSON = require('extend-geojson-properties');
+
+
+    extendGeoJSON( shape, data, joinMap);
+
+    var leaflet = this.renderConstituencies(shape, dataFilterOptions);
 
     const PrintControl = withLeaflet(PrintControlDefault);
 

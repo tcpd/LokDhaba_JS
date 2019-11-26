@@ -73,9 +73,9 @@ export default class VictoryMarginMap extends React.Component {
     const PrintControl = withLeaflet(PrintControlDefault);
 
     var dataFilterOptions = this.props.dataFilterOptions;
-    var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
+    //var leaflet = this.renderConstituencies(data.features,dataFilterOptions);
 
-    var margins = data.features.flatMap(X => X.properties.Margin_Percentage);
+    var margins = data.map(X => X.Margin_Percentage);
     var legend = {};
     for (var i = 0; i < margins.length; i++) {
       var val = margins[i];
@@ -99,6 +99,31 @@ export default class VictoryMarginMap extends React.Component {
       }
 
     }
+
+    var shape = this.props.map;
+    var state = this.props.stateName;
+    if(electionType === "Lok Sabha"){
+      for (var i=0; i<data.length; i++){
+        data[i].key = data[i].State_Name + "_" + data[i].Constituency_No
+      }
+      var joinMap = {
+        geoKey: 'properties.State_Key', //here geoKey can be feature 'id' also
+        dataKey: 'key'
+      };
+    }else{
+      var joinMap = {
+        geoKey: 'properties.ASSEMBLY', //here geoKey can be feature 'id' also
+        dataKey: 'Constituency_No'
+      };
+    }
+
+    var extendGeoJSON = require('extend-geojson-properties');
+
+
+    extendGeoJSON( shape, data, joinMap);
+
+    var leaflet = this.renderConstituencies(shape, dataFilterOptions);
+
 
     return (
       <div className="my-map" style={{width: "100%", height: "100%"}}>

@@ -3,13 +3,7 @@ import decimal
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import mysql.connector
-
-# from mysql.connector import Error
-#
-# import simplejson
 from math import ceil
-# import pandas as pd
-# import geopandas
 import simplejson as json
 
 app = Flask(__name__,
@@ -72,27 +66,8 @@ def module_to_table(argument):
     return switcher.get(argument, "nothing")
 
 
-class DecimalEncoder(json.JSONEncoder):
-    def _iterencode(self, o, markers=None):
-        if isinstance(o, decimal.Decimal):
-            # wanted a simple yield str(o) in the next line,
-            # but that would mean a yield on the line with super(...),
-            # which wouldn't work (see my comment below), so...
-            return (str(o) for o in [o])
-        return super(DecimalEncoder, self)._iterencode(o, markers)
 
 
-# def get_map_data(rep, election, state, data):
-#     if election == "GE":
-#         shp = geopandas.read_file(rep + "/GE/India_PC_Updated.shp")
-#         left_key = ["STATE_UT", "PC_NO"]
-#         right_key = ["State_Name", "Constituency_No"]
-#     if election == "AE":
-#         shp = geopandas.read_file(rep + "/AE/" + state + "/" + state + "_Assembly_con.shp")
-#         left_key = ["ASSEMBLY"]
-#         right_key = ["Constituency_No"]
-#     shp = shp.merge(data, left_on=left_key, right_on=right_key, how="left")
-#     return shp
 
 
 ## Dummy route to check functioning of api
@@ -433,17 +408,6 @@ def get_party_options():
                 return (jsonify({'data': parties}))
 
 
-@app.route('/data/api/v1.0/getMapData', methods=['POST'])
-def get_map_data():
-    print("inside map data")
-    req = request.get_json()
-    electionType = req.get('ElectionType')  # if key doesn't exist, returns None
-    print('et', electionType)
-    stateName = req.get('StateName')  # if key doesn't exist, returns a 400, bad request error
-    print('st', stateName)
-    if electionType == "GE" :
-        return()
-
 
 @app.route('/data/api/v1.0/getVizData', methods=['POST'])
 def get_viz_data():
@@ -508,20 +472,6 @@ def get_viz_data():
                 json_data.append(dict(zip(row_headers, row)))
             return jsonify({'data': json_data})
 
-
-            # if type == "Chart":
-            #     records = cursor.fetchall()
-            #     row_headers = [x[0] for x in cursor.description]  # this will extract row headers
-            #     json_data = []
-            #     for row in records:
-            #         json_data.append(dict(zip(row_headers, row)))
-            #     return jsonify({'data': json_data})
-            # if type == "Map":
-            #     df = pd.DataFrame(cursor.fetchall())
-            #     df.columns = [x[0] for x in cursor.description]
-            #     shp = get_map_data(rep=db_config[4], election=electionType, state=stateName, data=df)
-            #     print(shp.geometry)
-            #     return jsonify({'data': [shp.to_json(cls=DecimalEncoder)]})
 
 
 

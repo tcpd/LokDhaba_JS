@@ -1,7 +1,7 @@
-Flask==1.1.1
-Flask-Cors==3.0.8
-mysql-connector==2.2.9
-mysql-connector-python==8.0.18
-pandas==0.24.2
-geopandas==0.6.1
-simplejson==3.16.0
+flask
+flask_cors
+mysql.connector
+mysql-connector-python
+pandas
+geopandas
+simplejson

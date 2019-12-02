@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import StateCodes from '../Assets/Data/StateCodes.json';
 import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json';
 import ChartsMapsCodes from '../Assets/Data/ChartsMapsCodes.json';
@@ -23,11 +24,25 @@ import NotaTurnoutMap from './Maps/NotaTurnoutMap.js';
 import * as Constants from './Shared/Constants.js';
 import $ from 'jquery';
 
+function getParams(location) {
+  return new URLSearchParams(location.search);
+}
+
+function setParams(props ) {
+  const { location, variable, val } = props;
+  const searchParams = new URLSearchParams(location.search);
+  searchParams.set(variable, val || "");
+  return searchParams.toString();
+}
+
+
 export default class DataVisualization extends Component {
   constructor(props) {
     super(props);
+    let inputs = getParams(props.location);
+    var et = inputs.get("et") || "";
     this.state = {
-      electionType: "GE",
+      electionType: et===""?"GE":et,
       stateName: "",
       AE_States: [],
       visualization: "",
@@ -45,11 +60,39 @@ export default class DataVisualization extends Component {
     };
   }
 
+  updateURL = (props) => {
+    const { variable, val } = props
+    const url = setParams({ location: this.props.location, variable:variable, val: val });
+    this.props.history.push(`?${url}`);
+  };
+
+
   componentDidMount() {
     var unique_AE_States = [...new Set(VidhanSabhaNumber.map(x => x.State_Name))];
     var visualizationOptions = [{ value: "", label: "Chart/Map" }].concat(ChartsMapsCodes.map(function (item) { return { value: item.modulename, label: item.title } }));
     var AE_States = [{ value: "", label: "Select State" }].concat(unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } }));
     this.setState({ AE_States: AE_States, visualizationOptions: visualizationOptions });
+
+    let inputs = getParams(this.props.location);
+    var st = inputs.get("st") || "";
+    if(st !== "" ){this.onStateNameChange(st);}
+    var viz = inputs.get("viz") || "";
+    if(viz !== "" ){this.onVisualizationChange(viz);}
+    var an = inputs.get("an") || "";
+    if(an !== "" ){this.onYearChange(an);}
+    var pty = inputs.get("pty") || "";
+    if(pty !== ""){this.onPartyChange(pty);}
+
+    var options = inputs.get("opt") || "";
+    if(options != ""){
+      var selected_options = options.replace(/%2C/g,",").split(",");
+      this.state.vizOptionsSelected = new Set(selected_options);
+      for(var an =0; an < selected_options.length;an++){
+        this.chartMapOptionChecked(selected_options[an],true);
+      }
+    }
+
+
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -59,6 +102,28 @@ export default class DataVisualization extends Component {
       this.fetchChartMapOptions(nextState);
     }
   }
+
+  // static getDerivedStateFromProps(props, state) {
+  //   // Any time the current user changes,
+  //   // Reset any parts of state that are tied to that user.
+  //   // In this simple example, that's just the email.
+  //
+  //   let inputs = getParams(props.location)
+  //   var et = inputs.get("Election_Type") || ""
+  //   var viz = inputs.get("viz") || ""
+  //   this.setState({electionType: et===""?"GE":et});
+  //   this.setState({visualization: viz});
+  //   var visualizationType = ChartsMapsCodes.filter(function (item) { return item.modulename === viz })[0].type;
+  //   this.setState({ visualizationType: visualizationType }, () => {
+  //     if (visualizationType === "Map") {
+  //       this.fetchMapYearOptions();
+  //     }
+  //   });
+  //
+  //
+  //
+  //
+  // }
 
   onVisualizationChange = (newValue) => {
     this.setState({ year: "" });
@@ -71,6 +136,7 @@ export default class DataVisualization extends Component {
         this.fetchMapYearOptions();
       }
     });
+    this.updateURL({variable:"viz",val:newValue});
   }
 
   onStateNameChange = (newValue) => {
@@ -79,6 +145,7 @@ export default class DataVisualization extends Component {
     this.setState({ vizOptionsSelected: new Set() });
     this.setState({ showVisualization: false });
     this.setState({ stateName: newValue });
+    this.updateURL({variable:"st",val:newValue});
   }
 
   onElectionTypeChange = (e) => {
@@ -94,6 +161,7 @@ export default class DataVisualization extends Component {
     activeItem.removeClass("active");
     $(e.target).parent().addClass("active");
     this.setState({ electionType: newValue });
+    this.updateURL({variable:"et",val:newValue});
   }
 
   fetchVisualizationData = () => {
@@ -251,6 +319,7 @@ export default class DataVisualization extends Component {
         this.setState({ showVisualization: false });
       }
     });
+    this.updateURL({variable:"opt",val:[...vizOptionsSelected]});
   }
 
   createOptionsCheckboxes = () => {
@@ -324,8 +393,9 @@ export default class DataVisualization extends Component {
   onPartyChange = (newValue) => {
     this.setState({ party: newValue });
     if (this.state.showVisualization === true) {
-      this.setState({ showVisualization: false })
+      this.setState({ showVisualization: false });
     }
+    this.updateURL({variable:"pty",val:newValue});
   }
 
   onYearChange = (newValue) => {
@@ -339,6 +409,7 @@ export default class DataVisualization extends Component {
       }
 
     });
+    this.updateURL({variable:"an",val:newValue});
   }
 
   render() {
@@ -367,14 +438,14 @@ export default class DataVisualization extends Component {
                       <a className="nav-link" name={"AE"} onClick={this.onElectionTypeChange}>Vidhan Sabha</a>
                     </li>
                   </ul>
-                {electionType === "AE" && <Select id="dv_state_selector" label="State" options={stateOptions} onChange={this.onStateNameChange} />}
+                {electionType === "AE" && <Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {(electionType === "GE" || (electionType === "AE" && stateName !== "")) && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
-                {visualizationType === "Map" && <Select id="dv_year_selector" label="Select Year" options={yearOptions} onChange={this.onYearChange} />}
-                {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} onChange={this.onPartyChange} />}
+                {visualizationType === "Map" && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
+                {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "")) && this.createOptionsCheckboxes()}
               </form>
           </div>
-          <div class="vis column" style={{width: "80%", padding: "10px"}}>
+          <div className="vis column" style={{width: "80%", padding: "10px"}}>
             {showVisualization && this.renderVisualization()}
           </div>
           </div>

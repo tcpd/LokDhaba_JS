@@ -12,9 +12,23 @@ import { Button } from 'react-bootstrap';
 import '../Assets/Styles/table.css'
 
 
+function getParams(location) {
+  return new URLSearchParams(location.search);
+}
+
+function setParams(props ) {
+  const { location, variable, val } = props;
+  const searchParams = new URLSearchParams(location.search);
+  searchParams.set(variable, val || "");
+  return searchParams.toString();
+}
+
+
 export default class BrowseData extends Component {
   constructor(props) {
     super(props);
+    // let inputs = getParams(props.location);
+    // var et = inputs.get("et") || "";
     this.state = {
       electionType: "",
       stateName: "",
@@ -36,8 +50,29 @@ export default class BrowseData extends Component {
     var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
     var unique_AE_States = [...new Set(VidhanSabhaNumber.map(x => x.State_Name))];
     var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
-    this.setState({ GE_States: GE_States });
-    this.setState({ AE_States: AE_States });
+    this.state.GE_States = GE_States;
+    this.state.AE_States = AE_States;
+    //this.setState({'GE_States': GE_States, 'AE_States': AE_States });
+    let inputs = getParams(this.props.location);
+    var et = inputs.get("et") || "";
+    if(et !== ""){this.onElectionTypeChange(et);}
+    var st = inputs.get("st") || "";
+    if(st !== "" ){this.onStateNameChange(st);}
+    //this.setState({  });
+    var assemblies = inputs.get("an") || "";
+    if(assemblies !== ""){
+      var assembly_numbers = assemblies.replace(/%2C/g,",").split(",");
+      this.state.assembliesChecked = new Set(assembly_numbers);
+      for(var an =0; an < assembly_numbers.length;an++){
+        this.onAssemblyChecked(assembly_numbers[an],true);
+      }
+    }
+
+
+    // var an = inputs.get("an") || "";
+    // if(an !== "" ){this.onYearChange(an);}
+
+
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -45,6 +80,12 @@ export default class BrowseData extends Component {
       this.setState({ isDataDownloadable: false });
     }
   }
+
+  updateURL = (props) => {
+    const { variable, val } = props
+    const url = setParams({ location: this.props.location, variable:variable, val: val });
+    this.props.history.push(`?${url}`);
+  };
 
   onAcceptTermsAndConditions = (key, checked) => {
     this.setState({ isDataDownloadable: checked });
@@ -68,17 +109,24 @@ export default class BrowseData extends Component {
 
   onElectionTypeChange = (newValue) => {
     if (newValue !== this.state.electionType) {
+
+      this.updateURL({variable:"et",val:newValue});
+      // this.updateURL({variable:"st",val:""});
+      // this.updateURL({variable:"an",val:""});
+      this.state.electionType = newValue;
+      let stateOptions;
+      if (newValue === "GE") {
+        stateOptions = [{ value: "", label: "Select State" }, { value: "all", label: "All" }].concat(this.state.GE_States);
+      } else if (newValue === "AE") {
+        stateOptions = [{ value: "", label: "Select State" }].concat(this.state.AE_States);
+      }
       this.setState({ stateName: "" });
+      this.setState({ stateOptions: stateOptions });
+      this.setState({ isDataDownloadable: false });
+
+    }else{
     }
-    this.setState({ electionType: newValue });
-    let stateOptions;
-    if (newValue === "GE") {
-      stateOptions = [{ value: "", label: "Select State" }, { value: "all", label: "All" }].concat(this.state.GE_States);
-    } else if (newValue === "AE") {
-      stateOptions = [{ value: "", label: "Select State" }].concat(this.state.AE_States);
-    }
-    this.setState({ stateOptions: stateOptions });
-    this.setState({ isDataDownloadable: false });
+
   }
 
   onStateNameChange = (newValue) => {
@@ -103,6 +151,8 @@ export default class BrowseData extends Component {
     }
     this.setState({ stateAssemblies: assemblies });
     this.setState({ isDataDownloadable: false });
+    this.updateURL({variable:"st",val:newValue});
+    //this.updateURL({variable:"an",val:""});
   }
 
   fetchDownloadData = () => {
@@ -173,6 +223,7 @@ export default class BrowseData extends Component {
     this.setState({ assembliesChecked: assembliesChecked });
     assembliesChecked.size > 0 && this.fetchTableData();
     this.setState({ isDataDownloadable: false });
+    this.updateURL({variable:"an",val:[...assembliesChecked]});
   }
 
   createAssemblyCheckboxes = () => {
@@ -247,8 +298,8 @@ export default class BrowseData extends Component {
           <div className="row">
             <div className="col-xs-3 input" style={{ width: "20%" }}>
               <form className="well">
-                <Select id="bd_electiontype_selector" label="Election Type" options={electionTypeOptions} onChange={this.onElectionTypeChange} />
-                {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange} />}
+                <Select id="bd_electiontype_selector" label="Election Type" options={electionTypeOptions} selectedValue={electionType} onChange={this.onElectionTypeChange} />
+                {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
                 {assembliesChecked.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>

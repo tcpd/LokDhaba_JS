@@ -27,13 +27,17 @@ label {
   font-weight: bold;
   font-size: 18px;
 }
+.modal-body {
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+}
 
 a.disabled, .btn.disabled {
   cursor: not-allowed;
   pointer-events: none;
 }
 .leaflet-container {
-  height: 800px;
+  height: 100vh;
   width: 100%;
 }
 .bar-icon {

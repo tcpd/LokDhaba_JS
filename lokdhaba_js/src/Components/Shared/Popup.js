@@ -22,7 +22,7 @@ export default class Popup extends Component {
     const showHideClassName = show ? "modal display-block" : "modal display-none";
      return (
        <div className={showHideClassName} id={id}>
-         <div className="modal-dialog modal-xl">
+         <div className="modal-dialog modal-lg">
            <div className="modal-content">
 
              <div className="modal-header">

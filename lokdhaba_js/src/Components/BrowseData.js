@@ -242,13 +242,14 @@ export default class BrowseData extends Component {
     </div>
 
     return (
-      <div className="content">
+      <div className="content overflow-auto">
         <div className="browse-data">
           <div className="row">
             <div className="col-xs-3 input" style={{ width: "20%" }}>
               <form className="well">
                 <Select id="bd_electiontype_selector" label="Election Type" options={electionTypeOptions} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} onChange={this.onStateNameChange} />}
+                <br></br>
                 {stateName !== "" && this.createAssemblyCheckboxes()}
                 {assembliesChecked.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>

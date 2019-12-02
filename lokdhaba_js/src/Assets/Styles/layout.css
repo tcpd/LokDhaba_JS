@@ -35,5 +35,19 @@ a.disabled, .btn.disabled {
 .leaflet-container {
   height: 800px;
   width: 100%;
-  z-index: -1;
+}
+.bar-icon {
+  width: 35px;
+  height: 0.2rem;
+  background-color: white;
+  margin: 5px 5px 3px 0px;
+}
+.control-label {
+  margin-bottom: 0rem !important;
+  font-size: 16px;
+  color: #555;
+}
+.active {
+  background-color: #B83027;
+  color: white;
 }

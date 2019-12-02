@@ -23,6 +23,7 @@ import NotaTurnoutMap from './Maps/NotaTurnoutMap.js';
 import * as Constants from './Shared/Constants.js';
 import $ from 'jquery';
 
+
 export default class DataVisualization extends Component {
   constructor(props) {
     super(props);
@@ -334,11 +335,11 @@ export default class DataVisualization extends Component {
     var showVisualization = this.state.showVisualization;
 
     return (
-      <div className="content">
+      <div className="content overflow-auto">
         <div className="data-vis row">
         <div className="column" style={{width: "20%"}}>
               <form className="well">
-                  <ul className="nav nav-tabs">
+                  <ul className="nav nav-tabs nav-fill">
                     <li className="nav-item active">
                       <a className="nav-link" name={"GE"} onClick={this.onElectionTypeChange}>Lok Sabha</a>
                     </li>
@@ -346,6 +347,7 @@ export default class DataVisualization extends Component {
                       <a className="nav-link" name={"AE"} onClick={this.onElectionTypeChange}>Vidhan Sabha</a>
                     </li>
                   </ul>
+                  <br></br>
                 {electionType === "AE" && <Select id="dv_state_selector" label="State" options={stateOptions} onChange={this.onStateNameChange} />}
                 {(electionType === "GE" || (electionType === "AE" && stateName !== "")) && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
                 {visualizationType === "Map" && <Select id="dv_year_selector" label="Select Year" options={yearOptions} onChange={this.onYearChange} />}

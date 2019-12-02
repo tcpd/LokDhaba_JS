@@ -1,16 +1,26 @@
 @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Sans&display=swap');
-
+html {
+  height: 100%;
+  min-height: 100%;
+}
 body {
   margin: 0;
   padding: 0;
   font-family: 'IBM Plex Serif', sans-serif !important;
   font-size: 16px !important;
   color: #333 !important;
+  height: 100%;
+}
+.cont {
+  height: 100%;
+  position: relative;
+}
+#root {
+  height: 100%;
 }
 .content {
-  min-height: 100%;
-  margin: 40px auto;
-  padding: 0 20px; 
+  margin: 40px auto 0px;
+  height: 100vh;
 }
 .text-content {
   margin: 40px auto;

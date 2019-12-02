@@ -297,7 +297,7 @@ export default class BrowseData extends Component {
       <div className="content overflow-auto">
         <div className="browse-data">
           <div className="row">
-            <div className="col-xs-3 input" style={{ width: "20%" }}>
+            <div className="col-xs-3 input card" style={{ width: "20%", padding: "0.5rem" }}>
               <form className="well">
                 <Select id="bd_electiontype_selector" label="Election Type" options={electionTypeOptions} selectedValue={electionType} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Pdf from '../Assets/Documents/TCPDLokDhabaCodebook.pdf';
 
 export default class Documentation extends Component {
   render() {
@@ -7,7 +8,7 @@ export default class Documentation extends Component {
         <div className="text-content">
 
           <h1>Documentation</h1>
-          <p>Please refer to the <a href="TCPDLokDhabaCodebook.pdf">Lok Dhaba Codebook</a> to understand the fields in this
+          <p>Please refer to the <a href={Pdf}>Lok Dhaba Codebook</a> to understand the fields in this
   dataset.</p>
           <h3>TCPD-IED: TCPD Indian Elections Dataset</h3>
           <p>If a variable(s) drawn from the TCDP-IED dataset plays an important role in your project (published or

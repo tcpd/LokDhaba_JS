@@ -8,7 +8,9 @@ export default class NavBar extends Component {
       <nav className="navbar navbar-expand-md" role="navigation">
         <a className="navbar-brand" href="/"><img height="100%" width="40px" src={require("../../Assets/Images/logo.png")} /></a>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
-          <span className="navbar-toggler-icon"></span>
+          <span style={{fontSize: "26px"}}>
+          &#9776;
+          </span>
         </button>
         <div className="collapse navbar-collapse" id="navbarContent">
           <ul className="navbar-nav ml-auto">

@@ -152,6 +152,7 @@ export default class BrowseData extends Component {
     this.setState({ stateAssemblies: assemblies });
     this.setState({ isDataDownloadable: false });
     this.updateURL({variable:"st",val:newValue});
+    
     //this.updateURL({variable:"an",val:""});
   }
 

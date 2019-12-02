@@ -84,7 +84,7 @@ export default class DataVisualization extends Component {
     if(pty !== ""){this.onPartyChange(pty);}
 
     var options = inputs.get("opt") || "";
-    if(options != ""){
+    if(options !== ""){
       var selected_options = options.replace(/%2C/g,",").split(",");
       this.state.vizOptionsSelected = new Set(selected_options);
       for(var an =0; an < selected_options.length;an++){

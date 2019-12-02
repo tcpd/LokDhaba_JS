@@ -22,6 +22,9 @@ import PartyPositionsMap from './Maps/PartyPositionsMap.js';
 import WinnerMap from './Maps/WinnerMap.js';
 import NotaTurnoutMap from './Maps/NotaTurnoutMap.js';
 import * as Constants from './Shared/Constants.js';
+import Popup from './Shared/Popup.js';
+import { CSVLink } from "react-csv";
+import { Button } from 'react-bootstrap';
 import $ from 'jquery';
 
 function getParams(location) {
@@ -56,7 +59,9 @@ export default class DataVisualization extends Component {
       showVisualization: false,
       vizOptionsSelected: new Set(),
       vizData: [],
-      mapData :[]
+      mapData :[],
+      isDataDownloadable: false,
+      showTermsAndConditionsPopup: false
     };
   }
 
@@ -102,28 +107,22 @@ export default class DataVisualization extends Component {
       this.fetchChartMapOptions(nextState);
     }
   }
+  onAcceptTermsAndConditions = (key, checked) => {
+    this.setState({ isDataDownloadable: checked });
+  }
 
-  // static getDerivedStateFromProps(props, state) {
-  //   // Any time the current user changes,
-  //   // Reset any parts of state that are tied to that user.
-  //   // In this simple example, that's just the email.
-  //
-  //   let inputs = getParams(props.location)
-  //   var et = inputs.get("Election_Type") || ""
-  //   var viz = inputs.get("viz") || ""
-  //   this.setState({electionType: et===""?"GE":et});
-  //   this.setState({visualization: viz});
-  //   var visualizationType = ChartsMapsCodes.filter(function (item) { return item.modulename === viz })[0].type;
-  //   this.setState({ visualizationType: visualizationType }, () => {
-  //     if (visualizationType === "Map") {
-  //       this.fetchMapYearOptions();
-  //     }
-  //   });
-  //
-  //
-  //
-  //
-  // }
+  CancelTermsAndConditionsPopup = () => {
+    this.setState({ isDataDownloadable: false });
+    this.setState({ showTermsAndConditionsPopup: false });
+  }
+
+  CloseTermsAndConditionsPopup = () => {
+    this.setState({ showTermsAndConditionsPopup: false });
+  }
+
+  showTermsAndConditionsPopup = () => {
+    this.setState({ showTermsAndConditionsPopup: true });
+  }
 
   onVisualizationChange = (newValue) => {
     this.setState({ year: "" });
@@ -424,10 +423,57 @@ export default class DataVisualization extends Component {
     var party = this.state.party;
     var partyOptions = this.state.partyOptions;
     var showVisualization = this.state.showVisualization;
+    var dataFilterOptions = this.state.vizOptionsSelected;
+    var csvData = this.state.vizData;
+    var isDataDownloadable = this.state.isDataDownloadable;
+    var showTermsAndConditionsPopup = this.state.showTermsAndConditionsPopup;
+
+
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${visualization}_${date}.csv`;
+    const modalBody = <div><p>Lok Dhaba is an online web interface provided by the Trivedi Centre for
+        Political Data. In these terms of use of the data provided by the Centre, 'Data'
+        includes all visualizations, texts, graphics and compilations of data and other
+        material presented within the application. The users are free to download,
+        display or include the data in other products for non-commercial purposes at no
+        cost subject to the following limitations:</p>
+      <ul>
+        <li>The user must include the citation for data they use in the manner indicated
+        through 'How to Cite' information mentioned on the top of this web page. The
+        user must not claim or imply that the Trivedi Centre for Political Data endorses
+        the user's use of the data or use of the Centre's logo(s) or trademarks(s) in
+        conjunction with the same.</li>
+        <li>The Centre makes no warranties with respect to the data and the user must
+        agree that the Centre shall not be held responsible or liable to the user for
+        any errors, omissions, misstatements and/or misrepresentations of the data
+        though the user is encouraged to report the same to us (following the procedure
+        elaborated upon within the 'Contact us' tab).</li>
+        <li>The Centre may record visits to Lok Dhaba without collecting the personal
+        information of the users. The records shall be used for statistical reports
+        only.</li>
+        <li>The user must agree that the use of Data presented within the application can
+        be seen as the acknowledgement of unconditionally accepting the Terms of Use
+        presented by the Centre.</li>
+      </ul>
+      <center><Checkbox id={"dd_accept_condition"} label={"I accept the terms and conditions mentioned here."} checked={this.state.isDataDownloadable} onChange={this.onAcceptTermsAndConditions} /></center>
+    </div>
+    var buttonClass = isDataDownloadable ? "btn-lg" : "btn-lg disabled";
+    const modalFooter = <div>
+      <Button className="btn-lg" variant="secondary" onClick={this.CancelTermsAndConditionsPopup}>
+        Cancel
+                        </Button>
+      <CSVLink className={buttonClass} data={csvData} filename={filename}>
+        <Button className={buttonClass} variant="primary" onClick={this.CloseTermsAndConditionsPopup}>
+          Download
+                          </Button>
+      </CSVLink>
+    </div>
 
     return (
       <div className="content overflow-auto">
-        <div className="data-vis row">
+        <div className="data-vis">
+        <div className="row">
         <div className="column" style={{width: "20%"}}>
               <form className="well">
                   <ul className="nav nav-tabs">
@@ -444,11 +490,14 @@ export default class DataVisualization extends Component {
                 {visualizationType === "Map" && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
                 {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "")) && this.createOptionsCheckboxes()}
+                {dataFilterOptions.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
           </div>
           <div className="vis column" style={{width: "80%", padding: "10px"}}>
             {showVisualization && this.renderVisualization()}
           </div>
+          </div>
+          {showTermsAndConditionsPopup && <Popup id="tems_and_conditions_popup" show={showTermsAndConditionsPopup} body={modalBody} heading={<p>Terms and Conditions</p>} footer={modalFooter} handleClose={this.CloseTermsAndConditionsPopup} />}
           </div>
       </div>
     )

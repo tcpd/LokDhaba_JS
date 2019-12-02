@@ -5,7 +5,6 @@ import 'leaflet/dist/leaflet.css';
 import WinnerLegends from './WinnerLegends';
 import ColPalette from '../../Assets/Data/PartyColourPalette.json';
 import PrintControlDefault from 'react-leaflet-easyprint';
-import AllConstituencyBoundaries from '../../Assets/Data/Maps/TCPD_India_all_ac_pc_constituencies.geojson'
 
 export default class WinnerMap extends React.Component {
 

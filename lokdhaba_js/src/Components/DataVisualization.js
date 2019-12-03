@@ -474,7 +474,7 @@ export default class DataVisualization extends Component {
       <div className="content overflow-auto">
         <div className="data-vis">
         <div className="row">
-        <div className="column" style={{width: "20%"}}>
+        <div className="column card" style={{width: "20%", padding: "0.5rem"}}>
               <form className="well">
                   <ul className="nav nav-tabs">
                     <li className="nav-item active">

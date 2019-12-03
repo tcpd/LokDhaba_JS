@@ -7,15 +7,27 @@ const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export default class PartyVoteShareChart extends Component {
   render() {
-    var vizData = this.props.data;
+    var vizData = this.props.data.sort(function(a, b){return a.Year - b.Year;});;
     var dataFilterOptions = this.props.dataFilterOptions;
     var stateName = this.props.stateName.replace(/_/g, " ");
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var data = [];
     var parties = new Set(vizData.map(x => x.Party));
+    var x_axis_labels = vizData.map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
+    x_axis_labels = [...new Set(x_axis_labels)];
     parties.forEach(function(party){
-      var y_contested = vizData.filter(x => x.Party === party).map(x => x.Vote_Share_Percentage);
-      var x_labels = vizData.filter(x => x.Party === party).map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
+      var party_data = vizData.filter(x => x.Party === party );
+      var y_vals = new Array(x_axis_labels.length).fill(NaN);
+      var y_contested = party_data.map(x => x.Vote_Share_Percentage);
+      var x_labels = party_data.map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
+
+      for(var i =0; i < x_axis_labels.length;i++){
+        var label = x_axis_labels[i];
+        var idx = x_labels.findIndex(function(x){return x=== label})
+        if(idx !== -1){
+          y_vals[i] = y_contested[idx]
+        }
+      }
 
       var party_color = "#808080"
 
@@ -31,8 +43,8 @@ export default class PartyVoteShareChart extends Component {
       var trace = {
                     type: 'scatter',
                     mode: 'lines+markers',
-                    x: x_labels,
-                    y: y_contested,
+                    x: x_axis_labels,
+                    y: y_vals,
                     name: party,
                     line: {
                       color: party_color,
@@ -48,7 +60,8 @@ export default class PartyVoteShareChart extends Component {
     let layout = {
       title: title,
       xaxis: {
-        title: 'Year(Assembly Number)'
+        title: 'Year(Assembly Number)',
+        tickvals : x_axis_labels
       },
       yaxis:{
         title: 'Vote share %',

@@ -12,9 +12,21 @@ export default class PartyStrikeRateChart extends Component {
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
     var data = [];
     var parties = new Set(vizData.map(x => x.Party));
+    var x_axis_labels = vizData.map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
+    x_axis_labels = [...new Set(x_axis_labels)];
     parties.forEach(function(party){
       var y_contested = vizData.filter(x => x.Party === party).map(x => x.Strike_Rate);
       var x_labels = vizData.filter(x => x.Party === party).map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
+      var y_vals = new Array(x_axis_labels.length).fill(NaN);
+      for(var i =0; i < x_axis_labels.length;i++){
+        var label = x_axis_labels[i];
+        var idx = x_labels.findIndex(function(x){return x=== label})
+        if(idx !== -1){
+          y_vals[i] = y_contested[idx]
+        }
+      }
+
+
       var party_color = "#808080"
 
       for (var i = 0; i < ColPalette.length; i++) {
@@ -28,8 +40,8 @@ export default class PartyStrikeRateChart extends Component {
       var trace = {
                     type: 'scatter',
                     mode: 'lines+markers',
-                    x: x_labels,
-                    y: y_contested,
+                    x: x_axis_labels,
+                    y: y_vals,
                     name: party,
                     line: {
                       color: party_color,

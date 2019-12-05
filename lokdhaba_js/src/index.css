@@ -33,6 +33,7 @@ body {
   color: #B83027 !important;
 }
 button {
+  border-color: white !important;
   background-color: #B83027 !important;
   color: white !important;
 }

@@ -187,10 +187,6 @@ export default class VoterTurnoutMap extends React.Component {
              dragging={true}
              animate={true}
              easeLinearity={0.35}>
-//             <TileLayer
-//               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-//               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-//             />
           {leaflet}
           <VoterTurnoutLegends Legend = {sortedLegend}/>
           <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />

@@ -24,7 +24,7 @@ export default class WinnerGenderMap extends React.Component {
                     weight: 1,
                     opacity: 1,
                     color: 'black',
-                    fillOpacity: 0.7};
+                    fillOpacity: 1};
        if(dataFilterOptions.has(constituency.properties.Sex)){
          switch(constituency.properties.Sex){
            case "Male":
@@ -32,21 +32,21 @@ export default class WinnerGenderMap extends React.Component {
                       weight: 1,
                       opacity: 1,
                       color: 'black',
-                      fillOpacity: 0.7};
+                      fillOpacity: 1};
              break;
            case "Female":
              style = {fillColor: '#A6CEE3',
                       weight: 1,
                       opacity: 1,
                       color: 'black',
-                      fillOpacity: 0.7};
+                      fillOpacity: 1};
              break;
            case "Others":
              style = {fillColor: '#B2DF8A',
                       weight: 1,
                       opacity: 1,
                       color: 'black',
-                      fillOpacity: 0.7};
+                      fillOpacity: 1};
              break;
           defualt:
              break;
@@ -125,10 +125,10 @@ export default class WinnerGenderMap extends React.Component {
              dragging={true}
              animate={true}
              easeLinearity={0.35}>
-             <TileLayer
-               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-             />
+//             <TileLayer
+//               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+//               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//             />
           {leaflet}
           <WinnerGenderLegends Legend= {sortedLegend}/>
           <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />

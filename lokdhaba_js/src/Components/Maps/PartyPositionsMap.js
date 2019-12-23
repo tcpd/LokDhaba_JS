@@ -24,7 +24,7 @@ export default class PartyPositionsMap extends React.Component {
       weight: 1,
       opacity: 1,
       color: 'black',
-      fillOpacity: 0.7};
+      fillOpacity: 1};
       var val = constituency.properties.Position;
       switch(true){
         case (!val):
@@ -34,28 +34,28 @@ export default class PartyPositionsMap extends React.Component {
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val===2 && dataFilterOptions.has("2")):
           style = {fillColor: '#74a9cf',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val ===3 && dataFilterOptions.has("3")):
           style = {fillColor: '#bdc9e1',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val >3 && dataFilterOptions.has(">3")):
           style = {fillColor: '#f1eef6',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
 
         default:
@@ -141,10 +141,10 @@ export default class PartyPositionsMap extends React.Component {
              dragging={true}
              animate={true}
              easeLinearity={0.35}>
-             <TileLayer
-               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-             />
+//             <TileLayer
+//               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+//               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//             />
           {leaflet}
           <PartyPositionsLegends Legend = {sortedLegend}/>
           <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />

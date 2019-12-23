@@ -28,7 +28,7 @@ export default class NotaTurnoutMap extends React.Component {
       weight: 1,
       opacity: 1,
       color: 'black',
-      fillOpacity: 0.7};
+      fillOpacity: 1};
       var val = constituency.properties.Nota_Percentage;
       switch(true){
         case (!val):
@@ -38,28 +38,28 @@ export default class NotaTurnoutMap extends React.Component {
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val>=3 && val<=5 && dataFilterOptions.has("3%-5%")):
           style = {fillColor: '#74a9cf',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val >=1 && val<3 && dataFilterOptions.has("1%-3%")):
           style = {fillColor: '#bdc9e1',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val <1 && dataFilterOptions.has("<1%")):
           style = {fillColor: '#f1eef6',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         default:
           break;
@@ -145,10 +145,10 @@ export default class NotaTurnoutMap extends React.Component {
              dragging={true}
              animate={true}
              easeLinearity={0.35}>
-             <TileLayer
-               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-             />
+//             <TileLayer
+//               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+//               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//             />
           {leaflet}
           <NotaTurnoutLegends Legend= {sortedLegend}/>
           <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />

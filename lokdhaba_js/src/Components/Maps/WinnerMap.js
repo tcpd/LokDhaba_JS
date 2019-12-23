@@ -40,7 +40,7 @@ export default class WinnerMap extends React.Component {
       weight: 1,
       opacity: 0.3,
       color: 'black',
-      fillOpacity: 0.7};
+      fillOpacity: 1};
 
 
       return (
@@ -117,10 +117,10 @@ export default class WinnerMap extends React.Component {
       dragging={true}
       animate={true}
       easeLinearity={0.35}>
-      <TileLayer
-      attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+//      <TileLayer
+//      attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+//      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//      />
       {leaflet}
       <WinnerLegends Legend = {sortedLegend}/>
 

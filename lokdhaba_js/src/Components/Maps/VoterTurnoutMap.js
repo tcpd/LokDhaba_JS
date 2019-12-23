@@ -25,7 +25,7 @@ export default class VoterTurnoutMap extends React.Component {
       weight: 1,
       opacity: 1,
       color: 'black',
-      fillOpacity: 0.7};
+      fillOpacity: 1};
       var val = constituency.properties.Turnout_Percentage;
       switch(true){
         case (!val):
@@ -35,63 +35,63 @@ export default class VoterTurnoutMap extends React.Component {
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val>=90 && val<95 && dataFilterOptions.has("90%-95%")):
           style = {fillColor: '#08519c',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val >=85 && val<90 && dataFilterOptions.has("85%-90%")):
           style = {fillColor: '#2171b5',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val >=80 && val<85 && dataFilterOptions.has("80%-85%")):
           style = {fillColor: '#4292c6',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val >=75 && val<80 && dataFilterOptions.has("75%-80%")):
           style = {fillColor: '#6baed6',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val >=70 && val<75 && dataFilterOptions.has("70%-75%")):
           style = {fillColor: '#9ecae1',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val >=60 && val<70 && dataFilterOptions.has("60%-70%")):
           style = {fillColor: '#c6dbef',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val >=50 && val<60 && dataFilterOptions.has("50%-60%")):
           style = {fillColor: '#deebf7',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         case (val <50 && dataFilterOptions.has("<50%")):
           style = {fillColor: '#f7fbff',
           weight: 1,
           opacity: 1,
           color: 'black',
-          fillOpacity: 0.7};
+          fillOpacity: 1};
           break;
         default:
           break;
@@ -187,10 +187,10 @@ export default class VoterTurnoutMap extends React.Component {
              dragging={true}
              animate={true}
              easeLinearity={0.35}>
-             <TileLayer
-               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-             />
+//             <TileLayer
+//               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+//               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//             />
           {leaflet}
           <VoterTurnoutLegends Legend = {sortedLegend}/>
           <PrintControl ref={(ref) => { this.printControl = ref; }} position="topleft" sizeModes={['Current', 'A4Portrait', 'A4Landscape']} hideControlContainer={false} />

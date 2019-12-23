@@ -36,6 +36,7 @@ export default class Documentation extends Component {
           <h3>Publications</h3>
           <p>Please notify us about any publications that result from the use of any of our datasets (TCDP-IED and TCPD-IID) by sending your bibliographic citation and information on your publication to tcpd-contact@ashoka.edu.in
 </p>
+          <p>If you are a news agency citing our data in your publication, kindly mention that the data was sourced from the Trivedi Centre for Political Data. You can also point to our website in your web articles: http://lokdhaba.ashoka.edu.in/ </p>
 
         </div>
       </div>

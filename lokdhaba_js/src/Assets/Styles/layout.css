@@ -39,6 +39,7 @@ a.disabled, .btn.disabled {
 .leaflet-container {
   height: 100vh;
   width: 100%;
+  background-color: transparent !important;
 }
 .bar-icon {
   width: 35px;

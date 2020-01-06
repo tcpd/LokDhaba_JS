@@ -16,13 +16,17 @@ export default class PartySeatShareChart extends Component {
     x_axis_labels = [...new Set(x_axis_labels)];
     parties.forEach(function(party){
       var y_contested = vizData.filter(x => x.Party === party).map(x => x.Seats);
+      var y_seats = vizData.filter(x => x.Party === party).map(x => x.partyseats);
+      var total_seats = vizData.filter(x => x.Party === party).map(x => x.totalseats);
       var x_labels = vizData.filter(x => x.Party === party).map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
       var y_vals = new Array(x_axis_labels.length).fill(NaN);
+      var y_text = new Array(x_axis_labels.length).fill(NaN);
       for(var i =0; i < x_axis_labels.length;i++){
         var label = x_axis_labels[i];
         var idx = x_labels.findIndex(function(x){return x=== label})
         if(idx !== -1){
           y_vals[i] = y_contested[idx]
+          y_text[i] = y_seats[idx]+"/"+total_seats[idx]+" Seats"
         }
       }
 
@@ -42,6 +46,7 @@ export default class PartySeatShareChart extends Component {
                     x: x_axis_labels,
                     y: y_vals,
                     name: party,
+                    text: y_text,
                     line: {
                       color: party_color,
                       width: 1

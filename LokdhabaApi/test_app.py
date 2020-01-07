@@ -285,7 +285,13 @@ def get_select_options():
                 for (row,) in records:
                     options.append(row)
                 options.sort()
-                return (jsonify({'data': options}))
+                sql_parameterized_selected_query = sql_parameterized_data_query + " where position < 3"
+                cursor.execute(sql_parameterized_selected_query,tuple(query_input))
+                selected_records = cursor.fetchall()
+                selected_options = []
+                for (row,) in selected_records:
+                    selected_options.append(row)
+                return (jsonify({'data': options, 'selected':selected_options}))
         if type == "Map":
             a_no = req.get('AssemblyNo')
             # assembly = year[year.find("(")+1:year.find(")")]

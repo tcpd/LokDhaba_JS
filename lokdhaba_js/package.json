@@ -11,6 +11,8 @@
     "jquery": "^3.4.1",
     "leaflet": "^1.5.1",
     "plotly.js": "^1.49.4",
+    "popper.js": "^1.16.0",
+    "rc-tooltip": "^4.0.0-alpha.3",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.0-beta.14",
     "react-csv": "^1.1.1",
@@ -18,11 +20,14 @@
     "react-leaflet": "^2.4.0",
     "react-leaflet-easyprint": "^2.0.0",
     "react-plotlyjs": "^0.4.4",
+    "react-render-html": "^0.6.0",
     "react-router": "^5.1.2",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
-    "react-table": "^6.10.0"
+    "react-table": "^6.10.0",
+    "react-tooltip": "^3.11.2",
+    "typescript": "^3.7.4"
   },
   "scripts": {
     "start": "react-scripts start",

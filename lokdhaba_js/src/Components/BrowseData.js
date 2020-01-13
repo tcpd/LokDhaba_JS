@@ -10,6 +10,7 @@ import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json';
 import LokSabhaNumber from '../Assets/Data/LokSabhaNumber.json'
 import { Button } from 'react-bootstrap';
 import '../Assets/Styles/table.css'
+import ReactTooltip from 'react-tooltip'
 
 function compareValues(key, order = 'asc') {
   return function innerSort(a, b) {

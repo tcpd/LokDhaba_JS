@@ -3,13 +3,17 @@ Holds any constants used across the project
 */
 
 import React from 'react';
+import ReactTooltip from 'react-tooltip'
+import Tooltip from 'rc-tooltip'
 
-export const baseUrl = "http://127.0.0.1:15000";
+export const baseUrl = "http://lokdhaba.ashoka.edu.in:15000";
 
 export const tableColumns = [
     {
+      minWidth: 160,
       Header: "State",
-      accessor: "State_Name"
+      accessor: "State_Name",
+      Cell: row => <span text-overflow="ellipsis" data-tip={row.value}>{row.value} <ReactTooltip place="left" type="dark" effect="solid"/></span>
     },
     {
       Header: "Year",
@@ -19,7 +23,8 @@ export const tableColumns = [
     {
       minWidth: 160,
       Header: "Candidate",
-      accessor: "Candidate"
+      accessor: "Candidate",
+      Cell: row => <span text-overflow="ellipsis" data-tip={row.value}>{row.value} <ReactTooltip place="left" type="dark" effect="solid"/></span>
     },
     {
       Header: "Sex",
@@ -32,7 +37,8 @@ export const tableColumns = [
     {
       minWidth: 160,
       Header: "Constituency Name",
-      accessor: "Constituency_Name"
+      accessor: "Constituency_Name",
+      Cell: row => <span text-overflow="ellipsis" data-tip={row.value}>{row.value} <ReactTooltip place="left" type="dark" effect="solid"/></span>    
     },
     {
       Header: "Position",

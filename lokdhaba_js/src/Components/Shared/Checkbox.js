@@ -32,10 +32,11 @@ export default class Checkbox extends Component {
    var label = this.props.label;
    var id = this.props.id;
    var isChecked = this.props.checked ? this.props.checked : this.state.checked;
+   var title = this.props.title;
     return (
       <div className="form-group">
         <input type="checkbox"  id={id} key={id} checked={isChecked} onChange={this.handleCheckboxChange}/>
-        <label className="control-label" key={id + "_label"} htmlFor={id}>{label}</label>
+        <label className="control-label" key={id + "_label"} title = {title} htmlFor={id}>{label}</label>
       </div>
     )
   }

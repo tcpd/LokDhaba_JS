@@ -85,7 +85,8 @@ export default class DataVisualization extends Component {
       vizData: [],
       mapData :[],
       isDataDownloadable: false,
-      showTermsAndConditionsPopup: false
+      showTermsAndConditionsPopup: false,
+      vizOptionsNames : {}
     };
   }
 
@@ -309,7 +310,9 @@ export default class DataVisualization extends Component {
         AssemblyNo: assemblyNo
       })
     }).then(response => response.json()).then(resp => {
+
       this.setState({ chartMapOptions: resp.data });
+      this.setState({ vizOptionsNames : resp.names});
       var checked = ChartsMapsCodes.filter(function (item) { return item.modulename === visualization })[0].alloptionschecked;
       if (checked) {
         this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) }, () => {
@@ -319,6 +322,18 @@ export default class DataVisualization extends Component {
           }
         });
       }
+      var selectedOptions = resp.selected;
+      if(typeof selectedOptions != "undefined" && selectedOptions != null && selectedOptions.length != null && selectedOptions.length > 0){
+        this.setState({ vizOptionsSelected: new Set(selectedOptions.map(x => x.replace(/_/g, ""))) }, () => {
+          this.fetchVisualizationData();
+          if(visualizationType==="Map"){
+            this.fetchMapData();
+          }
+        });
+
+        this.setState({ showVisualization: true });
+      }
+
     });
   }
 
@@ -352,9 +367,14 @@ export default class DataVisualization extends Component {
     var vizOptionsSelected = scope.state.vizOptionsSelected;
     var label = ChartsMapsCodes.filter(function (item) { return item.modulename === scope.state.visualization })[0].optionslabel;
     var chartMapOptions = scope.state.chartMapOptions;
+    var optionNames = scope.state.vizOptionsNames;
     chartMapOptions.forEach(function (item) {
       var checked = vizOptionsSelected.has(item.replace(/_/g, ""));
-      checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item.replace(/_/g, "")} checked={checked} key={item.replace(/_/g, "")} label={item.replace(/_/g, " ")} onChange={scope.chartMapOptionChecked} />)
+      var name = ""
+      if(typeof optionNames === "object"){
+        name = optionNames[item]
+      }
+      checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item.replace(/_/g, "")} checked={checked} key={item.replace(/_/g, "")} title={name} label={item.replace(/_/g, " ")} onChange={scope.chartMapOptionChecked} />)
     });
     if (checkboxes.length > 0) {
       return <div>
@@ -378,8 +398,9 @@ export default class DataVisualization extends Component {
       case "partiesPresentedChart":
         return <PartiesPresentedChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
       case "tvoteShareChart":
+        return <PartyVoteShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} total='true'/>;
       case "cvoteShareChart":
-        return <PartyVoteShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
+        return <PartyVoteShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} total ='false'/>;
       case "seatShareChart":
         return <PartySeatShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
       case "strikeRateChart":

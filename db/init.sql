@@ -1,4 +1,4 @@
-ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '<root password>';
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
 SHOW GLOBAL VARIABLES LIKE 'local_infile';
 CREATE DATABASE tcpd_data;
 USE tcpd_data;
@@ -32,17 +32,17 @@ CREATE table if not exists `mastersheet` (
 	`pid` varchar(255),
 	`Party_Type_TCPD` varchar(255),
 	`Party_ID` INT,
-	`last_poll` BIT,
+	`last_poll` varchar(10),
 	`Contested` INT,
 	`Last_Party` varchar(255),
 	`Last_Party_ID` INT,
 	`Last_Constituency_Name` varchar(255),
-	`Same_Constituency` BIT,
-	`Same_Party` BIT,
+	`Same_Constituency` varchar(10),
+	`Same_Party` varchar(10),
 	`No_Terms` INT,
-	`Turncoat` BIT,
-	`Incumbent` BIT,
-	`Recontest` BIT,
+	`Turncoat` varchar(10),
+	`Incumbent` varchar(10),
+	`Recontest` varchar(10),
 	`Age` INT,
 	`District_Name` varchar(255),
 	PRIMARY KEY (`Election_Type`,`State_Name`, `Assembly_No`,`Constituency_No`,`Poll_No`,`Position`)
@@ -106,6 +106,26 @@ create table `partys` (
 	`Candidate` varchar(255) NOT NULL,
 	PRIMARY KEY (`Election_Type`, `State_Name`,`Assembly_No`,`Constituency_No`,`Position`)
 );
+create table party_statistics (
+	Election_Type varchar(2) NOT NULL,
+	State_Name varchar(50) NOT NULL,
+	Assembly_No INT NOT NULL,
+	Year INT NOT NULL,
+	Party varchar(50) NOT NULL,
+        Total_Seats_in_Assembly INT NOT NULL,
+        Total_Votes_in_Assembly INT NOT NULL,
+        Total_Votes_in_Contested_Seats INT NOT NULL,
+	Total_Candidates INT ,
+	Winners INT NOT NULL,
+	Deposit_Lost INT,
+	Strike_Rate Numeric(4,2),
+	Seat_Share Numeric(4,2),
+	Vote_Share_in_Assembly Numeric(4,2),
+	Vote_Share_in_Contested_Seats Numeric(4,2),
+	position INT,
+	Expanded_Party_Name varchar(50),
+	PRIMARY KEY (Election_Type, State_Name,Assembly_No,Party)
+);
 create table partysummary (
 	Election_Type varchar(2) NOT NULL,
 	State_Name varchar(50) NOT NULL,
@@ -117,6 +137,7 @@ create table partysummary (
 	Deposit_Lost INT,
 	Avg_Winning_Margin Numeric(4,2),
 	Strike_Rate Numeric(4,2),
+	position INT,
 	PRIMARY KEY (Election_Type, State_Name,Assembly_No,Party)
 );
 create table seatshares (
@@ -152,6 +173,7 @@ create table voteshares_total (
 	Year INT NOT NULL,
 	Party varchar(50) NOT NULL,
 	Vote_Share_Percentage Numeric(4,2),
+	position INT,
 	PRIMARY KEY (Election_Type, State_Name,Assembly_No,Party)
 );
 
@@ -174,7 +196,8 @@ create table voter_turnout (
 	PRIMARY KEY (Election_Type, State_Name, Assembly_No)
 );
 
-CREATE USER '<mysql ld user>'@'%' IDENTIFIED WITH mysql_native_password BY '<mysql ld password>';
+
+CREATE USER 'ld_api'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
 
 GRANT SELECT on *.* to 'ld_api'@'%';
 FLUSH PRIVILEGES;

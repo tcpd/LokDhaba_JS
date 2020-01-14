@@ -41,10 +41,10 @@ def connectdb(config):
 def module_to_table(argument):
     switcher = {
         "voterTurnoutChart": "voter_turnout",
-        "cvoteShareChart": "voteshares_cont",
-        "tvoteShareChart": "voteshares_total",
-        "seatShareChart": "seatshares",
-        "strikeRateChart": "partysummary",
+        "cvoteShareChart": "party_statistics",
+        "tvoteShareChart": "party_statistics",
+        "seatShareChart": "party_statistics",
+        "strikeRateChart": "party_statistics",
         "partiesPresentedChart": "parties_contests",
         "contestedDepositSavedChart": "contested_deposit_losts",
         "winnerCasteMap": "maps",
@@ -269,14 +269,16 @@ def get_select_options():
                 cursor = connection.cursor(prepared=True)
                 query_input = list()
                 get_table = "Select distinct Party from " + tableName
+                get_count = "Select count(distinct Party) as count from " + tableName
+                get_full_names = "Select distinct Party,Expanded_Party_Name from " + tableName
                 # query_input.append(tableName)
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
                 get_state = ""
-                if (electionType == "AE"):
+                if electionType == "AE":
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
-                sql_parameterized_data_query = get_table + get_election + get_state
+                sql_parameterized_data_query = get_table + get_election + get_state + " and position < 10" #+" order by Party"
                 print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
                 cursor.execute(sql_parameterized_data_query, tuple(query_input))
                 records = cursor.fetchall()
@@ -285,13 +287,37 @@ def get_select_options():
                 for (row,) in records:
                     options.append(row)
                 options.sort()
-                sql_parameterized_selected_query = sql_parameterized_data_query + " where position < 3"
+                #sorted_parties = sorted(options, key = lambda i: i['Party'])
+                sql_parameterized_selected_query = sql_parameterized_data_query + " and position < 3"
+                print("Selected Query : ", sql_parameterized_selected_query, "\n query_input :", query_input)
                 cursor.execute(sql_parameterized_selected_query,tuple(query_input))
                 selected_records = cursor.fetchall()
                 selected_options = []
                 for (row,) in selected_records:
                     selected_options.append(row)
-                return (jsonify({'data': options, 'selected':selected_options}))
+
+                sql_parameterized_count_query = get_count + get_election + get_state
+                print("Count Query : ", sql_parameterized_count_query, "\n query_input :", query_input)
+                cursor.execute(sql_parameterized_count_query, tuple(query_input))
+                tr = [x[0] for x in cursor.fetchall()]
+                total_parties = tr[0] 
+
+                selected_count_query = get_count + get_election + get_state + " and position < 10"
+                print("selected Count Query : ", selected_count_query, "\n query_input :", query_input)
+                cursor.execute(selected_count_query,tuple(query_input))
+                tr = [x[0] for x in cursor.fetchall()]
+                shown_parties = tr[0]
+
+                party_names_query = get_full_names + get_election + get_state + " and position <10"
+                cursor.execute(party_names_query, tuple(query_input))
+                party_names = cursor.fetchall()
+                full_party_names = {}
+                for (name, full_name) in party_names:
+                    print(name)
+                    print(full_name)
+                    full_party_names.update({name: full_name})
+                return jsonify({'data': options, 'selected': selected_options, 'total_parties': total_parties, 'parties_displayed': shown_parties, 'names': full_party_names})
+
         if type == "Map":
             a_no = req.get('AssemblyNo')
             # assembly = year[year.find("(")+1:year.find(")")]

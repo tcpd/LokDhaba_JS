@@ -11,6 +11,7 @@ export default class PartyVoteShareChart extends Component {
     var dataFilterOptions = this.props.dataFilterOptions;
     var stateName = this.props.stateName.replace(/_/g, " ");
     var electionType = this.props.electionType === "GE" ? "Lok Sabha" : "Vidhan Sabha";
+    var getTotal = this.props.total==="true"?true : false;
     var data = [];
     var parties = new Set(vizData.map(x => x.Party));
     var x_axis_labels = vizData.map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
@@ -18,7 +19,12 @@ export default class PartyVoteShareChart extends Component {
     parties.forEach(function(party){
       var party_data = vizData.filter(x => x.Party === party );
       var y_vals = new Array(x_axis_labels.length).fill(NaN);
-      var y_contested = party_data.map(x => x.Vote_Share_Percentage);
+      if(getTotal){
+        var y_contested = party_data.map(x => x.Vote_Share_in_Assembly);
+      }else{
+        var y_contested = party_data.map(x => x.Vote_Share_in_Contested_Seats);
+      }
+
       var x_labels = party_data.map(function(item){return item.Year +" (#" + item.Assembly_No + ")"});
 
       for(var i =0; i < x_axis_labels.length;i++){
@@ -53,9 +59,10 @@ export default class PartyVoteShareChart extends Component {
                   }
       data.push(trace);
     });
-    var title = `Party wise voteshare in seats contested across years in ${electionType}`;
+    var tmp = getTotal ? "all seats" : "seats contested";
+    var title = `Party wise voteshare in ${tmp} across years in ${electionType}`;
     if(stateName !== ""){
-      title = `Party wise voteshare in seats contested across years in ${stateName} ${electionType}`
+      title = `Party wise voteshare in ${tmp} across years in ${stateName} ${electionType}`
     }
     let layout = {
       title: title,

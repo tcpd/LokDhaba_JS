@@ -71,9 +71,9 @@ export default class BrowseData extends Component {
   }
 
   componentDidMount() {
-    var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
+    var GE_States = StateCodes.map(function (item) { return { value: item.State_Name.replace(/_/g, " "), label: item.State_Name.replace(/_/g, " ") } });
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
-    var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
+    var AE_States = unique_AE_States.map(function (item) { return { value: item.replace(/_/g, " "), label: item.replace(/_/g, " ") } });
     this.state.GE_States = GE_States;
     this.state.AE_States = AE_States;
     //this.setState({'GE_States': GE_States, 'AE_States': AE_States });
@@ -159,7 +159,7 @@ export default class BrowseData extends Component {
     this.setState({ stateName: newValue });
     let assemblies;
     if (this.state.electionType === "AE") {
-      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name === newValue });
+      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name.replace(/_/g, " ") === newValue });
     } else if (this.state.electionType === "GE") {
       if (newValue === "all") {
         assemblies = [...new Set(LokSabhaNumber.map(s => s.Assembly_No))]
@@ -170,7 +170,7 @@ export default class BrowseData extends Component {
             };
           });
       } else {
-        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name === newValue });
+        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name.replace(/_/g, " ") === newValue });
       }
     }
     this.setState({ stateAssemblies: assemblies });

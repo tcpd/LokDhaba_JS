@@ -72,6 +72,9 @@ getTdProps = (state, rowInfo, column, instance) => {
                      minRows={1}
                      className="-striped -highlight"
                      getTdProps= {this.getTdProps}
+                     style={{
+                        height: "600px" // This will force the table body to overflow and scroll, since there is not enough room
+                      }}
                      />
     );
   }

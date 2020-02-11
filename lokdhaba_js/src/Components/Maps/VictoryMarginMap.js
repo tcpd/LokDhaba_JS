@@ -4,6 +4,8 @@ import '../../Assets/Styles/layout.css';
 import 'leaflet/dist/leaflet.css';
 import VictoryMarginLegends from './VictoryMarginLegends';
 import PrintControlDefault from 'react-leaflet-easyprint';
+import StateCentroids from '../../Assets/Data/StateCentroids.json';
+
 
 export default class VictoryMarginMap extends React.Component {
 
@@ -123,6 +125,11 @@ export default class VictoryMarginMap extends React.Component {
     extendGeoJSON( shape, data, joinMap);
 
     var leaflet = this.renderConstituencies(shape, dataFilterOptions);
+    var st = state !==""?state:"Lok_Sabha";
+    var centerX = StateCentroids.filter(function (item) { return item.State_Name === st })[0].Y;
+    var centerY = StateCentroids.filter(function (item) { return item.State_Name === st })[0].X;
+    var zoom = electionType === "Lok Sabha" ? 5 : 8;
+
 
 
     return (
@@ -132,9 +139,9 @@ export default class VictoryMarginMap extends React.Component {
          {`Constituency wise victory margin percentages for ${electionType} in Assembly #${assemblyNo}`}
        </label>
        </div>
-        <Map center={[20.5937, 78.9629]}
-             zoom={5}
-             maxZoom={13}
+        <Map center={[centerX,centerY]}
+             zoom={zoom}
+             maxZoom={zoom+8}
              attributionControl={true}
              zoomControl={true}
              doubleClickZoom={true}

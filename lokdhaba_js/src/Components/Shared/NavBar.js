@@ -15,10 +15,10 @@ export default class NavBar extends Component {
         <div className="collapse navbar-collapse" id="navbarContent">
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">
-              <a className="nav-link" href="/data-vis">Data Visualization</a>
+              <a className="nav-link" href="/data-vis?et=GE">Data Visualization</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/browse-data">Browse/Download Data</a>
+              <a className="nav-link" href="/browse-data?et=GE">Browse/Download Data</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="https://lokdhaba.ashoka.edu.in/incumbency/GE.html">Incumbency Profile</a>

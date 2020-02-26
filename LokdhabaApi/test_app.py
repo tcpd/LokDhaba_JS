@@ -275,7 +275,7 @@ def get_select_options():
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
                 get_state = ""
-                if electionType == "AE":
+                if stateName is not None:
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
                 sql_parameterized_data_query = get_table + get_election + get_state + " and position < 10" #+" order by Party"
@@ -333,7 +333,7 @@ def get_select_options():
                 get_assembly = " and Assembly_No = %s"
                 query_input.append(a_no)
                 get_state = ""
-                if electionType == "AE":
+                if stateName != "Lok_Sabha":
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
                 sql_parameterized_data_query = get_table + get_election + get_assembly + get_state
@@ -378,7 +378,7 @@ def get_year_options():
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
                 get_state = ""
-                if electionType == "AE":
+                if stateName != "Lok_Sabha":
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
                 sql_parameterized_data_query = get_table + get_election + get_state + " and Year >2007"
@@ -426,7 +426,7 @@ def get_party_options():
                 get_assembly = " and Assembly_No = %s"
                 query_input.append(a_no)
                 get_state = ""
-                if (electionType == "AE"):
+                if (stateName != "Lok_Sabha"):
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
                 sql_parameterized_data_query = get_table + get_election + get_assembly + get_state
@@ -470,9 +470,13 @@ def get_viz_data():
             get_election = " where Election_Type = %s"
             query_input.append(electionType)
             get_state = ""
-            if electionType == "AE":
+            if type == "Chart":
                 get_state = " and State_Name = %s"
                 query_input.append(stateName)
+            else :
+                if stateName !="Lok_Sabha":
+                    get_state = " and State_Name = %s"
+                    query_input.append(stateName)
             get_party = ""
             if module in ["cvoteShareChart", "seatShareChart", "tvoteShareChart", "strikeRateChart"]:
                 parties = req.get('Legends')

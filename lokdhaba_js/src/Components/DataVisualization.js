@@ -72,6 +72,7 @@ export default class DataVisualization extends Component {
       electionType: et===""?"GE":et,
       stateName: "",
       AE_States: [],
+      GE_States: [],
       visualization: "",
       visualizationType: "",
       visualizationOptions: [],
@@ -86,7 +87,8 @@ export default class DataVisualization extends Component {
       mapData :[],
       isDataDownloadable: false,
       showTermsAndConditionsPopup: false,
-      vizOptionsNames : {}
+      vizOptionsNames : {},
+      stateOptions :[]
     };
   }
 
@@ -101,9 +103,32 @@ export default class DataVisualization extends Component {
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
     var visualizationOptions = [{ value: "", label: "Chart/Map" }].concat(ChartsMapsCodes.map(function (item) { return { value: item.modulename, label: item.title } }));
     var AE_States = [{ value: "", label: "Select State" }].concat(unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } }));
-    this.setState({ AE_States: AE_States, visualizationOptions: visualizationOptions });
+
+    var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
+    this.state.GE_States = GE_States;
+    this.state.AE_States = AE_States;
+    this.state.visualizationOptions = visualizationOptions;
+    //this.setState({ AE_States: AE_States, visualizationOptions: visualizationOptions, GE_States : GE_States });
 
     let inputs = getParams(this.props.location);
+    var et = inputs.get("et") || "";
+    if(et !== ""){
+      var elem = $("a.nav-link[id=et"+et+"]");
+      // var e.target = elem[0];
+      // this.onElectionTypeChange(e);
+      var evt = new MouseEvent('click'); // If cancelled, don't dispatch our event
+      evt.initEvent('click', true, true);
+      elem[0].addEventListener('click',this.onElectionTypeChange,false);
+      elem[0].target = elem[0];
+      elem[0].dispatchEvent(evt);
+      // var event = document.createEvent('Event');
+      // event.initEvent('click', true, true);
+      // var elem = $(document).ready(function(){$("a.nav-link[name="+et+"]")});
+      // elem[0].addEventListener('click',this.onElectionTypeChange,false);
+      // elem[0].dispatchEvent(event);
+      //$(document).ready(function(){$("a.nav-link[name="+et+"]").click()});
+      //this.onElectionTypeChange(evt);
+    }
     var st = inputs.get("st") || "";
     if(st !== "" ){this.onStateNameChange(st);}
     var viz = inputs.get("viz") || "";
@@ -184,6 +209,13 @@ export default class DataVisualization extends Component {
     var activeItem = $("li.nav-item.active");
     activeItem.removeClass("active");
     $(e.target).parent().addClass("active");
+    let stateOptions;
+    if (newValue === "GE") {
+      stateOptions = [{ value: "", label: "Select State" }, { value: "Lok_Sabha", label: "All" }].concat(this.state.GE_States);
+    } else if (newValue === "AE") {
+      stateOptions = [{ value: "", label: "Select State" }].concat(this.state.AE_States);
+    }
+    this.setState({ stateOptions: stateOptions });
     this.setState({ electionType: newValue });
     this.updateURL({variable:"et",val:newValue});
   }
@@ -233,7 +265,12 @@ export default class DataVisualization extends Component {
       fetch(url, {
         method: "GET"
         }).then(response => response.json()).then(resp => {
-          var map = resp.features;
+          if(electionType === "GE" && stateName !== "Lok_Sabha"){
+            var map = resp.features.filter(function(item){return item.properties.State_Name=== stateName});
+          }else{
+            var map = resp.features;
+          }
+
           this.setState({ mapData: map });
           setTimeout(() => resolve(map), 500);
         });
@@ -458,7 +495,7 @@ export default class DataVisualization extends Component {
 
   render() {
     var electionType = this.state.electionType;
-    var stateOptions = this.state.AE_States;
+    var stateOptions = this.state.stateOptions;
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var visualizationOptions = this.state.visualizationOptions;
@@ -522,16 +559,16 @@ export default class DataVisualization extends Component {
         <div className="column card" style={{width: "20%", padding: "0.5rem"}}>
               <form className="well">
                   <ul className="nav nav-tabs">
-                    <li className="nav-item active">
-                      <a className="nav-link" name={"GE"} onClick={this.onElectionTypeChange}>Lok Sabha</a>
+                    <li className="nav-item active" >
+                      <a className="nav-link" id= {"etGE"} name={"GE"} onClick={this.onElectionTypeChange}>Lok Sabha</a>
                     </li>
-                    <li className="nav-item">
-                      <a className="nav-link" name={"AE"} onClick={this.onElectionTypeChange}>Vidhan Sabha</a>
+                    <li className="nav-item" >
+                      <a className="nav-link" id= {"etAE"} name={"AE"} onClick={this.onElectionTypeChange}>Vidhan Sabha</a>
                     </li>
                   </ul>
                   <br></br>
-                {electionType === "AE" && <Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
-                {(electionType === "GE" || (electionType === "AE" && stateName !== "")) && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
+                {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
+                {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
                 {visualizationType === "Map" && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
                 {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "")) && this.createOptionsCheckboxes()}

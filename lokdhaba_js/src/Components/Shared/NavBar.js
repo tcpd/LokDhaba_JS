@@ -21,7 +21,7 @@ export default class NavBar extends Component {
               <a className="nav-link" href="/browse-data?et=GE">Browse/Download Data</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="https://lokdhaba.ashoka.edu.in/incumbency/GE.html">Incumbency Profile</a>
+              <a className="nav-link" href="https://lokdhaba.ashoka.edu.in/incumbency/DL.html">Incumbency Profile</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/docs">Documentation</a>

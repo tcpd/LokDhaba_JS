@@ -121,8 +121,6 @@ export default class DataVisualization extends Component {
         this.chartMapOptionChecked(selected_options[an],true);
       }
     }
-
-
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -378,8 +376,10 @@ export default class DataVisualization extends Component {
     });
     if (checkboxes.length > 0) {
       return <div>
-        <label>{label}</label>
+        <details>
+          <summary><label>{label}</label></summary>
         {checkboxes}
+        </details>
       </div>;
     }
   }
@@ -453,7 +453,7 @@ export default class DataVisualization extends Component {
       }
 
     });
-    this.updateURL({variable:"an",val:newValue});
+    this.updateURL({variable:"an", val:newValue});
   }
 
   render() {

@@ -5,6 +5,7 @@ import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json';
 import ChartsMapsCodes from '../Assets/Data/ChartsMapsCodes.json';
 import Checkbox from './Shared/Checkbox.js';
 import Select from './Shared/Select.js';
+import MultiSelectReactComponent from './Shared/MultiSelectReact.js'
 import VoterTurnoutChart from './Charts/VoterTurnoutChart.js';
 import PartiesPresentedChart from './Charts/PartiesPresentedChart.js';
 import PartyVoteShareChart from './Charts/PartyVoteShareChart.js';
@@ -383,6 +384,40 @@ export default class DataVisualization extends Component {
       </div>;
     }
   }
+  
+  onMultiSelectChange = (vizOptionsSelected) => {
+    // var vizOptionsSelected = this.state.vizOptionsSelected;
+    var visualization = this.state.visualization;
+
+    this.setState({ vizOptionsSelected: vizOptionsSelected }, () => {
+
+      if (visualization === "cvoteShareChart" || visualization === "seatShareChart" || visualization === "tvoteShareChart" || visualization === "strikeRateChart") {
+        this.fetchVisualizationData();
+        this.setState({ showVisualization: true });
+      } else if (vizOptionsSelected.size > 0) {
+        this.fetchVisualizationData();
+        this.setState({ showVisualization: false });
+      } else {
+        this.setState({ showVisualization: false });
+      }
+    });
+    this.updateURL({variable:"opt",val:[...vizOptionsSelected]});
+  }
+  
+  createMultiSelect = () => {
+    var visualization = this.state.visualization;
+    var chartMapOptionChecked = [];
+    var visualizationOptions = this.state.visualizationOptions;
+    var chartMapOptions = this.state.chartMapOptions;
+    var chartMapOptionsList = [];
+    chartMapOptions.forEach(function (item) {
+      chartMapOptionsList.push({'value': item, 'label': item});
+    });
+    var label = ChartsMapsCodes.filter(function (item) { return item.modulename === visualization })[0].optionslabel;
+    var optionNames = this.state.vizOptionsNames;
+  
+    return <MultiSelectReactComponent id="multi_select_1" label={label} options={chartMapOptionsList} selected={chartMapOptionChecked} onChange={this.onMultiSelectChange}/>
+  }
 
   renderVisualization = () => {
     var data = this.state.vizData;
@@ -472,7 +507,7 @@ export default class DataVisualization extends Component {
     var csvData = this.state.vizData;
     var isDataDownloadable = this.state.isDataDownloadable;
     var showTermsAndConditionsPopup = this.state.showTermsAndConditionsPopup;
-
+    // var multiSelectLabel = ChartsMapsCodes.filter(function (item) { return item.modulename === visualization })[0].optionslabel;
 
     var today = new Date();
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -501,7 +536,8 @@ export default class DataVisualization extends Component {
         be seen as the acknowledgement of unconditionally accepting the Terms of Use
         presented by the Centre.</li>
       </ul>
-      <center><Checkbox id={"dd_accept_condition"} label={"I accept the terms and conditions mentioned here."} checked={this.state.isDataDownloadable} onChange={this.onAcceptTermsAndConditions} /></center>
+      <center>
+        <Checkbox id={"dd_accept_condition"} label={"I accept the terms and conditions mentioned here."} checked={this.state.isDataDownloadable} onChange={this.onAcceptTermsAndConditions} /></center>
     </div>
     var buttonClass = isDataDownloadable ? "btn-lg" : "btn-lg disabled";
     const modalFooter = <div>
@@ -534,7 +570,7 @@ export default class DataVisualization extends Component {
                 {(electionType === "GE" || (electionType === "AE" && stateName !== "")) && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
                 {visualizationType === "Map" && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
                 {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
-                {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "")) && this.createOptionsCheckboxes()}
+                {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "")) && this.createMultiSelect()}
                 {dataFilterOptions.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
           </div>

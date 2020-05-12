@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import SearchBox from '../../Components/Shared/SearchBox';
 import '../../Assets/Styles/navbar.css'
 import $ from 'jquery';
 
@@ -12,6 +13,9 @@ export default class NavBar extends Component {
           &#9776;
           </span>
         </button>
+        <div>
+          <SearchBox/>
+        </div>
         <div className="collapse navbar-collapse" id="navbarContent">
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">

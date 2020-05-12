@@ -5,6 +5,9 @@ from flask_cors import CORS
 import mysql.connector
 from math import ceil
 import simplejson as json
+import spacy
+from spacy.matcher import PhraseMatcher
+from StateNames import stateNamesDict
 
 app = Flask(__name__,
             static_url_path="",
@@ -440,7 +443,6 @@ def get_party_options():
                 return (jsonify({'data': parties}))
 
 
-
 @app.route('/data/api/v1.0/getVizData', methods=['POST'])
 def get_viz_data():
     print("inside viz data")
@@ -509,6 +511,56 @@ def get_viz_data():
             return jsonify({'data': json_data})
 
 
+nlp = spacy.load('en_core_web_md')
+
+@app.route('/data/api/v1.0/getSearchResults', methods=['POST'])
+def get_search_result():
+    req = request.get_json()
+    query = req.get('Query')
+    doc = nlp(query)
+    
+    codes_json = open('ChartsMapsCodes.json')
+    codes_data = json.load(codes_json)
+
+    similar_modules = {}
+
+    for code in codes_data:
+        similar_modules[code['modulename']] = doc.similarity(nlp(code['title']))
+
+    matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+
+    GE_terms = ["lok sabha", "ls", "ge", "general election", "general elections", "national"]
+    GE_patterns = list(nlp.tokenizer.pipe(GE_terms))
+    matcher.add("GE_PATTERN", None, *GE_patterns)
+
+    AE_terms = ["ae", "vidhan sabha", "state election", "state elections", "assembly election", "assembly elections"]
+    AE_patterns = list(nlp.tokenizer.pipe(AE_terms))
+    matcher.add("AE_PATTERN", None, *AE_patterns)
+
+    state_patterns = [nlp.make_doc(key) for key in stateNamesDict]
+    matcher.add("STATE_PATTERN", None, *state_patterns)
+
+    matches = matcher(doc)
+
+    electionType = "GE"     # default
+    stateName = "Lok_Sabha" # default
+
+    for match_id, start, end in matches:
+        string_id = nlp.vocab.strings[match_id]  # Get string representation
+        if string_id == "GE_PATTERN":
+            electionType = "GE"
+        elif string_id == "AE_PATTERN":
+            electionType = "AE"
+        elif string_id == "STATE_PATTERN":
+            span = doc[start:end]
+            stateName = stateNamesDict.get(span.text.lower())
+
+    results = {}
+    results["electionType"] = electionType
+    results["stateName"] = stateName
+    results["similarModules"] = similar_modules
+        
+    return jsonify({'results': results})
 
 
 if __name__ == '__main__':

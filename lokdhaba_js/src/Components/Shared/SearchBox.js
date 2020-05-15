@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as Constants from './Constants.js';
 import { withRouter } from 'react-router-dom'
+import '../../Assets/Styles/navbar.css'
 
 class SearchBox extends Component {
   constructor(props) {
@@ -55,7 +56,7 @@ class SearchBox extends Component {
 
   render() {
     return (
-      <div>
+      <div className="search-box">
         <input type="text" placeholder="Search..." onKeyDown={this.handleOnInputChange} />
       </div>
     )

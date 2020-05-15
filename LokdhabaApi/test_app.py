@@ -6,8 +6,9 @@ import mysql.connector
 from math import ceil
 import simplejson as json
 import spacy
-from spacy.matcher import PhraseMatcher
+from spacy.matcher import PhraseMatcher, Matcher
 from StateNames import stateNamesDict
+import re
 
 app = Flask(__name__,
             static_url_path="",
@@ -517,47 +518,62 @@ nlp = spacy.load('en_core_web_md')
 def get_search_result():
     req = request.get_json()
     query = req.get('Query')
+    process_query = query   # query after removing all matched patterns
     doc = nlp(query)
-    
-    codes_json = open('ChartsMapsCodes.json')
-    codes_data = json.load(codes_json)
-
-    similar_modules = {}
-
-    for code in codes_data:
-        similar_modules[code['modulename']] = doc.similarity(nlp(code['title']))
-
-    matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    phraseMatcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    tokenMatcher = Matcher(nlp.vocab)
 
     GE_terms = ["lok sabha", "ls", "ge", "general election", "general elections", "national"]
     GE_patterns = list(nlp.tokenizer.pipe(GE_terms))
-    matcher.add("GE_PATTERN", None, *GE_patterns)
+    phraseMatcher.add("GE_PATTERN", None, *GE_patterns)
 
     AE_terms = ["ae", "vidhan sabha", "state election", "state elections", "assembly election", "assembly elections"]
     AE_patterns = list(nlp.tokenizer.pipe(AE_terms))
-    matcher.add("AE_PATTERN", None, *AE_patterns)
+    phraseMatcher.add("AE_PATTERN", None, *AE_patterns)
 
     state_patterns = [nlp.make_doc(key) for key in stateNamesDict]
-    matcher.add("STATE_PATTERN", None, *state_patterns)
+    phraseMatcher.add("STATE_PATTERN", None, *state_patterns)
 
-    matches = matcher(doc)
+    matches = phraseMatcher(doc)
+    electionType = ""
+    stateName = "Lok_Sabha"
+    years = []
 
-    electionType = "GE"     # default
-    stateName = "Lok_Sabha" # default
-
-    for match_id, start, end in matches:
-        string_id = nlp.vocab.strings[match_id]  # Get string representation
+    for i in range(len(matches)):
+        string_id = nlp.vocab.strings[matches[i][0]]
         if string_id == "GE_PATTERN":
             electionType = "GE"
         elif string_id == "AE_PATTERN":
             electionType = "AE"
         elif string_id == "STATE_PATTERN":
+            start, end = matches[i][1], matches[i][2]
             span = doc[start:end]
             stateName = stateNamesDict.get(span.text.lower())
+
+        if i < len(matches) - 1 and (matches[i][1] != matches[i+1][1]):
+            start, end = matches[i][1], matches[i][2]
+            span = doc[start:end]
+            process_query = re.sub(span.text, '', process_query)
+
+    tokenMatcher.add("YEAR_PATTERN", None, [{"TEXT": {"REGEX": "[1-9][0-9][0-9][0-9]"}}])
+    matches2 = tokenMatcher(doc)
+    for match_id, start, end in matches2:
+        span = doc[start:end]
+        years.append(span.text)
+        process_query = re.sub(span.text, '', process_query)
+
+    new_doc = nlp(process_query)
+    codes_json = open('ChartsMapsCodes.json')
+    codes_data = json.load(codes_json)
+    similar_modules = {}
+
+    for code in codes_data:
+        similar_modules[code['modulename']] = new_doc.similarity(nlp(code['title']))
 
     results = {}
     results["electionType"] = electionType
     results["stateName"] = stateName
+    results["year"] = years
     results["similarModules"] = similar_modules
         
     return jsonify({'results': results})

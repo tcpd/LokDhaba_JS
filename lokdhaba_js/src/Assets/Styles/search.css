@@ -1,0 +1,24 @@
+/*
+css specific to search results element
+*/
+
+.searchLink {
+    width: 80%;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    display: inline-block;
+    border: 1px solid;
+    border-radius: 5px;
+    border-color: lightgrey;
+}
+
+.searchLink:hover {
+    background-color:rgb(250, 235, 235);
+    text-decoration: none;
+}
+
+.searchLink pre {
+    margin-bottom: 0em;
+    color: dimgray;
+    font-size: small;
+}

@@ -8,14 +8,14 @@ export default class NavBar extends Component {
     return (
       <nav className="navbar navbar-expand-md" role="navigation">
         <a className="navbar-brand" href="/"><img height="100%" width="40px" src={require("../../Assets/Images/logo.png")} /></a>
+        <div>
+          <SearchBox/>
+        </div>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
           <span style={{fontSize: "26px"}}>
           &#9776;
           </span>
         </button>
-        <div>
-          <SearchBox/>
-        </div>
         <div className="collapse navbar-collapse" id="navbarContent">
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">

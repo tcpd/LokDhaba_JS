@@ -70,7 +70,30 @@ export default class BrowseData extends Component {
     };
   }
 
+  setYearsFromSearch = (searchYears) => {
+    if (typeof searchYears !== 'undefined' && searchYears.length > 0) {
+      let options = this.state.stateAssemblies;
+      searchYears.map((searchYear) => {
+        let year = parseInt(searchYear);
+        let assembly = options.find((ele) => {
+          return ele.Year === year
+        })
+
+        if (typeof assembly !== 'undefined') {
+          this.onAssemblyChecked(assembly.Assembly_No.toString(), true);
+        }
+        return null;
+      })
+    }
+  }
+
   componentDidMount() {
+    let searchYears = []
+    if (this.props.location.state) {
+      searchYears = this.props.location.state.years;
+      console.log(searchYears)
+    }
+
     var GE_States = StateCodes.map(function (item) { return { value: item.State_Name.replace(/_/g, " "), label: item.State_Name.replace(/_/g, " ") } });
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
     var AE_States = unique_AE_States.map(function (item) { return { value: item.replace(/_/g, " "), label: item.replace(/_/g, " ") } });
@@ -81,7 +104,7 @@ export default class BrowseData extends Component {
     var et = inputs.get("et") || "";
     if(et !== ""){this.onElectionTypeChange(et);}
     var st = inputs.get("st") || "";
-    if(st !== "" ){this.onStateNameChange(st);}
+    if(st !== "" ){this.onStateNameChange(st, searchYears);}
     //this.setState({  });
     var assemblies = inputs.get("an") || "";
     if(assemblies !== ""){
@@ -153,7 +176,7 @@ export default class BrowseData extends Component {
 
   }
 
-  onStateNameChange = (newValue) => {
+  onStateNameChange = (newValue, searchYears) => {
     this.setState({ assembliesChecked: new Set() });
     this.setState({ allChecked: false });
     this.setState({ stateName: newValue });
@@ -173,7 +196,12 @@ export default class BrowseData extends Component {
         assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name.replace(/_/g, " ") === newValue });
       }
     }
-    this.setState({ stateAssemblies: assemblies });
+    this.setState(
+      { stateAssemblies: assemblies },
+      () => {
+        this.setYearsFromSearch(searchYears)
+      }
+    );
     this.setState({ isDataDownloadable: false });
     this.updateURL({variable:"st",val:newValue});
 

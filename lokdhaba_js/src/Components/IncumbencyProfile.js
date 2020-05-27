@@ -37,7 +37,6 @@ export default class IncumbencyProfile extends Component {
   }
 
   componentDidMount() {
-    console.log("inc mount")
     let assemblyOptions = [{ value: "", label: "Select" }];
     assemblyOptions.push({ value: lokSabha.name, label: lokSabha.name });
     states.forEach((item) => {

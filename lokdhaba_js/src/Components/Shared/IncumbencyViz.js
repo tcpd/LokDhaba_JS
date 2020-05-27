@@ -58,7 +58,6 @@ class IncumbencyViz extends Component {
     this.state = {
       pids_data: [],
       data: [],
-      reload: "",
     }
   }
 
@@ -74,11 +73,6 @@ class IncumbencyViz extends Component {
     if (this.props.data_url !== prevProps.data_url) {
       this.fetchData();
     }
-
-    // if (this.props !== prevProps) {
-    //   this.updateSVG();
-    // }
-    // this.updateSVG();
   }
 
   fetchPidsData() {
@@ -133,21 +127,6 @@ class IncumbencyViz extends Component {
 
     LOG("allparties")
     LOG(allParties)
-
-    // # of seats won by party (all assemblies, not just the one being shown). This will be used for generating the sort order of parties.
-    // let numSeats = { Other: 0 };
-
-    // allRows.forEach(function (data) {
-    //   let party = data.Party;
-    //   if (data.Position === 1 && data.Assembly_No === assemblyNumber) {
-    //     if (numSeats[party]) {
-    //       numSeats[party]++;
-    //     }
-    //     else {
-    //       numSeats[party] = 1;
-    //     }
-    //   }
-    // });
 
     LOG("numseats")
     LOG(numSeats);

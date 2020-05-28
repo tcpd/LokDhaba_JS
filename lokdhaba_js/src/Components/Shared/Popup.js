@@ -27,7 +27,7 @@ export default class Popup extends Component {
 
              <div className="modal-header">
                <h4 className="modal-title"><center>{this.props.heading}</center></h4>
-               <button type="button" className="close" data-dismiss="modal" onClick={this.handleClose}>&times;</button>
+               <button type="button" className="close" style={{opacity: "1"}} onClick={this.handleClose}>&times;</button>
              </div>
 
              <div className="modal-body">

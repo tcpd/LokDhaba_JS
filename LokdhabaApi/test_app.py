@@ -9,6 +9,7 @@ import spacy
 from spacy.matcher import PhraseMatcher, Matcher
 from StateNames import stateNamesDict
 import re
+import operator
 
 app = Flask(__name__,
             static_url_path="",
@@ -537,6 +538,7 @@ def get_search_result():
     matches = phraseMatcher(doc)
     electionType = ""
     stateName = "Lok_Sabha"
+    party = []
     years = []
 
     for i in range(len(matches)):
@@ -570,12 +572,79 @@ def get_search_result():
     for code in codes_data:
         similar_modules[code['modulename']] = new_doc.similarity(nlp(code['title']))
 
+    sorted_modules = sorted(similar_modules.items(), key=operator.itemgetter(1), reverse=True)
+    module = ""
+    full_party_names = {}
+    party_options_modules = ["cvoteShareChart", "seatShareChart", "tvoteShareChart", "strikeRateChart"]
+    
+    for i in range(len(sorted_modules)):
+        module_name = sorted_modules[i][0]
+        if module_name in party_options_modules:
+            module = module_name
+            break
+
+    connection = connectdb(db_config)
+    if connection.is_connected():
+        cursor = connection.cursor()
+        cursor.execute("show tables")
+        tables = cursor.fetchall()
+        db_tables = []
+        for (table,) in tables:
+            db_tables.append(table)
+        tableName = module_to_table(module)
+        if tableName in db_tables:
+            cursor = connection.cursor(prepared=True)
+            query_input = list()
+            get_table = "Select distinct Party from " + tableName
+            get_count = "Select count(distinct Party) as count from " + tableName
+            get_full_names = "Select distinct Party,Expanded_Party_Name from " + tableName
+            # query_input.append(tableName)
+            get_election = " where Election_Type = %s"
+            if electionType == "":
+                query_input.append("GE")
+            else:
+                query_input.append(electionType)
+            get_state = ""
+            if stateName is not None:
+                get_state = " and State_Name = %s"
+                query_input.append(stateName)
+            
+            party_names_query = get_full_names + get_election + get_state + " and position <10"
+            cursor.execute(party_names_query, tuple(query_input))
+            party_names = cursor.fetchall()
+
+            print(query_input)
+            for (name, full_name) in party_names:
+                # print(name)
+                # print(full_name)
+                full_party_names.update({name: full_name})
+
+    party_patterns = []
+    for key, value in full_party_names.items():
+        print(key, value)
+        if key is not None:
+            party_patterns.append(nlp.make_doc(key))
+        if value is not None:
+            party_patterns.append(nlp.make_doc(value))
+
+    partyMatcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    partyMatcher.add("PARTY_PATTERN", None, *party_patterns)
+    party_matches = partyMatcher(new_doc)
+
+    for match_id, start, end in party_matches:
+        span = doc[start:end]
+        party_match = span.text.upper()
+        for key, value in full_party_names.items():
+            if party_match == key or party_match == value:
+                party.append(key)
+
     results = {}
     results["electionType"] = electionType
     results["stateName"] = stateName
     results["year"] = years
-    results["similarModules"] = similar_modules
-        
+    results["similarModules"] = sorted_modules
+    results["party"] = party
+
     return jsonify({'results': results})
 
 

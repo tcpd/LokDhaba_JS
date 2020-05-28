@@ -388,7 +388,10 @@ export default class DataVisualization extends Component {
         });
       }
       var selectedOptions = resp.selected;
-      if(typeof selectedOptions != "undefined" && selectedOptions != null && selectedOptions.length != null && selectedOptions.length > 0){
+      if(this.state.vizOptionsSelected.size > 0){
+        this.setState({ showVisualization: true });
+      }
+      else if(typeof selectedOptions != "undefined" && selectedOptions != null && selectedOptions.length != null && selectedOptions.length > 0){
         this.setState({ vizOptionsSelected: new Set(selectedOptions.map(x => x.replace(/_/g, ""))) }, () => {
           this.fetchVisualizationData();
           if(visualizationType==="Map"){

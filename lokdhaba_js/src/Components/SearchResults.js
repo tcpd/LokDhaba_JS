@@ -42,12 +42,12 @@ class SearchResults extends Component {
     )
   }
 
-  getDataVizLink = (modulename, title, electionType, stateName, year) => {
+  getDataVizLink = (modulename, title, electionType, stateName, year, party) => {
     return (
       <NavLink
         to={{
           pathname: "/data-vis",
-          search: "?et=" + electionType + "&st=" + stateName + "&viz=" + modulename,
+          search: "?et=" + electionType + "&st=" + stateName + "&viz=" + modulename + "&opt=" + party,
           state: {
             year: year
           }
@@ -55,7 +55,7 @@ class SearchResults extends Component {
         className="searchLink"
       >
         {title}
-        <pre>{this.getElectionName(electionType)}    {this.getStateName(stateName)}    {year}</pre>
+      <pre>{this.getElectionName(electionType)}    {this.getStateName(stateName)}    {year}    {party.join(' ')}</pre>
       </NavLink>
     )
   }
@@ -82,14 +82,14 @@ class SearchResults extends Component {
     }
   }
 
-  renderDataVizResults = (item, electionType, stateName, year) => {
+  renderDataVizResults = (item, electionType, stateName, year, party) => {
     let title = ChartsMapsCodes.filter(function (element) { return element.modulename === item[0] })[0].title;
     let modulename = item[0];
 
     if (electionType === "AE" || electionType === "GE") {
       return (
         <div key={item[0] + electionType}>
-          {this.getDataVizLink(modulename, title, electionType, stateName, year)}
+          {this.getDataVizLink(modulename, title, electionType, stateName, year, party)}
         </div>
       )
     }
@@ -97,10 +97,10 @@ class SearchResults extends Component {
       return (
         <div key={item[0]}>
           <div key={item[0] + "GE"}>
-            {this.getDataVizLink(modulename, title, "GE", stateName, year)}
+            {this.getDataVizLink(modulename, title, "GE", stateName, year, party)}
           </div>
           <div key={item[0] + "AE"}>
-            {this.getDataVizLink(modulename, title, "AE", stateName, year)}
+            {this.getDataVizLink(modulename, title, "AE", stateName, year, party)}
           </div>
         </div>
       )
@@ -108,21 +108,13 @@ class SearchResults extends Component {
   }
 
   render() {
-    let res = this.props.location.state.results[0]['results']
-    let electionType = res['electionType']
-    let stateName = res['stateName']
-    let year = res['year'][0]
-    let years = res['year']
-
-    // Create modules array
-    var modules = Object.keys(res['similarModules']).map(function (key) {
-      return [key, res['similarModules'][key]];
-    });
-
-    // Sort the array based on similarity scores
-    modules.sort(function (first, second) {
-      return second[1] - first[1];
-    });
+    const res = this.props.location.state.results[0]['results']
+    const electionType = res['electionType']
+    const stateName = res['stateName']
+    const year = res['year'][0]
+    const years = res['year']
+    const party = res['party']
+    const modules = res['similarModules']
 
     // Find the maximum differnce (gap) between similarity scores
     let maxDiff = 0;
@@ -152,7 +144,7 @@ class SearchResults extends Component {
           <br />
           <div>
             <h5>Data Visualization</h5>
-            {dataVizResults.map((item) => this.renderDataVizResults(item, electionType, stateName, year))}
+            {dataVizResults.map((item) => this.renderDataVizResults(item, electionType, stateName, year, party))}
           </div>
           <br />
           <div>

@@ -112,9 +112,8 @@ export default class BrowseData extends Component {
   };
 
   onAcceptTermsAndConditions = (key, checked) => {
-    this.setState({ isDataDownloadable: checked });
     if (checked) {
-      this.fetchDownloadData();
+      this.fetchDownloadData(checked);
     }
   }
 
@@ -180,7 +179,7 @@ export default class BrowseData extends Component {
     //this.updateURL({variable:"an",val:""});
   }
 
-  fetchDownloadData = () => {
+  fetchDownloadData = (checked) => {
     let electionType = this.state.electionType;
     let stateName = this.state.stateName;
     let filters = this.state.filters;
@@ -198,6 +197,7 @@ export default class BrowseData extends Component {
         Filters: filters
       })
     }).then(response => response.json()).then(resp => {
+      this.setState({ isDataDownloadable: checked });
       this.setState({ csvData: resp.data });
     });
   }

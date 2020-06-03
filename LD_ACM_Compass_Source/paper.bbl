@@ -1,0 +1,425 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{33}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[\protect\citeauthoryear{Asher and Novosad}{Asher and Novosad}{2019}]%
+        {DVN/DPESAK_2019}
+\bibfield{author}{\bibinfo{person}{Sam Asher} {and} \bibinfo{person}{Paul
+  Novosad}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{title}{{Socioeconomic High-resolution Rural-Urban Geographic
+  Dataset for India (SHRUG)}}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.7910/DVN/DPESAK}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Bhavnani}{Bhavnani}{2012}]%
+        {bhavnani2012using}
+\bibfield{author}{\bibinfo{person}{Rikhil~R Bhavnani}.}
+  \bibinfo{year}{2012}\natexlab{}.
+\newblock \showarticletitle{Using Asset Disclosures to Study Politicians Rents:
+  An Application to India}. In \bibinfo{booktitle}{\emph{Annual Bank
+  Conferences on Development Economics, Washington, DC}},
+  Vol.~\bibinfo{volume}{22}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Bhavnani and Jensenius}{Bhavnani and
+  Jensenius}{2015}]%
+        {bhavnani2015socio}
+\bibfield{author}{\bibinfo{person}{Rikhil~R Bhavnani} {and}
+  \bibinfo{person}{Francesca~Refsum Jensenius}.}
+  \bibinfo{year}{2015}\natexlab{}.
+\newblock \bibinfo{title}{Socio-economic Profiles for India’s Old Electoral
+  Constituencies: 1971 and 2001}.
+\newblock
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Blair}{Blair}{1973}]%
+        {blair1973minority}
+\bibfield{author}{\bibinfo{person}{Harry~W Blair}.}
+  \bibinfo{year}{1973}\natexlab{}.
+\newblock \showarticletitle{Minority electoral politics in a North Indian
+  state: aggregate data analysis and the Muslim community in Bihar,
+  1952--1972}.
+\newblock \bibinfo{journal}{\emph{American political science review}}
+  \bibinfo{volume}{67}, \bibinfo{number}{4} (\bibinfo{year}{1973}),
+  \bibinfo{pages}{1275--1287}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Bose and Singh}{Bose and Singh}{1987}]%
+        {bose1987state}
+\bibfield{author}{\bibinfo{person}{Shankar Bose} {and} \bibinfo{person}{VB
+  Singh}.} \bibinfo{year}{1987}\natexlab{}.
+\newblock \bibinfo{title}{State elections in India: Data handbook on Vidhan
+  Sabha elections 1952-85}.
+\newblock
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Brass}{Brass}{1978}]%
+        {brass1978indian}
+\bibfield{author}{\bibinfo{person}{Paul~R Brass}.}
+  \bibinfo{year}{1978}\natexlab{}.
+\newblock \showarticletitle{Indian election studies}.
+\newblock \bibinfo{journal}{\emph{South Asia: Journal of South Asian Studies}}
+  \bibinfo{volume}{1}, \bibinfo{number}{2} (\bibinfo{year}{1978}),
+  \bibinfo{pages}{91--108}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Chandra}{Chandra}{2016}]%
+        {chandra2016democratic}
+\bibfield{author}{\bibinfo{person}{Kanchan Chandra}.}
+  \bibinfo{year}{2016}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Democratic dynasties: State, party, and
+  family in contemporary Indian politics}}.
+\newblock \bibinfo{publisher}{Cambridge University Press}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Dash}{Dash}{2004}]%
+        {dash2004civil}
+\bibfield{author}{\bibinfo{person}{Bikash~Chandra Dash}.}
+  \bibinfo{year}{2004}\natexlab{}.
+\newblock \showarticletitle{Civil Society Initiatives and Electoral Reforms}.
+\newblock \bibinfo{journal}{\emph{Economic and Political Weekly}}
+  (\bibinfo{year}{2004}), \bibinfo{pages}{4136--4137}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Fisman, Schulz, and Vig}{Fisman
+  et~al\mbox{.}}{2016}]%
+        {fisman2016financial}
+\bibfield{author}{\bibinfo{person}{Raymond Fisman}, \bibinfo{person}{Florian
+  Schulz}, {and} \bibinfo{person}{Vikrant Vig}.}
+  \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Financial disclosure and political selection:
+  Evidence from India}.
+\newblock \bibinfo{journal}{\emph{Unpublished manuscript, Boston Univ}}
+  (\bibinfo{year}{2016}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{for Democratic~Reforms}{for
+  Democratic~Reforms}{2019}]%
+        {myneta}
+\bibfield{author}{\bibinfo{person}{Association for Democratic~Reforms}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{MyNeta Website}}.
+\newblock
+\urldef\tempurl%
+\url{https://myneta.info}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{for Monitoring Indian~Economy}{for Monitoring
+  Indian~Economy}{2000}]%
+        {center2000cmie}
+\bibfield{author}{\bibinfo{person}{Center for Monitoring Indian~Economy}.}
+  \bibinfo{year}{2000}\natexlab{}.
+\newblock \bibinfo{title}{CMIE: Economic Overview}.
+\newblock
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Heath and Ziegfeld}{Heath and
+  Ziegfeld}{2018}]%
+        {heath2018electoral}
+\bibfield{author}{\bibinfo{person}{Oliver Heath} {and} \bibinfo{person}{Adam
+  Ziegfeld}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{Electoral Volatility and Turnout: Party Entry and
+  Exit in Indian Elections}.
+\newblock \bibinfo{journal}{\emph{The Journal of Politics}}
+  \bibinfo{volume}{80}, \bibinfo{number}{2} (\bibinfo{year}{2018}),
+  \bibinfo{pages}{570--584}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{if~India}{if~India}{1995}]%
+        {bipolls52-95}
+\bibfield{author}{\bibinfo{person}{Election~Commission if India}.}
+  \bibinfo{year}{1995}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Bye-elections results 1952-1995}}.
+\newblock
+\urldef\tempurl%
+\url{https://eci.gov.in/files/file/2511-details-of-bye-elections-from-1952-to-1995/}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{if~India}{if~India}{2019}]%
+        {bipolls}
+\bibfield{author}{\bibinfo{person}{Election~Commission if India}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Detailed Bye-elections results}}.
+\newblock
+\urldef\tempurl%
+\url{https://eci.gov.in/statistical-report/detailed-bye-election-results/}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Jensenius and Verniers}{Jensenius and
+  Verniers}{2017}]%
+        {jensenius2017studying}
+\bibfield{author}{\bibinfo{person}{Francesca~R Jensenius} {and}
+  \bibinfo{person}{Gilles Verniers}.} \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{Studying Indian politics with large-scale data:
+  Indian election data 1961--today}.
+\newblock \bibinfo{journal}{\emph{Studies in Indian Politics}}
+  \bibinfo{volume}{5}, \bibinfo{number}{2} (\bibinfo{year}{2017}),
+  \bibinfo{pages}{269--275}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Kagan, Stevens, and Subrahmanian}{Kagan
+  et~al\mbox{.}}{2015}]%
+        {kagan2015using}
+\bibfield{author}{\bibinfo{person}{Vadim Kagan}, \bibinfo{person}{Andrew
+  Stevens}, {and} \bibinfo{person}{VS Subrahmanian}.}
+  \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{Using twitter sentiment to forecast the 2013
+  pakistani election and the 2014 indian election}.
+\newblock \bibinfo{journal}{\emph{IEEE Intelligent Systems}}
+  \bibinfo{volume}{30}, \bibinfo{number}{1} (\bibinfo{year}{2015}),
+  \bibinfo{pages}{2--5}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Kollman, Hicken, Caramani, Backer, and
+  Lublin}{Kollman et~al\mbox{.}}{2011}]%
+        {kollman2011constituency}
+\bibfield{author}{\bibinfo{person}{Ken Kollman}, \bibinfo{person}{Allen
+  Hicken}, \bibinfo{person}{Daniele Caramani}, \bibinfo{person}{David Backer},
+  {and} \bibinfo{person}{David Lublin}.} \bibinfo{year}{2011}\natexlab{}.
+\newblock \showarticletitle{Constituency-level elections archive}.
+\newblock \bibinfo{journal}{\emph{Ann Arbor, mich.: Center for Political
+  studies, University of michigan. At http://www. electiondataarchive. org,
+  accessed may}} (\bibinfo{year}{2011}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{limited}{limited}{2019}]%
+        {electionsInIndia}
+\bibfield{author}{\bibinfo{person}{Datanet India~Private limited}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{India Electoral Data}}.
+\newblock
+\urldef\tempurl%
+\url{https://www.electionsinindia.com/}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Ltd.}{Ltd.}{2019}]%
+        {indiavotes}
+\bibfield{author}{\bibinfo{person}{Niti Digital~Pvt. Ltd.}}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{India Votes : India`s largest election
+  database}}.
+\newblock
+\urldef\tempurl%
+\url{http://www.indiavotes.com/}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Nissa and Kumar}{Nissa and Kumar}{2019}]%
+        {nissa2019party}
+\bibfield{author}{\bibinfo{person}{B. Nissa} {and} \bibinfo{person}{M. Kumar}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Notes on methods, identifying and analysing
+  political parties in Indian elections (working paper)}.
+\newblock  (\bibinfo{year}{2019}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Nissa and Housekeeper}{Nissa and
+  Housekeeper}{2019}]%
+        {nissa2019factions}
+\bibfield{author}{\bibinfo{person}{M.~Kumar Nissa, B.} {and}
+  \bibinfo{person}{S. Housekeeper}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Factions and mergers in the Indian Party System -
+  Evidence from Indian General Elections. (working paper)}.
+\newblock  (\bibinfo{year}{2019}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Noonburg}{Noonburg}{1995}]%
+        {pdftotext}
+\bibfield{author}{\bibinfo{person}{Derek Noonburg}.}
+  \bibinfo{year}{1995}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{xpdfreader}}.
+\newblock
+\urldef\tempurl%
+\url{https://www.xpdfreader.com/pdftotext-man.html}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Nooruddin and Chhibber}{Nooruddin and
+  Chhibber}{2008}]%
+        {nooruddin2008unstable}
+\bibfield{author}{\bibinfo{person}{Irfan Nooruddin} {and}
+  \bibinfo{person}{Pradeep Chhibber}.} \bibinfo{year}{2008}\natexlab{}.
+\newblock \showarticletitle{Unstable politics: fiscal space and electoral
+  volatility in the Indian states}.
+\newblock \bibinfo{journal}{\emph{Comparative Political Studies}}
+  \bibinfo{volume}{41}, \bibinfo{number}{8} (\bibinfo{year}{2008}),
+  \bibinfo{pages}{1069--1091}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{of~India}{of~India}{2019}]%
+        {StatReportECI}
+\bibfield{author}{\bibinfo{person}{Election~Commission of India}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Statistical Reports to parliamentary and
+  assembly elections in India}}.
+\newblock
+\urldef\tempurl%
+\url{https://eci.gov.in/statistical-report/statistical-reports}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Quraishi}{Quraishi}{2014}]%
+        {quraishi2014undocumented}
+\bibfield{author}{\bibinfo{person}{Shahabuddin~Yaqoob Quraishi}.}
+  \bibinfo{year}{2014}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{An undocumented wonder: The great Indian
+  election}}.
+\newblock \bibinfo{publisher}{Rupa Publications}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Rana}{Rana}{2006}]%
+        {rana2006india}
+\bibfield{author}{\bibinfo{person}{Mahendra~Singh Rana}.}
+  \bibinfo{year}{2006}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{India Votes: Lok Sabha \& Vidhan Sabha
+  Elections 2001-2005}}.
+\newblock \bibinfo{publisher}{Sarup \& Sons}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Research}{Research}{1993}]%
+        {nielsen1993nielsen}
+\bibfield{author}{\bibinfo{person}{Nielsen~Media Research}.}
+  \bibinfo{year}{1993}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Nielsen Tunes in to Politics: Tracking the
+  Presidential Election Years (1960-1992).}}
+\newblock \bibinfo{publisher}{Nielsen Media Research}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Shastri, Suri, and Yadav}{Shastri
+  et~al\mbox{.}}{2009}]%
+        {shastri2009electoral}
+\bibfield{author}{\bibinfo{person}{Sandeep Shastri},
+  \bibinfo{person}{Kondaveeti~Chinnaya Suri}, {and} \bibinfo{person}{Yogendra
+  Yadav}.} \bibinfo{year}{2009}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Electoral politics in Indian states: Lok
+  Sabha elections in 2004 and beyond}}.
+\newblock \bibinfo{publisher}{Oxford University Press}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Singh}{Singh}{2018}]%
+        {singhelection}
+\bibfield{author}{\bibinfo{person}{Sanjeev~Kumar Singh}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{ELECTION CAMPAIGN MANAGEMENT SERVICES--A START OF
+  NEW ERA IN INDIAN POLITICS}.
+\newblock  (\bibinfo{year}{2018}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{TCPD}{TCPD}{2020a}]%
+        {lokdhabaRepo}
+\bibfield{author}{\bibinfo{person}{TCPD}.} \bibinfo{year}{2020}\natexlab{a}.
+\newblock \bibinfo{booktitle}{\emph{Github repository for the Lokdhaba
+  framework}}.
+\newblock
+\urldef\tempurl%
+\url{https://github.com/tcpd/LokDhaba_JS}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{TCPD}{TCPD}{2020b}]%
+        {Surf}
+\bibfield{author}{\bibinfo{person}{TCPD}.} \bibinfo{year}{2020}\natexlab{b}.
+\newblock \bibinfo{booktitle}{\emph{Github repository for the Surf codebase}}.
+\newblock
+\urldef\tempurl%
+\url{https://github.com/tcpd/surf}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Trust}{Trust}{2019}]%
+        {datameet}
+\bibfield{author}{\bibinfo{person}{Datameet Trust}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{Github repository for open maps}}.
+\newblock Bangalore, India.
+\newblock
+\urldef\tempurl%
+\url{https://github.com/datameet/maps}
+\showURL{%
+\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Vaishnav}{Vaishnav}{2017}]%
+        {vaishnav2017crime}
+\bibfield{author}{\bibinfo{person}{Milan Vaishnav}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{When crime pays: Money and muscle in Indian
+  politics}}.
+\newblock \bibinfo{publisher}{Yale University Press}.
+\newblock
+
+
+\end{thebibliography}

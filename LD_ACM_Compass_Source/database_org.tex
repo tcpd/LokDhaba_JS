@@ -1,0 +1,67 @@
+
+\section{Data Management and Integration}\label{sec:datamanagement}
+
+In this section, we describe how we organize our dataset extracted from the ECI's statistical reports and integrate it with other datasets. The dataset has to be extendable since several new variables are collected by domain experts or field researchers. For example, political scientists often study data across a cohesive sub-region within a state in order to analyze results, trends and swings within such sub-regions. Similarly, they may want to cross-reference this data with data related to administrative units such as districts, and sociological data on candidates such as their caste, religion, and whether they belong to a political dynasty.
+
+\subsection{Structuring Election Results}
+
+The data extracted from ECI statistical reports is stored in relational form, i.e., in several tables, that are almost fully normalized. To support analysts who may need the entire dataset on one screen, scripts are used to stitch the primary tables together and derive a single non-normalized dataset. In order to ensure repeatability in the process, all updates are made only to primary files (under version control), and all derived files are generated only from scripts.
+
+\subsection{Primary and Derived Data}
+
+We now describe the schema of our primary tables. The \textbf{candidates electoral info} table has candidate variables like \emph{candidate name, sex, party, votes}, and the \textbf{constituency electoral info} table has constituency information like \emph{constituency name , electors, voters}, with the tuple \emph{election type, state name, assembly number, constituency number, poll number} as a foreign key to each other.
+
+Using automated scripts, we also compute derived electoral variables useful in political analysis such as \emph{Valid votes, Turnout percentage, Vote share percentage, Deposit lost, Vote margin, Margin percentage and ENOP\footnote{ENOP is the Effective Number of Parties, a common metric used by political scientists to estimate how healthy the competition is in a democracy}}.
+
+Variables related to each individual's political career like \emph{Number of times contested, Number of times won, Previous party, Last Constituency, Whether incumbent/turncoat/re-contesting} are calculated with the help of the candidate's unique identifier, as described in Section~\ref{name_mapping} below.
+
+\subsection{Fragmented Elections and Bye-elections}
+
+While people intuitively associate elections with a specific year (e.g. the 1991 national elections, the 1996 state elections, etc.). the year can be a misleading way of relating sets of elections. For example, the 1991 national elections in India were not conducted in one state (Punjab) due to law and order reasons; elections in Punjab to the same parliamentary House were actually conducted in 1992. Further, in the Indian election system, a bye-election is called when a seat becomes vacant due to death, resignation or disqualification of an incumbent. This bye-election election data is provided separately by the ECI and is released separately from the statistical reports\cite{bipolls}. Bye-election data until 1995 is available as a single spreadsheet with multiple worksheets for national and state elections \cite{bipolls52-95}. Results from 1996 to 2008 are released as HTML pages, and results from 2009 onward are released as Microsoft Excel files with results for each constituency in different worksheets. Once again, we see the presence of format drift. As a result of the difficulty of dealing with disparate formats, bye-election data is rarely factored into political analyses. However, for the purpose of calculating important metrics related to incumbency (the number of sitting members who re-contested, and were elected or lost), it is essential to know the sitting members at the end of an assembly's term, and therefore, to handle bye-election data.
+
+To handle all these cases and merge them into a single table with a consistent schema in LokDhaba, we associate sets of elections with assembly (i.e., legislative house) numbers instead of years. Therefore a particular election in a particular constituency is identified by a tuple of (``Assembly Number'', ``State Name'', ``Constituency Number'' and ``Poll Number''). The variable ``Poll Number`` is used to accurately record bye-elections data. Increasing Poll Numbers represent successive elections for a seat in a given assembly.
+
+\subsection{Unique Identifiers for Names}
+
+Many political science questions require identifying the trajectory of entities such as parties, candidates and constituencies over time. This needs us to be able to assign unique identifiers to these entities, when none exist in our source data.
+
+\subsubsection{Election Candidates}
+\label{name_mapping}
+To be able to study the career trajectory of every individual candidate, we need a unique identifier for each person across time -- something that the source datasets do not include. This is a complex task because the spelling of the \emph{Candidate Name} field in the dataset can be the same for two different individuals and can be different over time for the same individual. Candidates switch parties and constituencies between elections and it is not possible to use the existing set of variables to make a unique identifier for any single individual. For this reason, a human-in-the-loop entity mapping and resolution system for Indian names called Surf \cite{Surf} was designed and implemented to assign a unique identifier for each individual candidate. Surf clusters records based on a resolution variable, which is \emph{Candidate Name} in the current context, based on a similarity metric designed specifically for Indian names. It handles phonetic matching, edit distance based clustering, expected variations like initialization of first and middle names, and expected streaks of candidates contesting consecutive elections. Initially, each record in the dataset is given a unique ID and functionality to merge records within or across clusters is implemented in the interface. A human analyst merges or unmerges records based on her knowledge, along with secondary research on every candidate and constituency. Surf's user interface makes certain operations in this research easier, such as mapping place names and searching for news about a candidate. This work has helped us create a unique identifier for every candidate who has contested any election in the dataset.
+
+\subsubsection{Political Parties}
+
+A similar problem is that statistical reports often use abbreviations to indicate a candidate's party. However, the abbreviations given to parties in the source dataset across elections are inconsistent, making it difficult to track party performance over time. The same parties have been assigned multiple abbreviations, for example, Bharatiya Janata Dal (BHJD, BAJD, BajD, BhJD), Aam Aadmi Party (AAAP, AAP), All India Anna Dravida Munnetra Kazhagam (ADK, ADMK, AIADMK, AIDMK), Indian National Congress (CONG, INC, INC(I), CON) and so on, for over 300 parties. The same abbreviation is also given to two different parties ad different times, for example AAP (Aam Aadmi Party, Awami Aamjan Party), BJS (Bharatiya Jan Sabha, Bharatiya Jana Sangh, Akhil Bharatiya Jana Sangh). Considering the inaccuracies this could lead to in aggregating party-wise data, we assign a unique identifier for each party using the same technique used for resolving names described in the previous section \cite{nissa2019party, nissa2019factions}.
+
+\subsubsection{Electoral Constituencies}
+\label{sec:delim}
+
+In India, a Delimitation Commission periodically reorganizes boundaries of electoral constituencies to account for changes in population as measured by the decadal Census of India. Four major delimitations have been made so far, in 1952, 1962, 1972 and 2002, along with amendments in 2001, 2003 and 2008. In each delimitation, two thirds of the constituencies for a state are reorganized. This also means a reassignment of constituency numbers and names. As such, there is no authoritative way to map constituencies across delimitations. As described later, this requires us to assign a unique identifier for each constituency to analyse spatial characteristics with respect to an older time period.
+
+% Public domain constituency maps are available only for the last delimitation in 2008. 
+
+% \subsection{Keeping data updated}
+% Elections to the states in India are spread such that every 6 months or so there is an election for at least two states. With each election since 2004, contesting candidates are required to release affidavits. From the affidavit archive, we scrape constituency, candidate and party for all contesting candidates. A working dataset is then created to extract \emph{pid, party id, sociological profile}, for each contesting candidate.
+
+\subsection{Integration with Other Datasets}
+
+% \subsubsection{Sociological data}
+% TCPD is also collecting data on sub-castes, caste, religion and political families of candidates from major parties. This data is managed as an independent candidate level primary file having constituency level variables as well, so it can be treated as a separate dataset to collect and update sociological profiles of candidates and elected representatives.
+
+\subsubsection{Affidavit Data}
+Beginning in 2004, it is mandatory for every election candidate in India to file an affidavit declaring information such as their address, education, profession, spouse, criminal cases and financial assets. This data is digitized by the Association of Democratic Reforms (ADR) and is disseminated on their website \cite{myneta}. We scrape this data and integrate it with the elections dataset. After resolving inconsistencies in candidate names and parties, new candidate-level primary tables are created with structured fields for this affidavit data.
+
+\subsubsection{Pictures}
+In order to aid visualizations of candidate performance, we use the pictures of electoral winners that are available from the website of PRS Legislative Research, a think-tank that tracks performance of legislators. See Fig.~\ref{incm_rhl} for an example of how these pictures are used. 
+
+\subsection{Maps}
+
+In this section, we describe some of the challenges of dealing with geo-spatial data, required for map visualizations built upon our dataset. In India, state-level constituencies are properly nested and contained within national constituencies. The present constituency boundaries at both levels were specified in the 2008 delimitation. Unfortunately, official spatial boundaries are not made available in digital format by the delimitation commission. A group called Datameet has developed a novel solution to this problem -- it scraped the GPS locations of the polling stations in the 2014 election, and derived approximate constituency boundary maps based on this data~\cite{datameet}. We adopted these maps as a starting point and applied consistency checking to detect potential problems. 
+
+There are a total of 543 national-level and 4120 state-level constituencies. We identified inconsistencies by comparing each constituency on area, neighbourhood and mapping of state-level constituencies to the national-level constituency they were contained in. This process helped us find problems with incorrect borders or missing constituencies in the original maps. We cross-referenced boundary polygons from the Datameet maps with constituency-wise listings from election results. We observed that a few urban constituencies were missing. Consistency checks on the area of each constituency also helped us identify some constituencies with suspiciously low area, for example, less that one square kilometer. For missing or inconsistent constituencies found in the above steps, we derived the correct shapes using manual digitization of the respective sub-districts, villages and municipal wards. The geometries of resulting boundaries are simplified further to remove overlaps and holes between polygons.
+
+\subsection{Data Provenance and Management}
+
+To store data and manage updates to our database, we use a git repository which stores all versions of all primary files and scripts. Data files are stored in CSV format, allowing efficient storage of revisions of the data, and ensuring no lock-in to any proprietary format. Revision control also allows us to track changes down to the time and person responsible for the change, and to roll back to any version if necessary. LokDhaba follows an Engineering Change Order (ECO) process by which each change has to be first vetted by multiple people before it is introduced in the primary dataset. This ensures that the data quality remains fairly high.
+
+LokDhaba has scripts that compute derived data from primary data dynamically. To alert us to any loss in data quality, data consistency checking scripts run nightly as a cron job. The process for extracting data from affidavits and results is also automated using scripts, ensuring that we can re-import data from some source, if and when it changes. This ensures the repeatability of our process. 

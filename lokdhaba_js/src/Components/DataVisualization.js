@@ -14,6 +14,7 @@ import ContestedDepositLostChart from './Charts/ContestedDepositLostChart.js';
 import ConstituencyTypeMap from './Maps/ConstituencyTypeMap.js';
 import NumCandidatesMap from './Maps/NumCandidatesMap.js';
 import VoterTurnoutMap from './Maps/VoterTurnoutMap.js';
+import VoterTurnoutMap2 from './Maps/VoterTurnoutMap2';
 import WinnerGenderMap from './Maps/WinnerGenderMap.js';
 import VictoryMarginMap from './Maps/VictoryMarginMap.js';
 import WinnerVoteShareMap from './Maps/WinnerVoteShareMap.js';
@@ -88,7 +89,8 @@ export default class DataVisualization extends Component {
       isDataDownloadable: false,
       showTermsAndConditionsPopup: false,
       vizOptionsNames : {},
-      stateOptions :[]
+      stateOptions :[],
+      allYearsData: []
     };
   }
 
@@ -98,8 +100,33 @@ export default class DataVisualization extends Component {
     this.props.history.push(`?${url}`);
   };
 
+  setDefaultYear = (searchYear) => {
+    // Set defalut year as searchYear if given, else set to latest year
+    
+    let options = this.state.yearOptions;
+    let foundYear = false;
+    if (typeof searchYear !== 'undefined' && searchYear !== "") {
+      options.map((item) => {
+        if (searchYear === item.label.split(' ')[0]) {
+          foundYear = true;
+          this.onYearChange(item.value);
+        }
+        return null
+      })
+    }
+    if (!foundYear) {
+      let latestYear = options[options.length - 1]
+      console.log("Data for year " + searchYear + " not found. Fetching data for latest year " + latestYear.label)
+      this.onYearChange(latestYear.value);
+    }
+  }
 
   componentDidMount() {
+    let searchYear = "";
+    if (this.props.location.state) {
+      searchYear = this.props.location.state.year;
+    }
+
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
     var visualizationOptions = [{ value: "", label: "Chart/Map" }].concat(ChartsMapsCodes.map(function (item) { return { value: item.modulename, label: item.title } }));
     var AE_States = [{ value: "", label: "Select State" }].concat(unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } }));
@@ -132,7 +159,7 @@ export default class DataVisualization extends Component {
     var st = inputs.get("st") || "";
     if(st !== "" ){this.onStateNameChange(st);}
     var viz = inputs.get("viz") || "";
-    if(viz !== "" ){this.onVisualizationChange(viz);}
+    if(viz !== "" ){this.onVisualizationChange(viz, searchYear);}
     var an = inputs.get("an") || "";
     if(an !== "" ){this.onYearChange(an);}
     var pty = inputs.get("pty") || "";
@@ -174,14 +201,17 @@ export default class DataVisualization extends Component {
     this.setState({ showTermsAndConditionsPopup: true });
   }
 
-  onVisualizationChange = (newValue) => {
+  onVisualizationChange = (newValue, searchYear) => {
     this.setState({ year: "" });
     this.setState({ vizOptionsSelected: new Set() });
     this.setState({ showVisualization: false });
     var visualizationType = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].type;
     this.setState({ visualization: newValue });
     this.setState({ visualizationType: visualizationType }, () => {
-      if (visualizationType === "Map") {
+      if (visualizationType === "Map" && this.state.visualization === "voterTurnoutMap2") {
+        this.fetchMapYearAndData(searchYear);
+      }
+      else if (visualizationType === "Map") {
         this.fetchMapYearOptions();
       }
     });
@@ -327,6 +357,68 @@ export default class DataVisualization extends Component {
     });
   }
 
+  fetchMapYearAndData = (searchYear) => {
+    return new Promise((resolve, reject) => {
+      let electionType = this.state.electionType;
+      let stateName = this.state.stateName;
+      let visualization = this.state.visualization;
+      let visualizationType = this.state.visualizationType;
+      let assemblyNumber = this.state.year;
+      let party = this.state.party;
+      let legends = this.state.vizOptionsSelected;
+
+      const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
+      fetch(url, {
+        method: "POST",
+        headers: new Headers({
+          "content-type": "application/json"
+        }),
+        body: JSON.stringify({
+          ElectionType: electionType,
+          StateName: stateName,
+          ModuleName: visualization,
+          VizType: visualizationType
+        })
+      }).then(response => response.json()).then(resp => {
+        var data = [{ value: "", label: "Select Year" }];
+        data = data.concat(resp.data.map(function (item) { return { label: `${item.Year} (#${item.Assembly_No})`, value: item.Assembly_No } }));
+        this.setState(
+          { yearOptions: data },
+          () => {
+            this.setDefaultYear(searchYear);
+          }
+        );
+        let scope = this;
+        let allYearsData = [];
+
+        resp.data.map(function (item) {
+          const url = Constants.baseUrl + "/data/api/v1.0/getVizData";
+          fetch(url, {
+            method: "POST",
+            headers: new Headers({
+              "content-type": "application/json"
+            }),
+            body: JSON.stringify({
+              ElectionType: electionType,
+              StateName: stateName,
+              ModuleName: visualization,
+              VizType: visualizationType,
+              AssemblyNo: item.Assembly_No,
+              Party: party,
+              Legends: [...legends]
+            })
+          }).then(response2 => response2.json()).then(resp2 => {
+            allYearsData = allYearsData.concat({ assemblyNo: item.Assembly_No, data: resp2.data});
+            scope.setState({ allYearsData: allYearsData });
+            setTimeout(() => resolve(data), 500);
+          });
+
+          return null;
+        });
+      });
+    });
+  }
+
   fetchChartMapOptions = (state) => {
     let electionType = state.electionType;
     let stateName = state.stateName;
@@ -429,6 +521,8 @@ export default class DataVisualization extends Component {
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
+    const { yearOptions } = this.state;
+
     switch (visualization) {
       case "voterTurnoutChart":
         return <VoterTurnoutChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
@@ -464,7 +558,20 @@ export default class DataVisualization extends Component {
         return < WinnerMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
       case "notaTurnoutMap":
         return < NotaTurnoutMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-
+      case "voterTurnoutMap2":
+        return (
+          <VoterTurnoutMap2
+            data={data}
+            map={shape}
+            electionType={electionType}
+            assemblyNo={assemblyNo}
+            dataFilterOptions={dataFilterOptions}
+            stateName={stateName}
+            yearOptions={yearOptions}
+            playChangeYears={this.playChangeYears}
+            onSliderYearChange={this.onSliderYearChange}
+          />
+        );
 
       default:
         return;
@@ -491,6 +598,31 @@ export default class DataVisualization extends Component {
 
     });
     this.updateURL({variable:"an",val:newValue});
+  }
+  
+  onSliderYearChange = (event, newValue) => {
+    this.setState({ year: newValue }, () => {
+      let allData = this.state.allYearsData;
+      let x = allData.find(function(item) {
+        return item.assemblyNo === parseInt(newValue);
+      })
+
+      if (typeof x != 'undefined') {
+        this.setState({ vizData: x.data });
+      }
+    });
+    this.updateURL({variable:"an",val:newValue});
+  }
+
+  playChangeYears = () => {
+    let x = this.state.yearOptions;
+    let scope = this;
+    for (let i=1; i<x.length; i++) {
+      setTimeout( function timer(){
+          console.log(x[i].value)
+          scope.setState({ year: x[i].value });
+      }, i*800 );
+    }
   }
 
   render() {

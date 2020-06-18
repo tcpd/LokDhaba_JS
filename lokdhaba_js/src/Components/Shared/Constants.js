@@ -197,3 +197,8 @@ export const tableColumns = [
       Cell: row => (<div style={{ textAlign: "right" }}>{row.value}</div>)
     },
 ]
+
+export const legendColorCodes = {
+  color1: 'B83027',
+  color2: 'ffffff'
+}

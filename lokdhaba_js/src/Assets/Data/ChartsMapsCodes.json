@@ -124,5 +124,12 @@
     "optionslabel": "Map range",
     "modulename": "notaTurnoutMap",
     "alloptionschecked": true
+  },
+  {
+    "title": "Map: Voter Turnout 2",
+    "type": "Map",
+    "optionslabel": "Map range",
+    "modulename": "voterTurnoutMap2",
+    "alloptionschecked": true
   }
 ]

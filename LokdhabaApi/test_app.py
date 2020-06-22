@@ -50,7 +50,6 @@ def module_to_table(argument):
         "winnerCasteMap": "maps",
         "numCandidatesMap": "maps",
         "voterTurnoutMap": "maps",
-        "voterTurnoutMap2": "maps",
         "winnerMap": "maps",
         "winnerGenderMap": "maps",
         "winnerMarginMap": "maps",
@@ -241,7 +240,7 @@ def get_select_options():
         return (jsonify({"data": ["General", "SC", "ST"]}))
     if module == "numCandidatesMap":
         return (jsonify({"data": ["<5", "5-15", ">15"]}))
-    if module == "voterTurnoutMap" or module == "voterTurnoutMap2":
+    if module == "voterTurnoutMap":
         return (jsonify(
             {"data": ["<50%", "50%-60%", "60%-70%", "70%-75%", "75%-80%", "80%-85%", "85%-90%", "90%-95%", ">95%"]}))
     if module == "winnerGenderMap":

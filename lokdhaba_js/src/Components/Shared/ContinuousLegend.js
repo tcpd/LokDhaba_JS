@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import { withLeaflet, MapControl } from "react-leaflet";
 import Paper from '@material-ui/core/Paper';
 import L from "leaflet";
-import * as Constants from '../Shared/Constants';
+import * as Constants from './Constants';
 import '../../Assets/Styles/legend.css'
 
-class MapLegend extends MapControl {
+class ContinuousLegend extends MapControl {
 
   createLeafletElement(opts) {
     const color1 = Constants.legendColorCodes.color2;
@@ -45,4 +45,4 @@ class MapLegend extends MapControl {
   }
 }
 
-export default withLeaflet(MapLegend);
+export default withLeaflet(ContinuousLegend);

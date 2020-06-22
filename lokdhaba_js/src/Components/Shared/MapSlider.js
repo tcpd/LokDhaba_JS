@@ -31,14 +31,14 @@ class MapSlider extends MapControl {
     }
 
     const jsx = (
-      <div {...this.props}>
+      <div>
         <Paper elevation={3}>
-          <button onClick={this.props.handlePlay}>play</button>
+          <button onClick={props.handlePlay}>play</button>
           <br />
           <div style={{ width: "450px", paddingLeft: 70, paddingRight: 70 }}>
             <Slider
               defaultValue={20}
-              value={parseInt(this.props.year)}
+              value={parseInt(props.year)}
               valueLabelFormat={valueLabelFormat}
               getAriaValueText={valuetext}
               aria-labelledby="discrete-slider-restrict"
@@ -47,7 +47,7 @@ class MapSlider extends MapControl {
               max={maxMarker}
               valueLabelDisplay="auto"
               marks={marks}
-              onChange={this.props.onSliderYearChange}
+              onChange={props.onSliderYearChange}
             />
           </div>
         </Paper>

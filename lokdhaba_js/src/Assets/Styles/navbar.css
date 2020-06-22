@@ -12,3 +12,14 @@ nav {
 .navbar-toggler {
   border-color: #B83027;
 }
+
+.search-box {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+@media screen and (max-width: 600px) {
+  .search-box {
+    margin-left: auto;
+  }
+}

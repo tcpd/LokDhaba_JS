@@ -5,6 +5,11 @@ from flask_cors import CORS
 import mysql.connector
 from math import ceil
 import simplejson as json
+import spacy
+from spacy.matcher import PhraseMatcher, Matcher
+from StateNames import stateNamesDict
+import re
+import operator
 
 app = Flask(__name__,
             static_url_path="",
@@ -440,7 +445,6 @@ def get_party_options():
                 return (jsonify({'data': parties}))
 
 
-
 @app.route('/data/api/v1.0/getVizData', methods=['POST'])
 def get_viz_data():
     print("inside viz data")
@@ -509,6 +513,139 @@ def get_viz_data():
             return jsonify({'data': json_data})
 
 
+nlp = spacy.load('en_core_web_md')
+
+@app.route('/data/api/v1.0/getSearchResults', methods=['POST'])
+def get_search_result():
+    req = request.get_json()
+    query = req.get('Query')
+    process_query = query   # query after removing all matched patterns
+    doc = nlp(query)
+    phraseMatcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    tokenMatcher = Matcher(nlp.vocab)
+
+    GE_terms = ["lok sabha", "ls", "ge", "general election", "general elections", "national"]
+    GE_patterns = list(nlp.tokenizer.pipe(GE_terms))
+    phraseMatcher.add("GE_PATTERN", None, *GE_patterns)
+
+    AE_terms = ["ae", "vidhan sabha", "state election", "state elections", "assembly election", "assembly elections"]
+    AE_patterns = list(nlp.tokenizer.pipe(AE_terms))
+    phraseMatcher.add("AE_PATTERN", None, *AE_patterns)
+
+    state_patterns = [nlp.make_doc(key) for key in stateNamesDict]
+    phraseMatcher.add("STATE_PATTERN", None, *state_patterns)
+
+    matches = phraseMatcher(doc)
+    electionType = ""
+    stateName = "Lok_Sabha"
+    party = []
+    years = []
+
+    for i in range(len(matches)):
+        string_id = nlp.vocab.strings[matches[i][0]]
+        if string_id == "GE_PATTERN":
+            electionType = "GE"
+        elif string_id == "AE_PATTERN":
+            electionType = "AE"
+        elif string_id == "STATE_PATTERN":
+            start, end = matches[i][1], matches[i][2]
+            span = doc[start:end]
+            stateName = stateNamesDict.get(span.text.lower())
+
+        if i < len(matches) - 1 and (matches[i][1] != matches[i+1][1]):
+            start, end = matches[i][1], matches[i][2]
+            span = doc[start:end]
+            process_query = re.sub(span.text, '', process_query)
+
+    tokenMatcher.add("YEAR_PATTERN", None, [{"TEXT": {"REGEX": "[1-9][0-9][0-9][0-9]"}}])
+    matches2 = tokenMatcher(doc)
+    for match_id, start, end in matches2:
+        span = doc[start:end]
+        years.append(span.text)
+        process_query = re.sub(span.text, '', process_query)
+
+    new_doc = nlp(process_query)
+    codes_json = open('ChartsMapsCodes.json')
+    codes_data = json.load(codes_json)
+    similar_modules = {}
+
+    for code in codes_data:
+        similar_modules[code['modulename']] = new_doc.similarity(nlp(code['title']))
+
+    sorted_modules = sorted(similar_modules.items(), key=operator.itemgetter(1), reverse=True)
+    module = ""
+    full_party_names = {}
+    party_options_modules = ["cvoteShareChart", "seatShareChart", "tvoteShareChart", "strikeRateChart"]
+    
+    for i in range(len(sorted_modules)):
+        module_name = sorted_modules[i][0]
+        if module_name in party_options_modules:
+            module = module_name
+            break
+
+    connection = connectdb(db_config)
+    if connection.is_connected():
+        cursor = connection.cursor()
+        cursor.execute("show tables")
+        tables = cursor.fetchall()
+        db_tables = []
+        for (table,) in tables:
+            db_tables.append(table)
+        tableName = module_to_table(module)
+        if tableName in db_tables:
+            cursor = connection.cursor(prepared=True)
+            query_input = list()
+            get_table = "Select distinct Party from " + tableName
+            get_count = "Select count(distinct Party) as count from " + tableName
+            get_full_names = "Select distinct Party,Expanded_Party_Name from " + tableName
+            # query_input.append(tableName)
+            get_election = " where Election_Type = %s"
+            if electionType == "":
+                query_input.append("GE")
+            else:
+                query_input.append(electionType)
+            get_state = ""
+            if stateName is not None:
+                get_state = " and State_Name = %s"
+                query_input.append(stateName)
+            
+            party_names_query = get_full_names + get_election + get_state + " and position <10"
+            cursor.execute(party_names_query, tuple(query_input))
+            party_names = cursor.fetchall()
+
+            print(query_input)
+            for (name, full_name) in party_names:
+                # print(name)
+                # print(full_name)
+                full_party_names.update({name: full_name})
+
+    party_patterns = []
+    for key, value in full_party_names.items():
+        print(key, value)
+        if key is not None:
+            party_patterns.append(nlp.make_doc(key))
+        if value is not None:
+            party_patterns.append(nlp.make_doc(value))
+
+    partyMatcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    partyMatcher.add("PARTY_PATTERN", None, *party_patterns)
+    party_matches = partyMatcher(new_doc)
+
+    for match_id, start, end in party_matches:
+        span = doc[start:end]
+        party_match = span.text.upper()
+        for key, value in full_party_names.items():
+            if party_match == key or party_match == value:
+                party.append(key)
+
+    results = {}
+    results["electionType"] = electionType
+    results["stateName"] = stateName
+    results["year"] = years
+    results["similarModules"] = sorted_modules
+    results["party"] = party
+
+    return jsonify({'results': results})
 
 
 if __name__ == '__main__':

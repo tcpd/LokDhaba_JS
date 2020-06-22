@@ -98,8 +98,31 @@ export default class DataVisualization extends Component {
     this.props.history.push(`?${url}`);
   };
 
+  setYearFromSearch = (searchYear) => {
+    let options = this.state.yearOptions;
+    let foundYear = false;
+    if (typeof searchYear !== 'undefined' && searchYear !== "") {
+      options.map((item) => {
+        if (searchYear === item.label.split(' ')[0]) {
+          foundYear = true;
+          this.onYearChange(item.value);
+        }
+        return null
+      })
+    }
+    if (!foundYear) {
+      let latestYear = options[options.length - 1]
+      console.log("Data for year " + searchYear + " not found. Fetching data for latest year " + latestYear.label)
+      this.onYearChange(latestYear.value);
+    }
+  }
 
   componentDidMount() {
+    let searchYear = "";
+    if (this.props.location.state) {
+      searchYear = this.props.location.state.year;
+    }
+
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
     var visualizationOptions = [{ value: "", label: "Chart/Map" }].concat(ChartsMapsCodes.map(function (item) { return { value: item.modulename, label: item.title } }));
     var AE_States = [{ value: "", label: "Select State" }].concat(unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } }));
@@ -132,7 +155,7 @@ export default class DataVisualization extends Component {
     var st = inputs.get("st") || "";
     if(st !== "" ){this.onStateNameChange(st);}
     var viz = inputs.get("viz") || "";
-    if(viz !== "" ){this.onVisualizationChange(viz);}
+    if(viz !== "" ){this.onVisualizationChange(viz, searchYear);}
     var an = inputs.get("an") || "";
     if(an !== "" ){this.onYearChange(an);}
     var pty = inputs.get("pty") || "";
@@ -174,7 +197,7 @@ export default class DataVisualization extends Component {
     this.setState({ showTermsAndConditionsPopup: true });
   }
 
-  onVisualizationChange = (newValue) => {
+  onVisualizationChange = (newValue, searchYear) => {
     this.setState({ year: "" });
     this.setState({ vizOptionsSelected: new Set() });
     this.setState({ showVisualization: false });
@@ -182,7 +205,7 @@ export default class DataVisualization extends Component {
     this.setState({ visualization: newValue });
     this.setState({ visualizationType: visualizationType }, () => {
       if (visualizationType === "Map") {
-        this.fetchMapYearOptions();
+        this.fetchMapYearOptions(searchYear);
       }
     });
     this.updateURL({variable:"viz",val:newValue});
@@ -303,7 +326,7 @@ export default class DataVisualization extends Component {
     });
   }
 
-  fetchMapYearOptions = () => {
+  fetchMapYearOptions = (searchYear) => {
     let electionType = this.state.electionType;
     let stateName = this.state.stateName;
     let visualization = this.state.visualization;
@@ -323,7 +346,12 @@ export default class DataVisualization extends Component {
     }).then(response => response.json()).then(resp => {
       var data = [{ value: "", label: "Select Year" }];
       var data = data.concat(resp.data.map(function (item) { return { label: `${item.Year} (#${item.Assembly_No})`, value: item.Assembly_No } }));
-      this.setState({ yearOptions: data });
+      this.setState(
+        { yearOptions: data },
+        () => {
+          this.setYearFromSearch(searchYear);
+        }
+      );
     });
   }
 
@@ -360,7 +388,10 @@ export default class DataVisualization extends Component {
         });
       }
       var selectedOptions = resp.selected;
-      if(typeof selectedOptions != "undefined" && selectedOptions != null && selectedOptions.length != null && selectedOptions.length > 0){
+      if(this.state.vizOptionsSelected.size > 0){
+        this.setState({ showVisualization: true });
+      }
+      else if(typeof selectedOptions != "undefined" && selectedOptions != null && selectedOptions.length != null && selectedOptions.length > 0){
         this.setState({ vizOptionsSelected: new Set(selectedOptions.map(x => x.replace(/_/g, ""))) }, () => {
           this.fetchVisualizationData();
           if(visualizationType==="Map"){

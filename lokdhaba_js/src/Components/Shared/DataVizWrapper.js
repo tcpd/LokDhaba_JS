@@ -84,7 +84,7 @@ export default class DataVizWrapper extends React.Component {
   }
 
   render() {
-    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, yearOptions, playChangeYears, onSliderYearChange } = this.props;
+    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange } = this.props;
     const electionTypeDisplay = electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const stateNameDisplay = stateName === 'Lok_Sabha' ? '' : stateName.replace(/_/g, " ");
 
@@ -243,7 +243,7 @@ export default class DataVizWrapper extends React.Component {
             }
           }
 
-          let SortedKeys = ['1', '2', '3', '>3']; //Object.keys(legend).sort(function(a,b){return legend[b]-legend[a]})
+          let SortedKeys = ['1', '2', '3', '>3'];
           let sortedLegend = {};
           for (let i = 0; i < SortedKeys.length; i++) {
             let val = SortedKeys[i];
@@ -345,9 +345,10 @@ export default class DataVizWrapper extends React.Component {
           dataFilterOptions={dataFilterOptions}
           assemblyNo={assemblyNo}
           stateName={stateName}
+          showMapYearOptions={showMapYearOptions}
           yearOptions={yearOptions}
           playChangeYears={playChangeYears}
-          onSliderYearChange={onSliderYearChange}
+          onMapYearChange={onMapYearChange}
           vizParameter={vizParameter}
           legendType={legendType}
           discreteLegend={discreteLegend}

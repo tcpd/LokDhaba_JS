@@ -6,7 +6,7 @@ import PrintControlDefault from 'react-leaflet-easyprint';
 import StateCentroids from '../../Assets/Data/StateCentroids.json';
 import ContinuousLegend from './ContinuousLegend';
 import DiscreteLegend from '../Shared/DiscreteLegend';
-import MapSlider from '../Shared/MapSlider';
+import MapYearOptions from '../Shared/MapYearOptions';
 
 export default class MapViz extends React.Component {
   onEachFeature = (feature, layer) => {
@@ -138,14 +138,14 @@ export default class MapViz extends React.Component {
               title="Export as PNG"
               exportOnly
             />
-            {/* <ContinuousLegend /> */}
             {this.renderLegend()}
-            <MapSlider
-              handlePlay={this.props.playChangeYears}
-              onSliderYearChange={this.props.onSliderYearChange}
-              year={this.props.assemblyNo}
-              yearOptions={this.props.yearOptions}
-            />
+            {this.props.showMapYearOptions &&
+              <MapYearOptions
+                handlePlay={this.props.playChangeYears}
+                onMapYearChange={this.props.onMapYearChange}
+                year={this.props.assemblyNo}
+                yearOptions={this.props.yearOptions}
+              />}
           </Map>
         </div>
       </div>

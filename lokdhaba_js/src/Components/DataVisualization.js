@@ -74,7 +74,9 @@ export default class DataVisualization extends Component {
       showTermsAndConditionsPopup: false,
       vizOptionsNames : {},
       stateOptions :[],
-      allYearsData: []
+      allYearsVizData: [],
+      allYearsVizLegend: [],
+      allYearsVizOptionsSelected: []
     };
   }
 
@@ -162,8 +164,7 @@ export default class DataVisualization extends Component {
 
   componentWillUpdate(nextProps, nextState) {
     if ((nextState.visualization !== "" && this.state.visualization !== nextState.visualization && nextState.visualizationType === "Chart")
-      || (nextState.year !== "" && this.state.year !== nextState.year && this.state.visualization !== "partyPositionsMap" && this.state.visualization !== "partyVoteShareMap")
-      || (nextState.party !== "" && (this.state.party !== nextState.party || this.state.year !== nextState.year) && (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap"))) {
+      || (nextState.party !== "" && (this.state.party !== nextState.party) && (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap"))) {
       this.fetchChartMapOptions(nextState);
     }
   }
@@ -192,7 +193,13 @@ export default class DataVisualization extends Component {
     this.setState({ visualization: newValue });
     this.setState({ visualizationType: visualizationType }, () => {
       if (visualizationType === "Map") {
-        this.fetchMapYearAndData(searchYear);
+        this.fetchMapData();
+        if (newValue !== "partyPositionsMap" && newValue !== "partyVoteShareMap") {
+          this.fetchMapYearAndData(searchYear);
+        }
+        else {
+          this.fetchMapYearOptions();
+        }
       }
     });
     this.updateURL({variable:"viz",val:newValue});
@@ -310,6 +317,7 @@ export default class DataVisualization extends Component {
       var data = [{ value: "", label: "Select Party" }];
       var data = data.concat(resp.data.map(function (item) { return { label: item, value: item } }));
       this.setState({ partyOptions: data });
+      this.onPartyChange("");
     });
   }
 
@@ -369,11 +377,13 @@ export default class DataVisualization extends Component {
         data = data.concat(resp.data.map(function (item) { return { label: `${item.Year} (#${item.Assembly_No})`, value: item.Assembly_No } }));
         this.setState({ yearOptions: data});
         let scope = this;
-        let allYearsData = [];
+        let allYearsVizData = [];
+        let allYearsVizLegend = [];
+        let allYearsVizOptionsSelected = [];
 
         resp.data.forEach(function (item) {
-          const url = Constants.baseUrl + "/data/api/v1.0/getVizData";
-          fetch(url, {
+          const urlVizData = Constants.baseUrl + "/data/api/v1.0/getVizData";
+          fetch(urlVizData, {
             method: "POST",
             headers: new Headers({
               "content-type": "application/json"
@@ -387,13 +397,36 @@ export default class DataVisualization extends Component {
               Party: party,
               Legends: [...legends]
             })
-          }).then(response2 => response2.json()).then(resp2 => {
-            allYearsData = allYearsData.concat({ assemblyNo: item.Assembly_No, data: resp2.data });
-            scope.setState({ allYearsData: allYearsData }, () => {
+          }).then(response2 => response2.json()).then(respVizData => {
+            allYearsVizData = allYearsVizData.concat({ assemblyNo: item.Assembly_No, data: respVizData.data });
+            scope.setState({ allYearsVizData: allYearsVizData }, () => {
               scope.setDefaultYear(searchYear);
             });
             setTimeout(() => resolve(data), 500);
           });
+
+          const urlVizLegend = Constants.baseUrl + "/data/api/v1.0/getVizLegend";
+          fetch(urlVizLegend, {
+            method: "POST",
+            headers: new Headers({
+              "content-type": "application/json"
+            }),
+            body: JSON.stringify({
+              ElectionType: electionType,
+              StateName: stateName,
+              ModuleName: visualization,
+              VizType: visualizationType,
+              AssemblyNo: item.Assembly_No,
+            })
+          }).then(response => response.json()).then(respVizLegend => {
+            allYearsVizLegend.push({ assemblyNo: item.Assembly_No, data: respVizLegend.data });
+            var checked = ChartsMapsCodes.filter(function (item1) { return item1.modulename === visualization })[0].alloptionschecked;
+            if (checked) {
+              allYearsVizOptionsSelected.push({ assemblyNo: item.Assembly_No, data: new Set(respVizLegend.data.map(x => x.replace(/_/g, ""))) })
+            }
+          })
+          scope.setState({ allYearsVizLegend: allYearsVizLegend });
+          scope.setState({ allYearsVizOptionsSelected: allYearsVizOptionsSelected });
         });
       });
     });
@@ -424,11 +457,13 @@ export default class DataVisualization extends Component {
       this.setState({ vizOptionsNames : resp.names});
       var checked = ChartsMapsCodes.filter(function (item) { return item.modulename === visualization })[0].alloptionschecked;
       if (checked) {
-        this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) }, () => {
+        this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) }, async () => {
           this.fetchVisualizationData();
           if(visualizationType==="Map"){
-            this.fetchMapData();
+            await this.fetchMapData();
           }
+
+        this.setState({ showVisualization: true });
         });
       }
       var selectedOptions = resp.selected;
@@ -459,11 +494,6 @@ export default class DataVisualization extends Component {
       if (visualization === "cvoteShareChart" || visualization === "seatShareChart" || visualization === "tvoteShareChart" || visualization === "strikeRateChart") {
         this.fetchVisualizationData();
         this.setState({ showVisualization: true });
-      } else if (vizOptionsSelected.size > 0) {
-        this.fetchVisualizationData();
-        this.setState({ showVisualization: false });
-      } else {
-        this.setState({ showVisualization: false });
       }
     });
     this.updateURL({variable:"opt",val:[...vizOptionsSelected]});
@@ -506,6 +536,10 @@ export default class DataVisualization extends Component {
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
     const { visualizationType, yearOptions, chartMapOptions } = this.state;
+    let showMapYearOptions = true;
+    if (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") {
+      showMapYearOptions = false;
+    }
 
     return (
       <DataVizWrapper
@@ -516,11 +550,12 @@ export default class DataVisualization extends Component {
         electionType={electionType}
         assemblyNo={assemblyNo}
         stateName={stateName}
+        showMapYearOptions={showMapYearOptions}
         yearOptions={yearOptions}
         chartMapOptions={chartMapOptions}
         dataFilterOptions={dataFilterOptions}
         playChangeYears={this.playChangeYears}
-        onSliderYearChange={this.onSliderYearChange}
+        onMapYearChange={this.onMapYearChange}
       />
     );
   }
@@ -534,39 +569,47 @@ export default class DataVisualization extends Component {
   }
 
   onYearChange = (newValue) => {
+    this.setState({ showVisualization: false });
     this.setState({ year: newValue }, () => {
       if (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap") {
         this.fetchMapYearParties();
       }
-
-      let allData = this.state.allYearsData;
-      let newData = allData.find(function (item) {
-        return item.assemblyNo === parseInt(newValue);
-      })
-
-      if (typeof newData != 'undefined') {
-        this.setState({ vizData: newData.data });
-      }
-    });
-    this.updateURL({variable:"an",val:newValue});
-  }
-
-  onSliderYearChange = (event, newValue) => {
-    this.setState({ year: newValue }, () => {
-      if (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap") {
-        this.fetchMapYearParties();
-      }
-
-      let allData = this.state.allYearsData;
-      let newData = allData.find(function (item) {
-        return item.assemblyNo === parseInt(newValue);
-      })
-
-      if (typeof newData != 'undefined') {
-        this.setState({ vizData: newData.data });
+      else {
+        const { allYearsVizData, allYearsVizLegend, allYearsVizOptionsSelected, showVisualization } = this.state;
+        let newData = allYearsVizData.find(function (item) {
+          return item.assemblyNo === parseInt(newValue);
+        })
+  
+        if (typeof newData != 'undefined') {
+          this.setState({ vizData: newData.data });
+        }
+  
+        let vizLegend = allYearsVizLegend.find(function (item) {
+          return item.assemblyNo === parseInt(newValue);
+        })
+  
+        if (typeof vizLegend != 'undefined') {
+          this.setState({ chartMapOptions: vizLegend.data });
+        }
+  
+        let vizOptionsSelected = allYearsVizOptionsSelected.find(function (item) {
+          return item.assemblyNo === parseInt(newValue);
+        })
+  
+        if (typeof vizOptionsSelected != 'undefined') {
+          this.setState({ vizOptionsSelected: vizOptionsSelected.data });
+        }
+  
+        if (showVisualization === false) {
+          this.setState({ showVisualization: true });
+        }
       }
     });
     this.updateURL({ variable: "an", val: newValue });
+  }
+
+  onMapYearChange = (event, newValue) => {
+    this.onYearChange(newValue);
   }
 
   playChangeYears = () => {
@@ -574,7 +617,7 @@ export default class DataVisualization extends Component {
     let scope = this;
     for (let i = 1; i < yearOptions.length; i++) {
       setTimeout(function timer() {
-        scope.setState({ year: yearOptions[i].value });
+        scope.onYearChange(yearOptions[i].value);
       }, i * 800);
     }
   }
@@ -655,6 +698,7 @@ export default class DataVisualization extends Component {
                 <br></br>
                 {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
+                {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
                 {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap"))) && this.createOptionsCheckboxes()}
                 {dataFilterOptions.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}

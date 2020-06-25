@@ -1,0 +1,9 @@
+Django==3.0.7
+mysqlclient
+mysql.connector
+mysql-connector-python
+pandas
+geopandas
+simplejson
+# libmysqlclient-dev default-libmysqlclient-dev
+django-mysql

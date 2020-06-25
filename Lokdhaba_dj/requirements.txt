@@ -7,3 +7,4 @@ geopandas
 simplejson
 # libmysqlclient-dev default-libmysqlclient-dev
 django-mysql
+django-cors-headers

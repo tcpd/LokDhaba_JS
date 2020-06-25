@@ -78,6 +78,9 @@ create table `maps` (
 	`Runner_Party` varchar(50),
 	`Runner_Sex` varchar(10),
 	`Nota_Percentage` Numeric(4,2),
+	`Vote_Share_Change_pct` decimal(4, 2),
+	`Turnout_Change_pct` decimal(4,2),
+	`Margin_Change_pct` decimal(4,2),
 	PRIMARY KEY (`Election_Type`, `State_Name`,`Assembly_No`,`Constituency_No`)
 );
 
@@ -104,6 +107,8 @@ create table `partys` (
 	`Party` varchar(50) NOT NULL,
 	`Votes` INT,
 	`Candidate` varchar(255) NOT NULL,
+	`Position_Change` decimal(4,2),
+	`Vote_Share_Change_pct` decimal(4,2),
 	PRIMARY KEY (`Election_Type`, `State_Name`,`Assembly_No`,`Constituency_No`,`Position`)
 );
 create table party_statistics (

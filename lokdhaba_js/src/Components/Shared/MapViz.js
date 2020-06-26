@@ -18,7 +18,7 @@ export default class MapViz extends React.Component {
         popupContent += `<b>${key}:</b> ${value}<br/>`;
       }
     }
-    layer.bindPopup(popupContent);
+    layer.bindTooltip(popupContent);
   };
 
   renderConstituencies = (mapGeoJson, dataFilterOptions) => {
@@ -54,20 +54,20 @@ export default class MapViz extends React.Component {
       if (showChangeMap) {
         return (
           <ContinuousLegend
-            backgroundStyle={"linear-gradient(to right, #" + Constants.legendColorCodes.changeMap.minColor + " 0%, #ffffff 50%, #" + Constants.legendColorCodes.changeMap.maxColor + " 100%)"}
+            backgroundStyle={"linear-gradient(to right, #" + Constants.mapColorCodes.changeMap.minColor + " 0%, #ffffff 50%, #" + Constants.mapColorCodes.changeMap.maxColor + " 100%)"}
             title={"Percentage(%)"}
-            leftMarker={maxVizParameter}
-            rightMarker={minVizParameter}
+            leftMarker={minVizParameter}
+            rightMarker={maxVizParameter}
           />
         )
       }
       else {
         return (
           <ContinuousLegend
-            backgroundStyle={"linear-gradient(to right, #" + Constants.legendColorCodes.normalMap.minColor + " 0%, #" + Constants.legendColorCodes.normalMap.maxColor + " 100%)"}
+            backgroundStyle={"linear-gradient(to right, #" + Constants.mapColorCodes.normalMap.minColor + " 0%, #" + Constants.mapColorCodes.normalMap.maxColor + " 100%)"}
             title={"Percentage(%)"}
-            leftMarker={maxVizParameter}
-            rightMarker={minVizParameter}
+            leftMarker={minVizParameter}
+            rightMarker={maxVizParameter}
           />
         )
       }
@@ -80,7 +80,7 @@ export default class MapViz extends React.Component {
   }
 
   render() {
-    const { title } = this.props;
+    const { title, enableChangeMap, showChangeMap, onShowChangeMapChange, enableNormalizedMap, showNormalizedMap, onShowNormalizedMapChange } = this.props;
     var data = this.props.data;
     var electionType = this.props.electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const PrintControl = withLeaflet(PrintControlDefault);
@@ -159,6 +159,12 @@ export default class MapViz extends React.Component {
             {this.renderLegend()}
             {this.props.showMapYearOptions &&
               <MapYearOptions
+                enableChangeMap={enableChangeMap}
+                showChangeMap={showChangeMap}
+                onShowChangeMapChange={onShowChangeMapChange}
+                enableNormalizedMap={enableNormalizedMap}
+                showNormalizedMap={showNormalizedMap}
+                onShowNormalizedMapChange={onShowNormalizedMapChange}
                 handlePlay={this.props.playChangeYears}
                 onMapYearChange={this.props.onMapYearChange}
                 year={this.props.assemblyNo}

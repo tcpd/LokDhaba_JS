@@ -48,13 +48,23 @@ export default class DataVizWrapper extends React.Component {
     if (val) {
       return this.getColorFromRatio(val / 100, minColor, maxColor);
     }
-    else return defaultColor;
+    else return Constants.mapColorCodes.dataUnavailabe.color;
   }
 
-  getColorForContinuousNormalized = (min, max, minColor, maxColor, val, dataFilterOptions) => {
+  getColorForNormalizedMap = (min, max, minColor, maxColor, val, dataFilterOptions) => {
+    if (!val) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    else {
+      let ratio = (val - min) / (max - min);
+      return this.getColorFromRatio(ratio, minColor, maxColor);
+    }
+  }
+
+  getColorForChangeMap = (min, max, minColor, maxColor, val, dataFilterOptions) => {
     let ratio;
     if (!val) {
-      return '#33ccff';
+      return Constants.mapColorCodes.dataUnavailabe.color;
     }
     if (val >= 0) {
       ratio = val / max;
@@ -63,7 +73,6 @@ export default class DataVizWrapper extends React.Component {
     else {
       ratio = (val - min) / (- min);
       return this.getColorFromRatio(ratio, minColor, 'ffffff');
-
     }
   }
 
@@ -103,7 +112,7 @@ export default class DataVizWrapper extends React.Component {
   }
 
   render() {
-    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap } = this.props;
+    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap, showNormalizedMap } = this.props;
     const electionTypeDisplay = electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const stateNameDisplay = stateName === 'Lok_Sabha' ? '' : stateName.replace(/_/g, " ");
 
@@ -119,9 +128,11 @@ export default class DataVizWrapper extends React.Component {
       let getMapColor;
       let curriedGetLegendColorFromPalette = curry(this.getLegendColorFromPalette);
       let curriedGetColorForContinuous = curry(this.getColorForContinuous);
-      let curriedGetColorForContinuousNormalized = curry(this.getColorForContinuousNormalized);
-      let minColorNormal = Constants.legendColorCodes.normalMap.minColor;
-      let maxColorNormal = Constants.legendColorCodes.normalMap.maxColor;
+      let curriedGetColorForChangeMap = curry(this.getColorForChangeMap);
+      let curriedGetColorForNormalizedMap = curry(this.getColorForNormalizedMap);
+      let minColorNormal = Constants.mapColorCodes.normalMap.minColor;
+      let maxColorNormal = Constants.mapColorCodes.normalMap.maxColor;
+      let enableNormalizedMap = false;
 
       switch (visualization) {
         case "winnerCasteMap": {
@@ -194,6 +205,7 @@ export default class DataVizWrapper extends React.Component {
           vizChangeParameter = "Turnout_Change_pct";
           legendType = "Continuous";
           getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal);
+          enableNormalizedMap = true;
           break;
         }
 
@@ -217,6 +229,7 @@ export default class DataVizWrapper extends React.Component {
           vizChangeParameter = "Margin_Change_pct";
           legendType = "Continuous";
           getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal);
+          enableNormalizedMap = true;
           break;
         }
 
@@ -227,6 +240,7 @@ export default class DataVizWrapper extends React.Component {
           vizChangeParameter = "Vote_Share_Change_pct";
           legendType = "Continuous";
           getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal);
+          enableNormalizedMap = true;
           break;
         }
 
@@ -235,6 +249,7 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Vote_Share_Percentage";
           legendType = "Continuous";
           getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal);
+          enableNormalizedMap = true;
           break;
         }
 
@@ -367,6 +382,9 @@ export default class DataVizWrapper extends React.Component {
           break;
       }
 
+      let enableChangeMap = vizChangeParameter !== "" ? true : false;
+      enableNormalizedMap = enableNormalizedMap && !showChangeMap;
+
       if (showChangeMap) {
         let maxVizParameter = Number.NEGATIVE_INFINITY;
         let minVizParameter = Number.POSITIVE_INFINITY;
@@ -380,12 +398,13 @@ export default class DataVizWrapper extends React.Component {
           }
         }
 
-        let getMapColorNormalized = curriedGetColorForContinuousNormalized(minVizParameter, maxVizParameter, Constants.legendColorCodes.changeMap.minColor, Constants.legendColorCodes.changeMap.maxColor);
+        let getMapChangeMapColor = curriedGetColorForChangeMap(minVizParameter, maxVizParameter, Constants.mapColorCodes.changeMap.minColor, Constants.mapColorCodes.changeMap.maxColor);
 
         return <MapViz
           title={changeMapTitle}
           data={data}
           map={map}
+          visualization={visualization}
           electionType={electionType}
           dataFilterOptions={dataFilterOptions}
           assemblyNo={assemblyNo}
@@ -397,37 +416,97 @@ export default class DataVizWrapper extends React.Component {
           vizParameter={vizChangeParameter}
           legendType={legendType}
           discreteLegend={discreteLegend}
-          getMapColor={getMapColorNormalized}
+          getMapColor={getMapChangeMapColor}
           getLegendColor={getLegendColor}
           minVizParameter={minVizParameter}
           maxVizParameter={maxVizParameter}
+          enableChangeMap={enableChangeMap}
           showChangeMap={showChangeMap}
+          onShowChangeMapChange={this.props.onShowChangeMapChange}
+          enableNormalizedMap={enableNormalizedMap}
+          showNormalizedMap={showNormalizedMap}
+          onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}
         />
       }
 
-      else return (
-        <MapViz
-          title={title}
-          data={data}
-          map={map}
-          electionType={electionType}
-          dataFilterOptions={dataFilterOptions}
-          assemblyNo={assemblyNo}
-          stateName={stateName}
-          showMapYearOptions={showMapYearOptions}
-          yearOptions={yearOptions}
-          playChangeYears={playChangeYears}
-          onMapYearChange={onMapYearChange}
-          vizParameter={vizParameter}
-          legendType={legendType}
-          discreteLegend={discreteLegend}
-          getMapColor={getMapColor}
-          getLegendColor={getLegendColor}
-          minVizParameter={0}
-          maxVizParameter={100}
-          showChangeMap={showChangeMap}
-        />
-      )
+      else {
+        if (showNormalizedMap) {
+          let maxVizParameter = Number.NEGATIVE_INFINITY;
+          let minVizParameter = Number.POSITIVE_INFINITY;
+          for (let index = 0; index < data.length; index++) {
+            let val = data[index][vizParameter];
+            if (parseFloat(val) > parseFloat(maxVizParameter)) {
+              maxVizParameter = val;
+            }
+            if (parseFloat(val) < parseFloat(minVizParameter)) {
+              minVizParameter = val;
+            }
+          }
+
+          let getMapChangeNormalizedColor = curriedGetColorForNormalizedMap(minVizParameter, maxVizParameter, Constants.mapColorCodes.normalMap.minColor, Constants.mapColorCodes.normalMap.maxColor);
+
+          return (
+            <MapViz
+              title={title}
+              data={data}
+              map={map}
+              visualization={visualization}
+              electionType={electionType}
+              dataFilterOptions={dataFilterOptions}
+              assemblyNo={assemblyNo}
+              stateName={stateName}
+              showMapYearOptions={showMapYearOptions}
+              yearOptions={yearOptions}
+              playChangeYears={playChangeYears}
+              onMapYearChange={onMapYearChange}
+              vizParameter={vizParameter}
+              legendType={legendType}
+              discreteLegend={discreteLegend}
+              getMapColor={getMapChangeNormalizedColor}
+              getLegendColor={getLegendColor}
+              minVizParameter={minVizParameter}
+              maxVizParameter={maxVizParameter}
+              enableChangeMap={enableChangeMap}
+              showChangeMap={showChangeMap}
+              onShowChangeMapChange={this.props.onShowChangeMapChange}
+              enableNormalizedMap={enableNormalizedMap}
+              showNormalizedMap={showNormalizedMap}
+              onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}
+            />
+          )
+        }
+        else {
+          return (
+            <MapViz
+              title={title}
+              data={data}
+              map={map}
+              visualization={visualization}
+              electionType={electionType}
+              dataFilterOptions={dataFilterOptions}
+              assemblyNo={assemblyNo}
+              stateName={stateName}
+              showMapYearOptions={showMapYearOptions}
+              yearOptions={yearOptions}
+              playChangeYears={playChangeYears}
+              onMapYearChange={onMapYearChange}
+              vizParameter={vizParameter}
+              legendType={legendType}
+              discreteLegend={discreteLegend}
+              getMapColor={getMapColor}
+              getLegendColor={getLegendColor}
+              minVizParameter={0}
+              maxVizParameter={100}
+              enableChangeMap={enableChangeMap}
+              showChangeMap={showChangeMap}
+              onShowChangeMapChange={this.props.onShowChangeMapChange}
+              enableNormalizedMap={enableNormalizedMap}
+              showNormalizedMap={showNormalizedMap}
+              onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}
+            />
+          )
+        }
+      }
     }
     else if (visualizationType === "Chart") {
       let chartType = "";

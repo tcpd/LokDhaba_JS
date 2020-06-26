@@ -7,6 +7,7 @@ import StateCentroids from '../../Assets/Data/StateCentroids.json';
 import ContinuousLegend from './ContinuousLegend';
 import DiscreteLegend from '../Shared/DiscreteLegend';
 import MapYearOptions from '../Shared/MapYearOptions';
+import * as Constants from '../Shared/Constants';
 
 export default class MapViz extends React.Component {
   onEachFeature = (feature, layer) => {
@@ -47,12 +48,29 @@ export default class MapViz extends React.Component {
   };
 
   renderLegend = () => {
-    const { legendType, discreteLegend, getLegendColor } = this.props;
+    const { legendType, discreteLegend, getLegendColor, minVizParameter, maxVizParameter, showChangeMap } = this.props;
 
     if (legendType === "Continuous") {
-      return (
-        <ContinuousLegend />
-      )
+      if (showChangeMap) {
+        return (
+          <ContinuousLegend
+            backgroundStyle={"linear-gradient(to right, #" + Constants.legendColorCodes.changeMap.minColor + " 0%, #ffffff 50%, #" + Constants.legendColorCodes.changeMap.maxColor + " 100%)"}
+            title={"Percentage(%)"}
+            leftMarker={maxVizParameter}
+            rightMarker={minVizParameter}
+          />
+        )
+      }
+      else {
+        return (
+          <ContinuousLegend
+            backgroundStyle={"linear-gradient(to right, #" + Constants.legendColorCodes.normalMap.minColor + " 0%, #" + Constants.legendColorCodes.normalMap.maxColor + " 100%)"}
+            title={"Percentage(%)"}
+            leftMarker={maxVizParameter}
+            rightMarker={minVizParameter}
+          />
+        )
+      }
     }
     else if (legendType === "Discrete") {
       return (
@@ -62,7 +80,7 @@ export default class MapViz extends React.Component {
   }
 
   render() {
-    const title = this.props.title;
+    const { title } = this.props;
     var data = this.props.data;
     var electionType = this.props.electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const PrintControl = withLeaflet(PrintControlDefault);

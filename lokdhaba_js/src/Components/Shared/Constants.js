@@ -200,5 +200,7 @@ export const tableColumns = [
 
 export const legendColorCodes = {
   color1: 'B83027',
-  color2: 'ffffff'
+  color2: 'ffffff',
+  normalMap: {minColor: 'ffffff', maxColor: 'B83027'},
+  changeMap: {minColor: 'cc3300', maxColor: '006600'},
 }

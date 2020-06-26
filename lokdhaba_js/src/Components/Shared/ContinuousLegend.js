@@ -3,26 +3,23 @@ import ReactDOM from 'react-dom';
 import { withLeaflet, MapControl } from "react-leaflet";
 import Paper from '@material-ui/core/Paper';
 import L from "leaflet";
-import * as Constants from './Constants';
 import '../../Assets/Styles/legend.css'
 
 class ContinuousLegend extends MapControl {
 
-  createLeafletElement(opts) {
-    const color1 = Constants.legendColorCodes.color2;
-    const color2 = Constants.legendColorCodes.color1;
-    const background = "linear-gradient(to right, #" + color1 +" 0%, #" + color2 +" 100%)";
-    
+  getLegend(props) {
+    const { backgroundStyle, title, leftMarker, rightMarker } = props;
+
     const jsx = (
       <div {...this.props}>
         <Paper elevation={3}>
           <div style={{ paddingLeft: "10px", paddingRight: "10px", paddingBottom: "10px", paddingTop: "5px" }}>
             <div className="box">
-              <p className="left-marker">0</p>
-              <p className="middle-marker">Percentage(%)</p>
-              <p className="right-marker">100</p>
+              <p className="left-marker">{leftMarker}</p>
+              <p className="middle-marker">{title}</p>
+              <p className="right-marker">{rightMarker}</p>
               <br />
-              <div className="legend-gradient" style={{ background: background }}></div>
+              <div className="legend-gradient" style={{ background: backgroundStyle }}></div>
             </div>
           </div>
         </Paper>
@@ -37,6 +34,23 @@ class ContinuousLegend extends MapControl {
       }
     });
     return new MapInfo({ position: "topright" });
+  }
+
+  createLeafletElement(props) {
+    return this.getLegend(props)
+  }
+
+  updateLeafletElement(fromProps, toProps) {
+    const { map } = this.props.leaflet;
+    if (fromProps.backgroundStyle !== toProps.backgroundStyle || fromProps.title !== toProps.title || fromProps.leftMarker !== toProps.leftMarker || fromProps.rightMarker !== toProps.rightMarker) {
+
+      if (this.leafletElement) {
+        this.leafletElement.remove(map);
+      }
+
+      this.leafletElement = this.createLeafletElement(toProps)
+      this.leafletElement.addTo(map)
+    }
   }
 
   componentDidMount() {

@@ -76,7 +76,8 @@ export default class DataVisualization extends Component {
       stateOptions :[],
       allYearsVizData: [],
       allYearsVizLegend: [],
-      allYearsVizOptionsSelected: []
+      allYearsVizOptionsSelected: [],
+      showChangeMap: false
     };
   }
 
@@ -168,8 +169,13 @@ export default class DataVisualization extends Component {
       this.fetchChartMapOptions(nextState);
     }
   }
+
   onAcceptTermsAndConditions = (key, checked) => {
     this.setState({ isDataDownloadable: checked });
+  }
+
+  onShowChangeMapChange = (key, checked) => {
+    this.setState({ showChangeMap: checked });
   }
 
   CancelTermsAndConditionsPopup = () => {
@@ -188,6 +194,7 @@ export default class DataVisualization extends Component {
   onVisualizationChange = (newValue, searchYear) => {
     this.setState({ year: "" });
     this.setState({ vizOptionsSelected: new Set() });
+    this.setState({ showChangeMap: false });
     this.setState({ showVisualization: false });
     var visualizationType = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].type;
     this.setState({ visualization: newValue });
@@ -535,7 +542,7 @@ export default class DataVisualization extends Component {
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
-    const { visualizationType, yearOptions, chartMapOptions } = this.state;
+    const { visualizationType, yearOptions, chartMapOptions, showChangeMap } = this.state;
     let showMapYearOptions = true;
     if (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") {
       showMapYearOptions = false;
@@ -556,6 +563,7 @@ export default class DataVisualization extends Component {
         dataFilterOptions={dataFilterOptions}
         playChangeYears={this.playChangeYears}
         onMapYearChange={this.onMapYearChange}
+        showChangeMap={showChangeMap}
       />
     );
   }
@@ -701,7 +709,8 @@ export default class DataVisualization extends Component {
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
                 {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap"))) && this.createOptionsCheckboxes()}
-                {dataFilterOptions.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
+                {(visualization === "voterTurnoutMap" || visualization === "winnerMarginMap" || visualization === "winnerVoteShareMap") && <Checkbox id={"change_map_checkbox"} label={"Show change map"} checked={this.state.showChangeMap} onChange={this.onShowChangeMapChange} />}
+                {<Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
             </div>
             <div className="vis column" style={{width: "80%", padding: "10px"}}>

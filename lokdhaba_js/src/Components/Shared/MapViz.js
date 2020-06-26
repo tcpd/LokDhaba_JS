@@ -22,12 +22,11 @@ export default class MapViz extends React.Component {
   };
 
   renderConstituencies = (mapGeoJson, dataFilterOptions) => {
-    const { getMapColor, vizParameter } = this.props;
+    const { getMapColor } = this.props;
 
     return mapGeoJson.map((constituency) => {
-      const val = constituency.properties[vizParameter];
       let style = {
-        fillColor: getMapColor(val, dataFilterOptions),
+        fillColor: getMapColor(constituency, dataFilterOptions),
         weight: 1,
         opacity: 1,
         color: 'black',

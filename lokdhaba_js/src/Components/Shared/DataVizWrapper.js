@@ -44,14 +44,34 @@ export default class DataVizWrapper extends React.Component {
     return "#" + middle.toString();
   }
 
-  getColorForContinuous = (minColor, maxColor, val, dataFilterOptions) => {
+  getColorForContinuous = (minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
+    if (!constituency) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    if (!constituency.hasOwnProperty('properties')) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    if (!constituency.properties.hasOwnProperty(vizParameter)) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    let val = constituency.properties[vizParameter];
     if (val) {
       return this.getColorFromRatio(val / 100, minColor, maxColor);
     }
     else return Constants.mapColorCodes.dataUnavailabe.color;
   }
 
-  getColorForNormalizedMap = (min, max, minColor, maxColor, val, dataFilterOptions) => {
+  getColorForNormalizedMap = (min, max, minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
+    if (!constituency) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    if (!constituency.hasOwnProperty('properties')) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    if (!constituency.properties.hasOwnProperty(vizParameter)) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    let val = constituency.properties[vizParameter];
     if (!val) {
       return Constants.mapColorCodes.dataUnavailabe.color;
     }
@@ -61,7 +81,17 @@ export default class DataVizWrapper extends React.Component {
     }
   }
 
-  getColorForChangeMap = (min, max, minColor, maxColor, val, dataFilterOptions) => {
+  getColorForChangeMap = (min, max, minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
+    if (!constituency) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    if (!constituency.hasOwnProperty('properties')) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    if (!constituency.properties.hasOwnProperty(vizParameter)) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    let val = constituency.properties[vizParameter];
     let ratio;
     if (!val) {
       return Constants.mapColorCodes.dataUnavailabe.color;
@@ -76,13 +106,48 @@ export default class DataVizWrapper extends React.Component {
     }
   }
 
-  getLegendColorFromPalette = (ColorPalette, vizParameter, d) => {
+  getMapColorFromPalette = (ColorPalette, vizParameter, constituency, dataFilterOptionName) => {
+    if (!constituency) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    if (!constituency.hasOwnProperty('properties')) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    if (!constituency.properties.hasOwnProperty(vizParameter)) {
+      return Constants.mapColorCodes.dataUnavailabe.color;
+    }
+    let d = constituency.properties[vizParameter];
     let color = "#FFFFFF00";
-    for (let i = 0; i < ColorPalette.length; i++) {
-      var element = ColorPalette[i];
-      if (element[vizParameter] === d) {
-        color = element.Color;
-        break;
+
+    if (!d) {
+      return color;
+    }
+    if (dataFilterOptionName.has(d.toString())) {
+      for (let i = 0; i < ColorPalette.length; i++) {
+        var element = ColorPalette[i];
+        if (element[vizParameter] === d) {
+          color = element.Color;
+          break;
+        }
+      }
+    }
+
+    return color;
+  }
+
+  getLegendColorFromPalette = (ColorPalette, vizParameter, d, dataFilterOptionName) => {
+    let color = "#FFFFFF00";
+
+    if (!d) {
+      return color;
+    }
+    if (dataFilterOptionName.has(d.toString())) {
+      for (let i = 0; i < ColorPalette.length; i++) {
+        var element = ColorPalette[i];
+        if (element[vizParameter] === d) {
+          color = element.Color;
+          break;
+        }
       }
     }
 
@@ -126,13 +191,18 @@ export default class DataVizWrapper extends React.Component {
       let discreteLegend = [];
       let getLegendColor;
       let getMapColor;
+      let getMapChangeMapColor;
+      let curriedGetMapColorFromPalette = curry(this.getMapColorFromPalette);
       let curriedGetLegendColorFromPalette = curry(this.getLegendColorFromPalette);
       let curriedGetColorForContinuous = curry(this.getColorForContinuous);
       let curriedGetColorForChangeMap = curry(this.getColorForChangeMap);
       let curriedGetColorForNormalizedMap = curry(this.getColorForNormalizedMap);
       let minColorNormal = Constants.mapColorCodes.normalMap.minColor;
       let maxColorNormal = Constants.mapColorCodes.normalMap.maxColor;
+      let enableChangeMap = false;
       let enableNormalizedMap = false;
+      let minVizParameter = 0;
+      let maxVizParameter = 100;
 
       switch (visualization) {
         case "winnerCasteMap": {
@@ -140,11 +210,13 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Constituency_Type";
           legendType = "Discrete";
           ColorPalette = ConstituencyTypeColorPalette;
-          getMapColor = (val, dataFilterOptions) => {
-            return curriedGetLegendColorFromPalette(ColorPalette, vizParameter, val);
+          getMapColor = (constituency, dataFilterOptions) => {
+            return curriedGetMapColorFromPalette(ColorPalette, vizParameter, constituency, dataFilterOptions);
           }
           discreteLegend = this.getSortedLegendFromValue(data, vizParameter, dataFilterOptions);
-          getLegendColor = curriedGetLegendColorFromPalette(ColorPalette, vizParameter);
+          getLegendColor = (val) => {
+            return curriedGetLegendColorFromPalette(ColorPalette, vizParameter, val, dataFilterOptions);
+          }
           break;
         }
 
@@ -152,7 +224,17 @@ export default class DataVizWrapper extends React.Component {
           title = `Constituency wise number of candidates contested for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "N_Cand";
           legendType = "Discrete";
-          getMapColor = (val, dataFilterOptions) => {
+          getMapColor = (constituency, dataFilterOptions) => {
+            if (!constituency) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (!constituency.hasOwnProperty('properties')) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (!constituency.properties.hasOwnProperty(vizParameter)) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            let val = constituency.properties[vizParameter];
             switch (true) {
               case !val:
                 return defaultColor;
@@ -204,7 +286,8 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Turnout_Percentage";
           vizChangeParameter = "Turnout_Change_pct";
           legendType = "Continuous";
-          getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal);
+          getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal, vizParameter);
+          enableChangeMap = true;
           enableNormalizedMap = true;
           break;
         }
@@ -214,11 +297,13 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Sex";
           legendType = "Discrete";
           ColorPalette = GenderColorPalette;
-          getMapColor = (val, dataFilterOptions) => {
-            return curriedGetLegendColorFromPalette(ColorPalette, vizParameter, val);
+          getMapColor = (constituency, dataFilterOptions) => {
+            return curriedGetMapColorFromPalette(ColorPalette, vizParameter, constituency, dataFilterOptions);
           }
           discreteLegend = this.getSortedLegendFromValue(data, vizParameter, dataFilterOptions);
-          getLegendColor = curriedGetLegendColorFromPalette(ColorPalette, vizParameter);
+          getLegendColor = (val) => {
+            return curriedGetLegendColorFromPalette(ColorPalette, vizParameter, val, dataFilterOptions);
+          }
           break;
         }
 
@@ -228,7 +313,8 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Margin_Percentage";
           vizChangeParameter = "Margin_Change_pct";
           legendType = "Continuous";
-          getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal);
+          getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal, vizParameter);
+          enableChangeMap = true;
           enableNormalizedMap = true;
           break;
         }
@@ -239,7 +325,8 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Vote_Share_Percentage";
           vizChangeParameter = "Vote_Share_Change_pct";
           legendType = "Continuous";
-          getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal);
+          getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal, vizParameter);
+          enableChangeMap = true;
           enableNormalizedMap = true;
           break;
         }
@@ -248,7 +335,7 @@ export default class DataVizWrapper extends React.Component {
           title = `Constituency wise vote share percentages of winners for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Vote_Share_Percentage";
           legendType = "Continuous";
-          getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal);
+          getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal, vizParameter);
           enableNormalizedMap = true;
           break;
         }
@@ -257,7 +344,17 @@ export default class DataVizWrapper extends React.Component {
           title = `Constituency wise vote share percentages of winners for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Position";
           legendType = "Discrete";
-          getMapColor = (val, dataFilterOptions) => {
+          getMapColor = (constituency, dataFilterOptions) => {
+            if (!constituency) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (!constituency.hasOwnProperty('properties')) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (!constituency.properties.hasOwnProperty(vizParameter)) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            let val = constituency.properties[vizParameter];
             switch (true) {
               case !val:
                 return defaultColor;
@@ -314,11 +411,31 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Party";
           legendType = "Discrete";
           ColorPalette = PartyColorPalette;
-          getMapColor = (val, dataFilterOptions) => {
-            return curriedGetLegendColorFromPalette(ColorPalette, vizParameter, val);
+          getMapColor = (constituency, dataFilterOptions) => {
+            return curriedGetMapColorFromPalette(ColorPalette, vizParameter, constituency, dataFilterOptions);
+          }
+          getMapChangeMapColor = (constituency, dataFilterOptions) => {
+            if (!constituency) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (!constituency.hasOwnProperty('properties')) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (!constituency.properties.hasOwnProperty(vizParameter)) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (constituency.properties["Party_Change"] === null) {
+              return '#ffffff';
+            }
+            else {
+              return curriedGetMapColorFromPalette(ColorPalette, vizParameter, constituency, dataFilterOptions);
+            }
           }
           discreteLegend = this.getSortedLegendFromValue(data, vizParameter, dataFilterOptions);
-          getLegendColor = curriedGetLegendColorFromPalette(ColorPalette, vizParameter);
+          getLegendColor = (val) => {
+            return curriedGetLegendColorFromPalette(ColorPalette, vizParameter, val, dataFilterOptions);
+          }
+          enableChangeMap = true;
           break;
         }
 
@@ -326,7 +443,17 @@ export default class DataVizWrapper extends React.Component {
           title = `Constituency wise NOTA vote share percentages for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Nota_Percentage";
           legendType = "Discrete";
-          getMapColor = (val, dataFilterOptions) => {
+          getMapColor = (constituency, dataFilterOptions) => {
+            if (!constituency) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (!constituency.hasOwnProperty('properties')) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            if (!constituency.properties.hasOwnProperty(vizParameter)) {
+              return Constants.mapColorCodes.dataUnavailabe.color;
+            }
+            let val = constituency.properties[vizParameter];
             switch (true) {
               case !val:
                 return defaultColor;
@@ -382,23 +509,24 @@ export default class DataVizWrapper extends React.Component {
           break;
       }
 
-      let enableChangeMap = vizChangeParameter !== "" ? true : false;
       enableNormalizedMap = enableNormalizedMap && !showChangeMap;
 
       if (showChangeMap) {
-        let maxVizParameter = Number.NEGATIVE_INFINITY;
-        let minVizParameter = Number.POSITIVE_INFINITY;
-        for (let index = 0; index < data.length; index++) {
-          let val = data[index][vizChangeParameter];
-          if (parseFloat(val) > parseFloat(maxVizParameter)) {
-            maxVizParameter = val;
+        if (vizChangeParameter !== "") {
+          maxVizParameter = Number.NEGATIVE_INFINITY;
+          minVizParameter = Number.POSITIVE_INFINITY;
+          for (let index = 0; index < data.length; index++) {
+            let val = data[index][vizChangeParameter];
+            if (parseFloat(val) > parseFloat(maxVizParameter)) {
+              maxVizParameter = val;
+            }
+            if (parseFloat(val) < parseFloat(minVizParameter)) {
+              minVizParameter = val;
+            }
           }
-          if (parseFloat(val) < parseFloat(minVizParameter)) {
-            minVizParameter = val;
-          }
-        }
 
-        let getMapChangeMapColor = curriedGetColorForChangeMap(minVizParameter, maxVizParameter, Constants.mapColorCodes.changeMap.minColor, Constants.mapColorCodes.changeMap.maxColor);
+          getMapChangeMapColor = curriedGetColorForChangeMap(minVizParameter, maxVizParameter, Constants.mapColorCodes.changeMap.minColor, Constants.mapColorCodes.changeMap.maxColor, vizChangeParameter);
+        }
 
         return <MapViz
           title={changeMapTitle}
@@ -431,8 +559,8 @@ export default class DataVizWrapper extends React.Component {
 
       else {
         if (showNormalizedMap) {
-          let maxVizParameter = Number.NEGATIVE_INFINITY;
-          let minVizParameter = Number.POSITIVE_INFINITY;
+          maxVizParameter = Number.NEGATIVE_INFINITY;
+          minVizParameter = Number.POSITIVE_INFINITY;
           for (let index = 0; index < data.length; index++) {
             let val = data[index][vizParameter];
             if (parseFloat(val) > parseFloat(maxVizParameter)) {
@@ -443,7 +571,7 @@ export default class DataVizWrapper extends React.Component {
             }
           }
 
-          let getMapChangeNormalizedColor = curriedGetColorForNormalizedMap(minVizParameter, maxVizParameter, Constants.mapColorCodes.normalMap.minColor, Constants.mapColorCodes.normalMap.maxColor);
+          let getMapChangeNormalizedColor = curriedGetColorForNormalizedMap(minVizParameter, maxVizParameter, Constants.mapColorCodes.normalMap.minColor, Constants.mapColorCodes.normalMap.maxColor, vizParameter);
 
           return (
             <MapViz

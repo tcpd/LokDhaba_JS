@@ -81,6 +81,8 @@ create table `maps` (
 	`Vote_Share_Change_pct` decimal(4, 2),
 	`Turnout_Change_pct` decimal(4,2),
 	`Margin_Change_pct` decimal(4,2),
+	`Last_Party` varchar(50),
+	`Party_Change` varchar(50),
 	PRIMARY KEY (`Election_Type`, `State_Name`,`Assembly_No`,`Constituency_No`)
 );
 

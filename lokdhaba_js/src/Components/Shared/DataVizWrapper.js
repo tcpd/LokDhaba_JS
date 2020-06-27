@@ -189,6 +189,7 @@ export default class DataVizWrapper extends React.Component {
       let ColorPalette = [];
       let legendType = "";
       let discreteLegend = [];
+      let changeMapDiscreteLegend = [];
       let getLegendColor;
       let getMapColor;
       let getMapChangeMapColor;
@@ -408,6 +409,7 @@ export default class DataVizWrapper extends React.Component {
 
         case "winnerMap": {
           title = `Constituency wise winning parties for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
+          changeMapTitle = `Constituency wise change in winning parties for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Party";
           legendType = "Discrete";
           ColorPalette = PartyColorPalette;
@@ -435,6 +437,32 @@ export default class DataVizWrapper extends React.Component {
           getLegendColor = (val) => {
             return curriedGetLegendColorFromPalette(ColorPalette, vizParameter, val, dataFilterOptions);
           }
+
+          let legend = {};
+          let noPartyChangeCount = 0;
+          for (let index = 0; index < data.length; index++) {
+            const constituency = data[index];
+            let val = constituency[vizParameter].toString();
+            if (constituency["Party_Change"] === null) {
+              noPartyChangeCount++;
+            }
+            else if (dataFilterOptions.has(val)) {
+              legend[val] = legend[val] ? legend[val] + 1 : 1;
+            }
+          }
+
+          let SortedKeys = Object.keys(legend).sort(function (a, b) {
+            return legend[b] - legend[a];
+          });
+          let sortedLegend = {};
+          sortedLegend['No change'] = noPartyChangeCount;
+          for (let i = 0; i < SortedKeys.length; i++) {
+            const val = SortedKeys[i];
+            sortedLegend[val] = legend[val];
+          }
+
+          changeMapDiscreteLegend = sortedLegend;
+
           enableChangeMap = true;
           break;
         }
@@ -543,7 +571,7 @@ export default class DataVizWrapper extends React.Component {
           onMapYearChange={onMapYearChange}
           vizParameter={vizChangeParameter}
           legendType={legendType}
-          discreteLegend={discreteLegend}
+          discreteLegend={changeMapDiscreteLegend}
           getMapColor={getMapChangeMapColor}
           getLegendColor={getLegendColor}
           minVizParameter={minVizParameter}

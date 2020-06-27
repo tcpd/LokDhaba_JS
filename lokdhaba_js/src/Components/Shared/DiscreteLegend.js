@@ -27,7 +27,7 @@ class DiscreteLegend extends MapControl {
           labels.push(
             '<i style="background:' +
             getLegendColor(key) +
-            '"></i> ' +
+          '; border-style: solid; border-width: 1px"></i> ' +
             key +
             ' (' + grades[key] + ')'
           );
@@ -58,7 +58,7 @@ class DiscreteLegend extends MapControl {
         labels.push(
           '<i style="background:' +
           getLegendColor(key) +
-          '"></i> ' +
+          '; border-style: solid; border-width: 1px"></i> ' +
           key +
           ' (' + grades[key] + ')'
         );

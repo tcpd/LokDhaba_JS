@@ -197,3 +197,9 @@ export const tableColumns = [
       Cell: row => (<div style={{ textAlign: "right" }}>{row.value}</div>)
     },
 ]
+
+export const mapColorCodes = {
+  normalMap: {minColor: 'ffffff', maxColor: 'B83027'},
+  changeMap: {minColor: 'cc3300', maxColor: '006600'},
+  dataUnavailabe: {color: '#BFC9CA'},
+}

@@ -37,7 +37,7 @@ a.disabled, .btn.disabled {
   pointer-events: none;
 }
 .leaflet-container {
-  height: 100vh;
+  height: 80vh;
   width: 100%;
   background-color: transparent !important;
 }

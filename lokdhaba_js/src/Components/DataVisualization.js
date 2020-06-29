@@ -5,22 +5,7 @@ import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json';
 import ChartsMapsCodes from '../Assets/Data/ChartsMapsCodes.json';
 import Checkbox from './Shared/Checkbox.js';
 import Select from './Shared/Select.js';
-import VoterTurnoutChart from './Charts/VoterTurnoutChart.js';
-import PartiesPresentedChart from './Charts/PartiesPresentedChart.js';
-import PartyVoteShareChart from './Charts/PartyVoteShareChart.js';
-import PartySeatShareChart from './Charts/PartySeatShareChart.js';
-import PartyStrikeRateChart from './Charts/PartyStrikeRateChart.js';
-import ContestedDepositLostChart from './Charts/ContestedDepositLostChart.js';
-import ConstituencyTypeMap from './Maps/ConstituencyTypeMap.js';
-import NumCandidatesMap from './Maps/NumCandidatesMap.js';
-import VoterTurnoutMap from './Maps/VoterTurnoutMap.js';
-import WinnerGenderMap from './Maps/WinnerGenderMap.js';
-import VictoryMarginMap from './Maps/VictoryMarginMap.js';
-import WinnerVoteShareMap from './Maps/WinnerVoteShareMap.js';
-import PartyVoteShareMap from './Maps/PartyVoteShareMap.js';
-import PartyPositionsMap from './Maps/PartyPositionsMap.js';
-import WinnerMap from './Maps/WinnerMap.js';
-import NotaTurnoutMap from './Maps/NotaTurnoutMap.js';
+import DataVizWrapper from './Shared/DataVizWrapper';
 import * as Constants from './Shared/Constants.js';
 import Popup from './Shared/Popup.js';
 import { CSVLink } from "react-csv";
@@ -88,7 +73,12 @@ export default class DataVisualization extends Component {
       isDataDownloadable: false,
       showTermsAndConditionsPopup: false,
       vizOptionsNames : {},
-      stateOptions :[]
+      stateOptions :[],
+      allYearsVizData: [],
+      allYearsVizLegend: [],
+      allYearsVizOptionsSelected: [],
+      showChangeMap: false,
+      showNormalizedMap: false,
     };
   }
 
@@ -98,21 +88,22 @@ export default class DataVisualization extends Component {
     this.props.history.push(`?${url}`);
   };
 
-  setYearFromSearch = (searchYear) => {
+  setDefaultYear = (searchYear) => {
+    // Set defalut year as searchYear if given, else set to latest year
+
     let options = this.state.yearOptions;
     let foundYear = false;
     if (typeof searchYear !== 'undefined' && searchYear !== "") {
-      options.map((item) => {
+      options.forEach((item) => {
         if (searchYear === item.label.split(' ')[0]) {
           foundYear = true;
           this.onYearChange(item.value);
         }
-        return null
       })
     }
     if (!foundYear) {
       let latestYear = options[options.length - 1]
-      console.log("Data for year " + searchYear + " not found. Fetching data for latest year " + latestYear.label)
+      console.log("Data for year searchYear=" + searchYear + " not found. Fetching data for latest year " + latestYear.label)
       this.onYearChange(latestYear.value);
     }
   }
@@ -175,13 +166,24 @@ export default class DataVisualization extends Component {
 
   componentWillUpdate(nextProps, nextState) {
     if ((nextState.visualization !== "" && this.state.visualization !== nextState.visualization && nextState.visualizationType === "Chart")
-      || (nextState.year !== "" && this.state.year !== nextState.year && this.state.visualization !== "partyPositionsMap" && this.state.visualization !== "partyVoteShareMap")
-      || (nextState.party !== "" && this.state.party !== nextState.party && (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap"))) {
+      || (nextState.party !== "" && (this.state.party !== nextState.party) && (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap"))) {
       this.fetchChartMapOptions(nextState);
     }
   }
+
   onAcceptTermsAndConditions = (key, checked) => {
     this.setState({ isDataDownloadable: checked });
+  }
+
+  onShowChangeMapChange = (key, checked) => {
+    if (checked === false) {
+      this.setState({ showNormalizedMap: false });
+    }
+    this.setState({ showChangeMap: checked });
+  }
+
+  onShowNormalizedMapChange = (key, checked) => {
+    this.setState({ showNormalizedMap: checked });
   }
 
   CancelTermsAndConditionsPopup = () => {
@@ -200,12 +202,19 @@ export default class DataVisualization extends Component {
   onVisualizationChange = (newValue, searchYear) => {
     this.setState({ year: "" });
     this.setState({ vizOptionsSelected: new Set() });
+    this.setState({ showChangeMap: false });
     this.setState({ showVisualization: false });
     var visualizationType = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].type;
     this.setState({ visualization: newValue });
     this.setState({ visualizationType: visualizationType }, () => {
       if (visualizationType === "Map") {
-        this.fetchMapYearOptions(searchYear);
+        this.fetchMapData();
+        if (newValue !== "partyPositionsMap" && newValue !== "partyVoteShareMap") {
+          this.fetchMapYearAndData(searchYear);
+        }
+        else {
+          this.fetchMapYearOptions();
+        }
       }
     });
     this.updateURL({variable:"viz",val:newValue});
@@ -287,17 +296,17 @@ export default class DataVisualization extends Component {
       const url = Constants.baseUrl + file;
       fetch(url, {
         method: "GET"
-        }).then(response => response.json()).then(resp => {
-          if(electionType === "GE" && stateName !== "Lok_Sabha"){
-            var map = resp.features.filter(function(item){return item.properties.State_Name=== stateName});
-          }else{
-            var map = resp.features;
-          }
+      }).then(response => response.json()).then(resp => {
+        if(electionType === "GE" && stateName !== "Lok_Sabha"){
+          var map = resp.features.filter(function(item){return item.properties.State_Name=== stateName});
+        }else{
+          var map = resp.features;
+        }
 
-          this.setState({ mapData: map });
-          setTimeout(() => resolve(map), 500);
-        });
+        this.setState({ mapData: map });
+        setTimeout(() => resolve(map), 500);
       });
+    });
   }
 
   fetchMapYearParties = () => {
@@ -323,6 +332,7 @@ export default class DataVisualization extends Component {
       var data = [{ value: "", label: "Select Party" }];
       var data = data.concat(resp.data.map(function (item) { return { label: item, value: item } }));
       this.setState({ partyOptions: data });
+      this.onPartyChange("");
     });
   }
 
@@ -349,9 +359,91 @@ export default class DataVisualization extends Component {
       this.setState(
         { yearOptions: data },
         () => {
-          this.setYearFromSearch(searchYear);
+          this.setDefaultYear(searchYear);
         }
       );
+    });
+  }
+
+  fetchMapYearAndData = (searchYear) => {
+    return new Promise((resolve, reject) => {
+      let electionType = this.state.electionType;
+      let stateName = this.state.stateName;
+      let visualization = this.state.visualization;
+      let visualizationType = this.state.visualizationType;
+      let assemblyNumber = this.state.year;
+      let party = this.state.party;
+      let legends = this.state.vizOptionsSelected;
+
+      const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
+      fetch(url, {
+        method: "POST",
+        headers: new Headers({
+          "content-type": "application/json"
+        }),
+        body: JSON.stringify({
+          ElectionType: electionType,
+          StateName: stateName,
+          ModuleName: visualization,
+          VizType: visualizationType
+        })
+      }).then(response => response.json()).then(resp => {
+        var data = [{ value: "", label: "Select Year" }];
+        data = data.concat(resp.data.map(function (item) { return { label: `${item.Year} (#${item.Assembly_No})`, value: item.Assembly_No } }));
+        this.setState({ yearOptions: data});
+        let scope = this;
+        let allYearsVizData = [];
+        let allYearsVizLegend = [];
+        let allYearsVizOptionsSelected = [];
+
+        resp.data.forEach(function (item) {
+          const urlVizData = Constants.baseUrl + "/data/api/v1.0/getVizData";
+          fetch(urlVizData, {
+            method: "POST",
+            headers: new Headers({
+              "content-type": "application/json"
+            }),
+            body: JSON.stringify({
+              ElectionType: electionType,
+              StateName: stateName,
+              ModuleName: visualization,
+              VizType: visualizationType,
+              AssemblyNo: item.Assembly_No,
+              Party: party,
+              Legends: [...legends]
+            })
+          }).then(response2 => response2.json()).then(respVizData => {
+            allYearsVizData = allYearsVizData.concat({ assemblyNo: item.Assembly_No, data: respVizData.data });
+            scope.setState({ allYearsVizData: allYearsVizData }, () => {
+              scope.setDefaultYear(searchYear);
+            });
+            setTimeout(() => resolve(data), 500);
+          });
+
+          const urlVizLegend = Constants.baseUrl + "/data/api/v1.0/getVizLegend";
+          fetch(urlVizLegend, {
+            method: "POST",
+            headers: new Headers({
+              "content-type": "application/json"
+            }),
+            body: JSON.stringify({
+              ElectionType: electionType,
+              StateName: stateName,
+              ModuleName: visualization,
+              VizType: visualizationType,
+              AssemblyNo: item.Assembly_No,
+            })
+          }).then(response => response.json()).then(respVizLegend => {
+            allYearsVizLegend.push({ assemblyNo: item.Assembly_No, data: respVizLegend.data });
+            var checked = ChartsMapsCodes.filter(function (item1) { return item1.modulename === visualization })[0].alloptionschecked;
+            if (checked) {
+              allYearsVizOptionsSelected.push({ assemblyNo: item.Assembly_No, data: new Set(respVizLegend.data.map(x => x.replace(/_/g, ""))) })
+            }
+          })
+          scope.setState({ allYearsVizLegend: allYearsVizLegend });
+          scope.setState({ allYearsVizOptionsSelected: allYearsVizOptionsSelected });
+        });
+      });
     });
   }
 
@@ -380,11 +472,13 @@ export default class DataVisualization extends Component {
       this.setState({ vizOptionsNames : resp.names});
       var checked = ChartsMapsCodes.filter(function (item) { return item.modulename === visualization })[0].alloptionschecked;
       if (checked) {
-        this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) }, () => {
+        this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) }, async () => {
           this.fetchVisualizationData();
           if(visualizationType==="Map"){
-            this.fetchMapData();
+            await this.fetchMapData();
           }
+
+        this.setState({ showVisualization: true });
         });
       }
       var selectedOptions = resp.selected;
@@ -418,11 +512,6 @@ export default class DataVisualization extends Component {
       if (visualization === "cvoteShareChart" || visualization === "seatShareChart" || visualization === "tvoteShareChart" || visualization === "strikeRateChart") {
         this.fetchVisualizationData();
         this.setState({ showVisualization: true });
-      } else if (vizOptionsSelected.size > 0) {
-        this.fetchVisualizationData();
-        this.setState({ showVisualization: false });
-      } else {
-        this.setState({ showVisualization: false });
       }
     });
     this.updateURL({variable:"opt",val:[...vizOptionsSelected]});
@@ -433,7 +522,11 @@ export default class DataVisualization extends Component {
     var scope = this;
     var visualization = scope.state.visualization;
     var vizOptionsSelected = scope.state.vizOptionsSelected;
-    var label = ChartsMapsCodes.filter(function (item) { return item.modulename === scope.state.visualization })[0].optionslabel;
+    var label = "";
+    var foundLabel = ChartsMapsCodes.find(function (item) { return item.modulename === scope.state.visualization });
+    if (foundLabel) {
+      label = foundLabel.optionslabel;
+    }
     var chartMapOptions = scope.state.chartMapOptions;
     var optionNames = scope.state.vizOptionsNames;
     chartMapOptions.forEach(function (item) {
@@ -460,46 +553,29 @@ export default class DataVisualization extends Component {
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
-    switch (visualization) {
-      case "voterTurnoutChart":
-        return <VoterTurnoutChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
-      case "partiesPresentedChart":
-        return <PartiesPresentedChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
-      case "tvoteShareChart":
-        return <PartyVoteShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} total='true'/>;
-      case "cvoteShareChart":
-        return <PartyVoteShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} total ='false'/>;
-      case "seatShareChart":
-        return <PartySeatShareChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
-      case "strikeRateChart":
-        return <PartyStrikeRateChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
-      case "contestedDepositSavedChart":
-        return <ContestedDepositLostChart data={data} dataFilterOptions={dataFilterOptions} electionType={electionType} stateName={stateName} />;
-      case "winnerCasteMap":
-        return <ConstituencyTypeMap data={data} map={shape} electionType={electionType} dataFilterOptions={dataFilterOptions} assemblyNo={assemblyNo} stateName={stateName} />;
-      case "numCandidatesMap":
-        return <NumCandidatesMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-      case "voterTurnoutMap":
-        return <VoterTurnoutMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-      case "winnerGenderMap":
-        return <WinnerGenderMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-      case "winnerMarginMap":
-        return <VictoryMarginMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-      case "winnerVoteShareMap":
-        return < WinnerVoteShareMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-      case "partyVoteShareMap":
-        return < PartyVoteShareMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-      case "partyPositionsMap":
-        return < PartyPositionsMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-      case "winnerMap":
-        return < WinnerMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
-      case "notaTurnoutMap":
-        return < NotaTurnoutMap data={data} map={shape} electionType={electionType} assemblyNo={assemblyNo} dataFilterOptions={dataFilterOptions} stateName={stateName} />;
+    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showNormalizedMap } = this.state;
 
-
-      default:
-        return;
-    }
+    return (
+      <DataVizWrapper
+        visualization={visualization}
+        visualizationType={visualizationType}
+        data={data}
+        map={shape}
+        electionType={electionType}
+        assemblyNo={assemblyNo}
+        stateName={stateName}
+        showMapYearOptions={true}
+        yearOptions={yearOptions}
+        chartMapOptions={chartMapOptions}
+        dataFilterOptions={dataFilterOptions}
+        playChangeYears={this.playChangeYears}
+        onMapYearChange={this.onMapYearChange}
+        showChangeMap={showChangeMap}
+        onShowChangeMapChange={this.onShowChangeMapChange}
+        showNormalizedMap={showNormalizedMap}
+        onShowNormalizedMapChange={this.onShowNormalizedMapChange}
+      />
+    );
   }
 
   onPartyChange = (newValue) => {
@@ -511,17 +587,57 @@ export default class DataVisualization extends Component {
   }
 
   onYearChange = (newValue) => {
+    this.setState({ showVisualization: false });
     this.setState({ year: newValue }, () => {
       if (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap") {
         this.fetchMapYearParties();
       }
+      else {
+        const { allYearsVizData, allYearsVizLegend, allYearsVizOptionsSelected, showVisualization } = this.state;
+        let newData = allYearsVizData.find(function (item) {
+          return item.assemblyNo === parseInt(newValue);
+        })
 
-      if (this.state.showVisualization === true) {
-        this.setState({ showVisualization: false })
+        if (typeof newData != 'undefined') {
+          this.setState({ vizData: newData.data });
+        }
+
+        let vizLegend = allYearsVizLegend.find(function (item) {
+          return item.assemblyNo === parseInt(newValue);
+        })
+
+        if (typeof vizLegend != 'undefined') {
+          this.setState({ chartMapOptions: vizLegend.data });
+        }
+
+        let vizOptionsSelected = allYearsVizOptionsSelected.find(function (item) {
+          return item.assemblyNo === parseInt(newValue);
+        })
+
+        if (typeof vizOptionsSelected != 'undefined') {
+          this.setState({ vizOptionsSelected: vizOptionsSelected.data });
+        }
+
+        if (showVisualization === false) {
+          this.setState({ showVisualization: true });
+        }
       }
-
     });
-    this.updateURL({variable:"an",val:newValue});
+    this.updateURL({ variable: "an", val: newValue });
+  }
+
+  onMapYearChange = (event, newValue) => {
+    this.onYearChange(newValue);
+  }
+
+  playChangeYears = () => {
+    const { yearOptions } = this.state;
+    let scope = this;
+    for (let i = 1; i < yearOptions.length; i++) {
+      setTimeout(function timer() {
+        scope.onYearChange(yearOptions[i].value);
+      }, i * 800);
+    }
   }
 
   render() {
@@ -546,10 +662,10 @@ export default class DataVisualization extends Component {
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
     var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${visualization}_${date}.csv`;
     const modalBody = <div><p>Lok Dhaba is an online web interface provided by the Trivedi Centre for
-        Political Data. In these terms of use of the data provided by the Centre, 'Data'
-        includes all visualizations, texts, graphics and compilations of data and other
-        material presented within the application. The users are free to download,
-        display or include the data in other products for non-commercial purposes at no
+    Political Data. In these terms of use of the data provided by the Centre, 'Data'
+    includes all visualizations, texts, graphics and compilations of data and other
+    material presented within the application. The users are free to download,
+    display or include the data in other products for non-commercial purposes at no
         cost subject to the following limitations:</p>
       <ul>
         <li>The user must include the citation for data they use in the manner indicated
@@ -586,32 +702,32 @@ export default class DataVisualization extends Component {
     return (
       <div className="content overflow-auto">
         <div className="data-vis">
-        <div className="row">
-        <div className="column card" style={{width: "20%", padding: "0.5rem"}}>
+          <div className="row">
+          <div className="column card" style={{width: "20%", padding: "0.5rem"}}>
               <form className="well">
-                  <ul className="nav nav-tabs">
-                    <li className="nav-item active" >
-                      <a className="nav-link" id= {"etGE"} name={"GE"} onClick={this.onElectionTypeChange}>Lok Sabha</a>
-                    </li>
-                    <li className="nav-item" >
-                      <a className="nav-link" id= {"etAE"} name={"AE"} onClick={this.onElectionTypeChange}>Vidhan Sabha</a>
-                    </li>
-                  </ul>
-                  <br></br>
+                <ul className="nav nav-tabs">
+                  <li className="nav-item active" >
+                  <a className="nav-link" id= {"etGE"} name={"GE"} onClick={this.onElectionTypeChange}>Lok Sabha</a>
+                  </li>
+                  <li className="nav-item" >
+                  <a className="nav-link" id= {"etAE"} name={"AE"} onClick={this.onElectionTypeChange}>Vidhan Sabha</a>
+                  </li>
+                </ul>
+                <br></br>
                 {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
-                {visualizationType === "Map" && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
+                {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
                 {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
-                {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "")) && this.createOptionsCheckboxes()}
-                {dataFilterOptions.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
+                {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap"))) && this.createOptionsCheckboxes()}
+                {<Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
-          </div>
-          <div className="vis column" style={{width: "80%", padding: "10px"}}>
-            {showVisualization && this.renderVisualization()}
-          </div>
+            </div>
+            <div className="vis column" style={{width: "80%", padding: "10px"}}>
+              {showVisualization && this.renderVisualization()}
+            </div>
           </div>
           {showTermsAndConditionsPopup && <Popup id="tems_and_conditions_popup" show={showTermsAndConditionsPopup} body={modalBody} heading={<p>Terms and Conditions</p>} footer={modalFooter} handleClose={this.CloseTermsAndConditionsPopup} />}
-          </div>
+        </div>
       </div>
     )
   }

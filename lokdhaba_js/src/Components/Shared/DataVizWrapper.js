@@ -177,7 +177,7 @@ export default class DataVizWrapper extends React.Component {
   }
 
   render() {
-    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap, showNormalizedMap } = this.props;
+    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap, showNormalizedMap } = this.props;
     const electionTypeDisplay = electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const stateNameDisplay = stateName === 'Lok_Sabha' ? '' : stateName.replace(/_/g, " ");
 
@@ -333,16 +333,18 @@ export default class DataVizWrapper extends React.Component {
         }
 
         case "partyVoteShareMap": {
-          title = `Constituency wise vote share percentages of winners for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
+          title = `Constituency wise vote share percentages of ${party} candidates for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Vote_Share_Percentage";
+          vizChangeParameter = "Vote_Share_Change_pct";
           legendType = "Continuous";
           getMapColor = curriedGetColorForContinuous(minColorNormal, maxColorNormal, vizParameter);
           enableNormalizedMap = true;
+          enableChangeMap = true;
           break;
         }
 
         case "partyPositionsMap": {
-          title = `Constituency wise vote share percentages of winners for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
+          title = `Constituency wise vote share percentages of ${party} candidates for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Position";
           legendType = "Discrete";
           getMapColor = (constituency, dataFilterOptions) => {

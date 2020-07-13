@@ -116,7 +116,7 @@ export default class DataVisualization extends Component {
 
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
     var visualizationOptions = [{ value: "", label: "Chart/Map" }].concat(ChartsMapsCodes.map(function (item) { return { value: item.modulename, label: item.title } }));
-    var AE_States = [{ value: "", label: "Select State" }].concat(unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } }));
+    var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
 
     var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
     this.state.GE_States = GE_States;
@@ -209,12 +209,11 @@ export default class DataVisualization extends Component {
     this.setState({ visualizationType: visualizationType }, () => {
       if (visualizationType === "Map") {
         this.fetchMapData();
-        if (newValue !== "partyPositionsMap" && newValue !== "partyVoteShareMap") {
-          this.fetchMapYearAndData(searchYear);
+        if (newValue == "partyPositionsMap" || newValue == "partyVoteShareMap") {
+          this.fetchMapYearParties();
         }
-        else {
-          this.fetchMapYearOptions();
-        }
+        this.fetchMapYearAndData(searchYear);
+
       }
     });
     this.updateURL({variable:"viz",val:newValue});
@@ -314,7 +313,6 @@ export default class DataVisualization extends Component {
     let stateName = this.state.stateName;
     let visualization = this.state.visualization;
     let visualizationType = this.state.visualizationType;
-    let assemblyNumber = this.state.year;
     const url = Constants.baseUrl + "/data/api/v1.0/getMapYearParty";
     fetch(url, {
       method: "POST",
@@ -325,14 +323,13 @@ export default class DataVisualization extends Component {
         ElectionType: electionType,
         StateName: stateName,
         ModuleName: visualization,
-        VizType: visualizationType,
-        AssemblyNo: assemblyNumber
+        VizType: visualizationType
       })
     }).then(response => response.json()).then(resp => {
       var data = [{ value: "", label: "Select Party" }];
       var data = data.concat(resp.data.map(function (item) { return { label: item, value: item } }));
       this.setState({ partyOptions: data });
-      this.onPartyChange("");
+      //this.onPartyChange("");
     });
   }
 
@@ -553,7 +550,7 @@ export default class DataVisualization extends Component {
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
-    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showNormalizedMap } = this.state;
+    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showNormalizedMap,party } = this.state;
 
     return (
       <DataVizWrapper
@@ -561,6 +558,7 @@ export default class DataVisualization extends Component {
         visualizationType={visualizationType}
         data={data}
         map={shape}
+        party = {party}
         electionType={electionType}
         assemblyNo={assemblyNo}
         stateName={stateName}
@@ -589,10 +587,10 @@ export default class DataVisualization extends Component {
   onYearChange = (newValue) => {
     this.setState({ showVisualization: false });
     this.setState({ year: newValue }, () => {
-      if (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap") {
-        this.fetchMapYearParties();
-      }
-      else {
+      // if (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap") {
+      //   this.fetchMapYearParties();
+      // }
+      //else {
         const { allYearsVizData, allYearsVizLegend, allYearsVizOptionsSelected, showVisualization } = this.state;
         let newData = allYearsVizData.find(function (item) {
           return item.assemblyNo === parseInt(newValue);
@@ -621,7 +619,7 @@ export default class DataVisualization extends Component {
         if (showVisualization === false) {
           this.setState({ showVisualization: true });
         }
-      }
+      //}
     });
     this.updateURL({ variable: "an", val: newValue });
   }
@@ -716,8 +714,7 @@ export default class DataVisualization extends Component {
                 <br></br>
                 {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
-                {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_year_selector" label="Select Year" options={yearOptions} selectedValue={year} onChange={this.onYearChange} />}
-                {year !== "" && (visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
+                {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap"))) && this.createOptionsCheckboxes()}
                 {<Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>

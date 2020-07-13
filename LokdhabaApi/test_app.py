@@ -428,13 +428,13 @@ def get_party_options():
                 # query_input.append(tableName)
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
-                #get_assembly = " and Assembly_No = %s"
-                #query_input.append(a_no)
+                get_assembly = " and Year > %s"
+                query_input.append(2007)
                 get_state = ""
                 if (stateName != "Lok_Sabha"):
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
-                sql_parameterized_data_query = get_table + get_election + get_state + "and Year > 2007"
+                sql_parameterized_data_query = get_table + get_election + get_assembly + get_state
                 print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
                 cursor.execute(sql_parameterized_data_query, tuple(query_input))
                 records = cursor.fetchall()

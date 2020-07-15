@@ -6,7 +6,7 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip'
 import Tooltip from 'rc-tooltip'
 
-export const baseUrl = "http://lokdhaba.ashoka.edu.in:15000";
+export const baseUrl = "http://0.0.0.0:8000";
 
 export const tableColumns = [
     {
@@ -197,3 +197,9 @@ export const tableColumns = [
       Cell: row => (<div style={{ textAlign: "right" }}>{row.value}</div>)
     },
 ]
+
+export const mapColorCodes = {
+  normalMap: {minColor: 'ffffff', maxColor: 'B83027'},
+  changeMap: {minColor: 'cc3300', maxColor: '006600'},
+  dataUnavailabe: {color: '#BFC9CA'},
+}

@@ -5,4 +5,5 @@ mysql-connector-python
 pandas
 geopandas
 simplejson
-spacy
+spaCy == 2.2
+

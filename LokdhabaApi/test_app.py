@@ -305,7 +305,7 @@ def get_select_options():
                 print("Count Query : ", sql_parameterized_count_query, "\n query_input :", query_input)
                 cursor.execute(sql_parameterized_count_query, tuple(query_input))
                 tr = [x[0] for x in cursor.fetchall()]
-                total_parties = tr[0] 
+                total_parties = tr[0]
 
                 selected_count_query = get_count + get_election + get_state + " and position < 10"
                 print("selected Count Query : ", selected_count_query, "\n query_input :", query_input)
@@ -409,8 +409,8 @@ def get_party_options():
     print('mod', module)
     type = req.get('VizType')
     print('type', type)
-    a_no = req.get('AssemblyNo')
-    print('an', a_no)
+    #a_no = req.get('AssemblyNo')
+    #print('an', a_no)
     if type == 'Map':
         connection = connectdb(db_config)
         if connection.is_connected():
@@ -428,8 +428,8 @@ def get_party_options():
                 # query_input.append(tableName)
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
-                get_assembly = " and Assembly_No = %s"
-                query_input.append(a_no)
+                get_assembly = " and Year > %s"
+                query_input.append(2007)
                 get_state = ""
                 if (stateName != "Lok_Sabha"):
                     get_state = " and State_Name = %s"
@@ -517,6 +517,7 @@ nlp = spacy.load('en_core_web_md')
 
 @app.route('/data/api/v1.0/getSearchResults', methods=['POST'])
 def get_search_result():
+
     req = request.get_json()
     query = req.get('Query')
     process_query = query   # query after removing all matched patterns
@@ -576,7 +577,7 @@ def get_search_result():
     module = ""
     full_party_names = {}
     party_options_modules = ["cvoteShareChart", "seatShareChart", "tvoteShareChart", "strikeRateChart"]
-    
+
     for i in range(len(sorted_modules)):
         module_name = sorted_modules[i][0]
         if module_name in party_options_modules:
@@ -608,7 +609,7 @@ def get_search_result():
             if stateName is not None:
                 get_state = " and State_Name = %s"
                 query_input.append(stateName)
-            
+
             party_names_query = get_full_names + get_election + get_state + " and position <10"
             cursor.execute(party_names_query, tuple(query_input))
             party_names = cursor.fetchall()

@@ -212,7 +212,7 @@ export default class BrowseData extends Component {
     let stateName = this.state.stateName;
     let filters = this.state.filters;
     let assemblyNumber = [...this.state.assembliesChecked].join(",");
-    const url = Constants.baseUrl + "/data/api/v1.0/DataDownload";
+    const url = Constants.baseUrl + "/v1/DataDownload/";
     fetch(url, {
       method: "POST",
       headers: new Headers({
@@ -235,7 +235,7 @@ export default class BrowseData extends Component {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
-      const url = Constants.baseUrl + "/data/api/v2.0/getDerivedData";
+      const url = Constants.baseUrl + "/v1/getDerivedData/";
       this.setState({ filters: filtered });
       fetch(url, {
         method: "POST",

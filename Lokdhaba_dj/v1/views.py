@@ -11,7 +11,16 @@ import json
 from django.core import serializers
 from math import ceil
 from django.apps import apps
+from django.contrib.staticfiles.views import serve
+# from django.conf import settings
+
+import csv
+
+from django.http import StreamingHttpResponse
 # from django.utils import simplejson
+import os
+os.chdir("..")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 db_conn = connections['default']
@@ -83,8 +92,9 @@ def get_derived_data(request):
             ]
 
             # received_json_data = request.body.decode('utf-8')
-            received_json_data=json.loads(request.body)
-        
+
+            received_json_data=json.loads(request.body) #!NOTE-recentchange
+            # received_json_data = request.POST
             electionType = received_json_data.get('ElectionType') #get ElectionType from dict
             print('et',electionType)
         
@@ -114,11 +124,13 @@ def get_derived_data(request):
             StartIndex = pageNo * pageSize # starting index of the queries
 
             select_all = Mastersheet.objects.all()
-            if assemblies[0] == 'all':
+            if  states[0] == 'all':
                 x = Mastersheet.objects.filter(Election_Type=electionType)
-                
+            elif assemblies[0] == 'all':
+                x = Mastersheet.objects.filter(Election_Type=electionType,State_Name__in = states)
             else:
                 x = Mastersheet.objects.filter(Election_Type=electionType,State_Name__in = states,Assembly_No__in=assemblies)
+
 
             for item in filters:
                 id1 = item.get('id') # stores the specified field for e:g 'Name'
@@ -174,7 +186,7 @@ def get_download_data(request):
         
             stateName = received_json_data.get('StateName') #get Election from dict
             # print('statename',stateName)
-        
+            
             assemblyNo = received_json_data.get('AssemblyNo') #get AssemblyNo from dict
             # print('an', assemblyNo)
 
@@ -191,10 +203,12 @@ def get_download_data(request):
             assemblies = assemblyNo.split(",")
             states = stateName.split(",") #collection of string(s)
 
-            if assemblies[0] != 'all':
-                x = Mastersheet.objects.filter(Election_Type=electionType,State_Name__in = states,Assembly_No__in=assemblies)
-            else:
+            if  states[0] == 'all':
+                x = Mastersheet.objects.filter(Election_Type=electionType)
+            elif assemblies[0] == 'all':
                 x = Mastersheet.objects.filter(Election_Type=electionType,State_Name__in = states)
+            else:
+                x = Mastersheet.objects.filter(Election_Type=electionType,State_Name__in = states,Assembly_No__in=assemblies)
 
 
             for item in filters:
@@ -481,8 +495,86 @@ def get_viz_data(request):
 
             return JsonResponse({'data':q2},safe=False)
 
+@csrf_exempt
+def get_static_data(request):
+     if connected == True:
+         if request.method == 'GET':
+            p = BASE_DIR+'/static/India_PC_json.geojson'
+            
+            return serve(request,p)
 
+@csrf_exempt
+class Echo:
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
+
+@csrf_exempt
+def get_direct_download_data(request):
+    if connected == True:
+        if request.method == 'GET':
+            
+            pseudo_buffer = Echo()
+            csv_writer = csv.writer(pseudo_buffer)
+            electionType = request.GET.get('ElectionType') #get ElectionType from dict
+            # print('et',electionType)
+        
+            stateName = request.GET.get('StateName') #get Election from dict
+            # print('statename',stateName)
+            if stateName==None or electionType==None:
+                x = Mastersheet.objects
+                q1 = x.values_list() # tuple of values returned
+                rows = (csv_writer.writerow(row) for row in q1)
+                resp = StreamingHttpResponse(rows, content_type="text/csv")
+                resp['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+                return resp
                 
+            states = stateName.split(",") #
+
+            assemblyNo = request.GET.get('AssemblyNo') #get AssemblyNo from dict
+            # print('an', assemblyNo)
+            if assemblyNo is None:
+                assemblyNo = []
+                x = Mastersheet.objects.filter(Election_Type=electionType,State_Name__in = states)
+                q1 = x.values_list() # tuple of values returned
+                rows = (csv_writer.writerow(row) for row in q1)
+                resp = StreamingHttpResponse(rows, content_type="text/csv")
+                resp['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+                return resp
+
+            filters = received_json_data.get('Filters') ##get Filters from dict
+            assemblies = assemblyNo.split(",")
+
+            if filters is None:
+                filters = []
+                x = Mastersheet.objects.filter(Election_Type=electionType,State_Name__in = states,Assembly_No__in=assemblies)
+                q1 = x.values_list() # tuple of values returned
+                rows = (csv_writer.writerow(row) for row in q1)
+                resp = StreamingHttpResponse(rows, content_type="text/csv")
+                resp['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+                return resp
+
+            print("filters", filters)
+
+            # cursor = db_cursor
+
+
+            for item in filters:
+                id1 = item.get('id') # stores the specified field for e:g 'Name'
+                val = item.get('value') # corresponding value pair for that field
+                id1 = id1+'__icontains' # behaves similarly to %LIKE% 
+
+                x = x.filter(**{id1:val}) # applies filter specific to the filed
+
+                q1 = x.values_list() # tuple of values returned
+                rows = (csv_writer.writerow(row) for row in q1)
+                resp = StreamingHttpResponse(rows, content_type="text/csv")
+                resp['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+                return resp
+
 
 
 

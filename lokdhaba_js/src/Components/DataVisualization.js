@@ -550,7 +550,7 @@ export default class DataVisualization extends Component {
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
-    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showNormalizedMap,party } = this.state;
+    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showNormalizedMap, party } = this.state;
 
     return (
       <DataVizWrapper

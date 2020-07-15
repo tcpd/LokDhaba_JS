@@ -18,11 +18,9 @@ class MapYearOptions extends MapControl {
 
     const jsx = (
       <div>
-        <Paper elevation={3} style={{ width: 200 }}>
+        <Paper elevation={3} style={{ width: 400, opacity: 0.7 }}>
           <div style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 5 }}>
-            {enableNormalizedMap &&
-              <Checkbox id={"normalized_map_checkbox"} label={"Show normalized map"} checked={props.showNormalizedMap} onChange={props.onShowNormalizedMapChange} />
-            }
+
             {enableChangeMap &&
               <Checkbox id={"change_map_checkbox"} label={"Show change map"} checked={props.showChangeMap} onChange={props.onShowChangeMapChange} />
             }
@@ -32,7 +30,7 @@ class MapYearOptions extends MapControl {
             <div style={{ paddingTop: 7 }}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Year</FormLabel>
-                <RadioGroup aria-label="year" name="year" value={parseInt(props.year)} onChange={props.onMapYearChange}>
+                <RadioGroup row aria-label="year" name="year" value={parseInt(props.year)} onChange={props.onMapYearChange}>
                   {yearOptions.map((year) => {
                     if (year.value !== "") {
                       return <FormControlLabel value={year.value} control={<Radio />} label={year.label} />

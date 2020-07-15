@@ -8,17 +8,61 @@ import ContinuousLegend from './ContinuousLegend';
 import DiscreteLegend from '../Shared/DiscreteLegend';
 import MapYearOptions from '../Shared/MapYearOptions';
 import * as Constants from '../Shared/Constants';
+import L from "leaflet";
 
 export default class MapViz extends React.Component {
+
+  highlightFeature = (e) => {
+    var layer = e.target;
+
+    layer.setStyle({
+      weight: 3,
+      color: '#ffffff'
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+      layer.bringToFront();
+    }
+  };
+
+  resetHighlight = (e) => {
+    var layer = e.target;
+    layer.setStyle({
+      weight: 1,
+      color: 'black'
+    });
+  };
+
+   // zoomToFeature = (e) => {
+   //   Map.fitBounds(e.target.getBounds());
+   // };
+
+
   onEachFeature = (feature, layer) => {
+    const { vizParameter } = this.props;
     var popupContent = '';
     for (var key in feature.properties) {
-      if (feature.properties.hasOwnProperty(key)) {
+      if (feature.properties.hasOwnProperty(key) ) {
         var value = feature.properties[key];
         popupContent += `<b>${key}:</b> ${value}<br/>`;
       }
     }
-    layer.bindTooltip(popupContent);
+    layer.bindPopup(popupContent);
+    var tooltip = '';
+
+
+    for (var key in feature.properties) {
+      if (feature.properties.hasOwnProperty(key) && (key === "State_Name" || key == "Constituency_Name" || key === vizParameter )) {
+        var value = feature.properties[key];
+        tooltip += `<b>${key}:</b> ${value}<br/>`;
+      }
+    }
+    layer.bindTooltip(tooltip);
+
+    layer.on({
+        mouseover: this.highlightFeature,
+        mouseout: this.resetHighlight
+    });
   };
 
   renderConstituencies = (mapGeoJson, dataFilterOptions) => {
@@ -47,7 +91,7 @@ export default class MapViz extends React.Component {
   };
 
   renderLegend = () => {
-    const { legendType, discreteLegend, getLegendColor, minVizParameter, maxVizParameter, showChangeMap } = this.props;
+    const { legendType, discreteLegend, getLegendColor, minVizParameter, maxVizParameter, showChangeMap, enableNormalizedMap, showNormalizedMap, onShowNormalizedMapChange  } = this.props;
 
     if (legendType === "Continuous") {
       if (showChangeMap) {
@@ -67,6 +111,9 @@ export default class MapViz extends React.Component {
             title={"Percentage(%)"}
             leftMarker={minVizParameter}
             rightMarker={maxVizParameter}
+            enableNormalizedMap = {enableNormalizedMap}
+            showNormalizedMap={showNormalizedMap}
+            onShowNormalizedMapChange={onShowNormalizedMapChange}
           />
         )
       }
@@ -129,7 +176,7 @@ export default class MapViz extends React.Component {
           </div>
           <Map
             center={[centerX, centerY]}
-            zoom={zoom - 1}
+            zoom={zoom }
             maxZoom={zoom + 8}
             attributionControl={true}
             zoomControl={true}

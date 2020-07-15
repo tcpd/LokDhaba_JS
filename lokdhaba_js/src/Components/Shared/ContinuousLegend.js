@@ -2,13 +2,15 @@ import React from "react";
 import ReactDOM from 'react-dom';
 import { withLeaflet, MapControl } from "react-leaflet";
 import Paper from '@material-ui/core/Paper';
+import Checkbox from '../Shared/Checkbox.js';
+import Divider from '@material-ui/core/Divider';
 import L from "leaflet";
 import '../../Assets/Styles/legend.css'
 
 class ContinuousLegend extends MapControl {
 
   getLegend(props) {
-    const { backgroundStyle, title, leftMarker, rightMarker } = props;
+    const { backgroundStyle, title, leftMarker, rightMarker,enableNormalizedMap } = props;
 
     const jsx = (
       <div {...this.props}>
@@ -21,6 +23,12 @@ class ContinuousLegend extends MapControl {
               <br />
               <div className="legend-gradient" style={{ background: backgroundStyle }}></div>
             </div>
+            {(enableNormalizedMap) &&
+              <Divider />
+            }
+            {enableNormalizedMap &&
+              <Checkbox id={"normalized_map_checkbox"} label={"Normalize legend colors"} checked={props.showNormalizedMap} onChange={props.onShowNormalizedMapChange} />
+            }
           </div>
         </Paper>
       </div>

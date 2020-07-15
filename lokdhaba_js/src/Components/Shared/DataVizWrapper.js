@@ -334,6 +334,7 @@ export default class DataVizWrapper extends React.Component {
 
         case "partyVoteShareMap": {
           title = `Constituency wise vote share percentages of ${party} candidates for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
+          changeMapTitle = `Constituency wise change in vote share percentages of ${party} candidates for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Vote_Share_Percentage";
           vizChangeParameter = "Vote_Share_Change_pct";
           legendType = "Continuous";

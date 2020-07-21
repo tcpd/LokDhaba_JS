@@ -7,13 +7,31 @@ import StateCentroids from '../../Assets/Data/StateCentroids.json';
 import ContinuousLegend from './ContinuousLegend';
 import DiscreteLegend from '../Shared/DiscreteLegend';
 import MapYearOptions from '../Shared/MapYearOptions';
+import FeatureInfo from '../Shared/FeatureInfo'
 import * as Constants from '../Shared/Constants';
 import L from "leaflet";
 
 export default class MapViz extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state={
+      info : ""
+    };
+  }
 
   highlightFeature = (e) => {
     var layer = e.target;
+    const { vizParameter } = this.props;
+
+
+    var tooltip = '';
+    for (var key in layer.feature.properties) {
+      if (layer.feature.properties.hasOwnProperty(key) && (key === "State_Name" || key == "Constituency_Name" || key === vizParameter )) {
+        var value = layer.feature.properties[key];
+        tooltip += `<b>${key}:</b> ${value}<br/>`;
+      }
+    }
+    this.setState({info:tooltip});
 
     layer.setStyle({
       weight: 3,
@@ -31,6 +49,7 @@ export default class MapViz extends React.Component {
       weight: 1,
       color: 'black'
     });
+    this.setState({info:""})
   };
 
    // zoomToFeature = (e) => {
@@ -39,7 +58,7 @@ export default class MapViz extends React.Component {
 
 
   onEachFeature = (feature, layer) => {
-    const { vizParameter } = this.props;
+
     var popupContent = '';
     for (var key in feature.properties) {
       if (feature.properties.hasOwnProperty(key) ) {
@@ -48,16 +67,9 @@ export default class MapViz extends React.Component {
       }
     }
     layer.bindPopup(popupContent);
-    var tooltip = '';
 
 
-    for (var key in feature.properties) {
-      if (feature.properties.hasOwnProperty(key) && (key === "State_Name" || key == "Constituency_Name" || key === vizParameter )) {
-        var value = feature.properties[key];
-        tooltip += `<b>${key}:</b> ${value}<br/>`;
-      }
-    }
-    layer.bindTooltip(tooltip);
+    // layer.bindTooltip(tooltip);
 
     layer.on({
         mouseover: this.highlightFeature,
@@ -126,7 +138,7 @@ export default class MapViz extends React.Component {
   }
 
   render() {
-    const { title, enableChangeMap, showChangeMap, onShowChangeMapChange, enableNormalizedMap, showNormalizedMap, onShowNormalizedMapChange } = this.props;
+    const { title, enableChangeMap, showChangeMap, onShowChangeMapChange, enableNormalizedMap, showNormalizedMap, onShowNormalizedMapChange, vizParameter } = this.props;
     var data = this.props.data;
     var electionType = this.props.electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const PrintControl = withLeaflet(PrintControlDefault);
@@ -134,6 +146,7 @@ export default class MapViz extends React.Component {
     var shape = this.props.map;
     var state = this.props.stateName;
     let joinMap = {};
+    const {info} = this.state;
 
     if (electionType === 'Lok Sabha') {
       for (var i = 0; i < data.length; i++) {
@@ -203,6 +216,9 @@ export default class MapViz extends React.Component {
               exportOnly
             />
             {this.renderLegend()}
+            <FeatureInfo
+              info= {this.state.info}
+            />
             {this.props.showMapYearOptions &&
               <MapYearOptions
                 enableChangeMap={enableChangeMap}

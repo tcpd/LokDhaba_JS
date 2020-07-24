@@ -14,17 +14,19 @@ import L from "leaflet";
 class MapYearOptions extends MapControl {
 
   getYearOptions(props) {
-    const { enableChangeMap, enableNormalizedMap, yearOptions } = props;
+    const { enableChangeMap, enableBaseMap, yearOptions } = props;
 
     const jsx = (
       <div>
         <Paper elevation={3} style={{ width: 400, opacity: 0.7 }}>
           <div style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 5 }}>
-
             {enableChangeMap &&
               <Checkbox id={"change_map_checkbox"} label={"Show change map"} checked={props.showChangeMap} onChange={props.onShowChangeMapChange} />
             }
-            {(enableChangeMap || enableNormalizedMap) &&
+            {enableBaseMap &&
+              <Checkbox id={"base_map_checkbox"} label={"Show base map"} checked={props.showBaseMap} onChange={props.onShowBaseMapChange} />
+            }
+            {(enableChangeMap || enableBaseMap) &&
               <Divider />
             }
             <div style={{ paddingTop: 7 }}>

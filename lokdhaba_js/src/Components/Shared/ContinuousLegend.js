@@ -27,7 +27,7 @@ class ContinuousLegend extends MapControl {
               <Divider />
             }
             {enableNormalizedMap &&
-              <Checkbox id={"normalized_map_checkbox"} label={"Normalize legend colors"} checked={props.showNormalizedMap} onChange={props.onShowNormalizedMapChange} />
+              <Checkbox id={"normalized_map_checkbox"} label={"Normalize values"} checked={props.showNormalizedMap} onChange={props.onShowNormalizedMapChange} />
             }
           </div>
         </Paper>

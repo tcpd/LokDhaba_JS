@@ -177,7 +177,7 @@ export default class DataVizWrapper extends React.Component {
   }
 
   render() {
-    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap, showNormalizedMap } = this.props;
+    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap,showBaseMap, showNormalizedMap } = this.props;
     const electionTypeDisplay = electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const stateNameDisplay = stateName === 'Lok_Sabha' ? '' : stateName.replace(/_/g, " ");
 
@@ -201,6 +201,7 @@ export default class DataVizWrapper extends React.Component {
       let minColorNormal = Constants.mapColorCodes.normalMap.minColor;
       let maxColorNormal = Constants.mapColorCodes.normalMap.maxColor;
       let enableChangeMap = false;
+      let enableBaseMap = true;
       let enableNormalizedMap = false;
       let minVizParameter = 0;
       let maxVizParameter = 100;
@@ -282,7 +283,7 @@ export default class DataVizWrapper extends React.Component {
         }
 
         case "voterTurnoutMap": {
-          title = `Constituency wise turnout perentages for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
+          title = `Constituency wise turnout percentages for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           changeMapTitle = `Constituency wise change in turnout perentages for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Turnout_Percentage";
           vizChangeParameter = "Turnout_Change_pct";
@@ -582,6 +583,9 @@ export default class DataVizWrapper extends React.Component {
           enableChangeMap={enableChangeMap}
           showChangeMap={showChangeMap}
           onShowChangeMapChange={this.props.onShowChangeMapChange}
+          enableBaseMap={enableBaseMap}
+          showBaseMap = {showBaseMap}
+          onShowBaseMapChange = {this.props.onShowBaseMapChange}
           enableNormalizedMap={enableNormalizedMap}
           showNormalizedMap={showNormalizedMap}
           onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}
@@ -628,6 +632,9 @@ export default class DataVizWrapper extends React.Component {
               enableChangeMap={enableChangeMap}
               showChangeMap={showChangeMap}
               onShowChangeMapChange={this.props.onShowChangeMapChange}
+              enableBaseMap={enableBaseMap}
+              showBaseMap = {showBaseMap}
+              onShowBaseMapChange = {this.props.onShowBaseMapChange}
               enableNormalizedMap={enableNormalizedMap}
               showNormalizedMap={showNormalizedMap}
               onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}
@@ -659,6 +666,9 @@ export default class DataVizWrapper extends React.Component {
               enableChangeMap={enableChangeMap}
               showChangeMap={showChangeMap}
               onShowChangeMapChange={this.props.onShowChangeMapChange}
+              enableBaseMap = {enableBaseMap}
+              showBaseMap = {showBaseMap}
+              onShowBaseMapChange = {this.props.onShowBaseMapChange}
               enableNormalizedMap={enableNormalizedMap}
               showNormalizedMap={showNormalizedMap}
               onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}

@@ -12,7 +12,7 @@ class FeatureInfo extends MapControl {
   getInfo(props){
 
     const text = this.props.info
-    const jsx = text===""?"Hover over a constituency":text;
+    const jsx = text===""?"Click a constituency to get information":text;
 
 
     const MapInfo = L.Control.extend({

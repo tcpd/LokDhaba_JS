@@ -1,5 +1,5 @@
-import React from 'react';
-import { Map, GeoJSON, withLeaflet } from 'react-leaflet';
+import React, {createRef} from 'react';
+import { Map, GeoJSON, withLeaflet, TileLayer } from 'react-leaflet';
 import '../../Assets/Styles/layout.css';
 import 'leaflet/dist/leaflet.css';
 import PrintControlDefault from 'react-leaflet-easyprint';
@@ -14,8 +14,9 @@ import L from "leaflet";
 export default class MapViz extends React.Component {
   constructor(props) {
     super(props);
+    this.mapRef = createRef();
     this.state={
-      info : ""
+      info : "",
     };
   }
 
@@ -26,7 +27,7 @@ export default class MapViz extends React.Component {
 
     var tooltip = '';
     for (var key in layer.feature.properties) {
-      if (layer.feature.properties.hasOwnProperty(key) && (key === "State_Name" || key == "Constituency_Name" || key === vizParameter )) {
+      if (layer.feature.properties.hasOwnProperty(key) && (key === "State_Name"|| key === "Constituency_Name" || key === vizParameter )) {
         var value = layer.feature.properties[key];
         tooltip += `<b>${key}:</b> ${value}<br/>`;
       }
@@ -35,45 +36,71 @@ export default class MapViz extends React.Component {
 
     layer.setStyle({
       weight: 3,
-      color: '#ffffff'
+      color:'#ffffff'
     });
 
-    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-      layer.bringToFront();
-    }
   };
 
   resetHighlight = (e) => {
     var layer = e.target;
     layer.setStyle({
-      weight: 1,
-      color: 'black'
+      weight:1,
+      color:'black'
     });
     this.setState({info:""})
   };
 
-   // zoomToFeature = (e) => {
-   //   Map.fitBounds(e.target.getBounds());
-   // };
+  zoomToFeature = (e) => {
+    var layer = e.target;
+    const { vizParameter } = this.props;
+
+    var info = '';
+    for (var key in layer.feature.properties) {
+      if (layer.feature.properties.hasOwnProperty(key) && (key === "State_Name"|| key === "Election_Type" || key === "Assembly_No" || key === "Constituency_Name" || key === "Candidate" || key === "Party" || key === "Position" || key === "Constituency_No" || key === "Constituency_Type"|| key === vizParameter )) {
+        var value = layer.feature.properties[key];
+        info += `<b>${key}:</b> ${value}<br/>`;
+      }
+    }
+    this.setState({info:info});
+    layer.setStyle({
+      weight: 3
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+      layer.bringToFront();
+    }
+    const map = this.mapRef.current.leafletElement;
+    map.fitBounds(layer.getBounds());
+  };
 
 
   onEachFeature = (feature, layer) => {
 
-    var popupContent = '';
-    for (var key in feature.properties) {
-      if (feature.properties.hasOwnProperty(key) ) {
-        var value = feature.properties[key];
-        popupContent += `<b>${key}:</b> ${value}<br/>`;
-      }
-    }
-    layer.bindPopup(popupContent);
+    // var popupContent = '';
+    // for (var key in feature.properties) {
+    //   if (feature.properties.hasOwnProperty(key) ) {
+    //     var value = feature.properties[key];
+    //     popupContent += `<b>${key}:</b> ${value}<br/>`;
+    //   }
+    // }
+    // layer.bindPopup(popupContent);
+    const { vizParameter } = this.props;
 
 
+    // var tooltip = '';
+    // for (var key in feature.properties) {
+    //   if (feature.properties.hasOwnProperty(key) && (key === "State_Name"|| key === "Constituency_Name" || key === vizParameter )) {
+    //     var value = feature.properties[key];
+    //     tooltip += `<b>${key}:</b> ${value}<br/>`;
+    //   }
+    // }
+    //
     // layer.bindTooltip(tooltip);
 
     layer.on({
         mouseover: this.highlightFeature,
-        mouseout: this.resetHighlight
+        mouseout: this.resetHighlight,
+        click: this.zoomToFeature
     });
   };
 
@@ -86,7 +113,7 @@ export default class MapViz extends React.Component {
         weight: 1,
         opacity: 1,
         color: 'black',
-        fillOpacity: 1
+        fillOpacity: 0.7
       };
 
       return (
@@ -138,7 +165,7 @@ export default class MapViz extends React.Component {
   }
 
   render() {
-    const { title, enableChangeMap, showChangeMap, onShowChangeMapChange, enableNormalizedMap, showNormalizedMap, onShowNormalizedMapChange, vizParameter } = this.props;
+    const { title, enableChangeMap, showChangeMap, onShowChangeMapChange, enableBaseMap, showBaseMap, onShowBaseMapChange, enableNormalizedMap, showNormalizedMap, onShowNormalizedMapChange, vizParameter } = this.props;
     var data = this.props.data;
     var electionType = this.props.electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const PrintControl = withLeaflet(PrintControlDefault);
@@ -166,7 +193,7 @@ export default class MapViz extends React.Component {
     var extendGeoJSON = require('extend-geojson-properties');
     extendGeoJSON(shape, data, joinMap);
 
-    var leaflet = this.renderConstituencies(shape, dataFilterOptions);
+    var leaflet= this.renderConstituencies(shape, dataFilterOptions);
 
     var st = state !== '' ? state : 'Lok_Sabha';
     var centerX = StateCentroids.filter(function (item) {
@@ -188,6 +215,7 @@ export default class MapViz extends React.Component {
             </label>
           </div>
           <Map
+            ref= {this.mapRef}
             center={[centerX, centerY]}
             zoom={zoom }
             maxZoom={zoom + 8}
@@ -198,7 +226,11 @@ export default class MapViz extends React.Component {
             dragging={true}
             animate={true}
             easeLinearity={0.35}
+            reset={true}
           >
+            {showBaseMap &&
+              <TileLayer attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            }
             {leaflet}
             <PrintControl
               ref={(ref) => {
@@ -206,12 +238,7 @@ export default class MapViz extends React.Component {
               }}
               position="topleft"
               sizeModes={['Current', 'A4Portrait', 'A4Landscape']}
-              hideControlContainer={false}
-            />
-            <PrintControl
-              position="topleft"
-              sizeModes={['Current', 'A4Portrait', 'A4Landscape']}
-              hideControlContainer={false}
+              hideControlContainer={true}
               title="Export as PNG"
               exportOnly
             />
@@ -224,6 +251,9 @@ export default class MapViz extends React.Component {
                 enableChangeMap={enableChangeMap}
                 showChangeMap={showChangeMap}
                 onShowChangeMapChange={onShowChangeMapChange}
+                enableBaseMap = {enableBaseMap}
+                showBaseMap={showBaseMap}
+                onShowBaseMapChange = {onShowBaseMapChange}
                 enableNormalizedMap={enableNormalizedMap}
                 showNormalizedMap={showNormalizedMap}
                 onShowNormalizedMapChange={onShowNormalizedMapChange}
@@ -238,3 +268,11 @@ export default class MapViz extends React.Component {
     );
   }
 }
+// <PrintControl
+//   ref={(ref) => {
+//     this.printControl = ref;
+//   }}
+//   position="topleft"
+//   sizeModes={['Current', 'A4Portrait', 'A4Landscape']}
+//   hideControlContainer={false}
+// />

@@ -79,6 +79,7 @@ export default class DataVisualization extends Component {
       allYearsVizOptionsSelected: [],
       showChangeMap: false,
       showNormalizedMap: false,
+      showBaseMap: true,
     };
   }
 
@@ -182,6 +183,10 @@ export default class DataVisualization extends Component {
     this.setState({ showChangeMap: checked });
   }
 
+  onShowBaseMapChange = (key, checked) => {
+    this.setState({ showBaseMap: checked });
+  }
+
   onShowNormalizedMapChange = (key, checked) => {
     this.setState({ showNormalizedMap: checked });
   }
@@ -203,6 +208,7 @@ export default class DataVisualization extends Component {
     this.setState({ year: "" });
     this.setState({ vizOptionsSelected: new Set() });
     this.setState({ showChangeMap: false });
+    this.setState({ showBaseMap: true });
     this.setState({ showVisualization: false });
     var visualizationType = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].type;
     this.setState({ visualization: newValue });
@@ -362,14 +368,14 @@ export default class DataVisualization extends Component {
     });
   }
 
-  fetchMapYearAndData = (searchYear) => {
+  fetchMapYearAndData = (searchYear, party=this.state.party) => {
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
       let visualization = this.state.visualization;
       let visualizationType = this.state.visualizationType;
       let assemblyNumber = this.state.year;
-      let party = this.state.party;
+      //let party = this.state.party;
       let legends = this.state.vizOptionsSelected;
 
       const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
@@ -550,7 +556,7 @@ export default class DataVisualization extends Component {
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
-    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showNormalizedMap, party } = this.state;
+    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showBaseMap, showNormalizedMap, party } = this.state;
 
     return (
       <DataVizWrapper
@@ -570,6 +576,8 @@ export default class DataVisualization extends Component {
         onMapYearChange={this.onMapYearChange}
         showChangeMap={showChangeMap}
         onShowChangeMapChange={this.onShowChangeMapChange}
+        showBaseMap = {showBaseMap}
+        onShowBaseMapChange = {this.onShowBaseMapChange}
         showNormalizedMap={showNormalizedMap}
         onShowNormalizedMapChange={this.onShowNormalizedMapChange}
       />
@@ -578,9 +586,15 @@ export default class DataVisualization extends Component {
 
   onPartyChange = (newValue) => {
     this.setState({ party: newValue });
+
+    this.fetchMapYearAndData("",newValue);
+
+
     if (this.state.showVisualization === true) {
-      this.setState({ showVisualization: false });
-    }
+       this.setState({ showVisualization: false });
+
+       //this.setState({ showVisualization: true });
+     }
     this.updateURL({variable:"pty",val:newValue});
   }
 
@@ -715,7 +729,7 @@ export default class DataVisualization extends Component {
                 {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
-                {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap"))) && this.createOptionsCheckboxes()}
+                {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsCheckboxes()}
                 {<Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
             </div>

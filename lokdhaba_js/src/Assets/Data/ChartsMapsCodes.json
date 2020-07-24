@@ -70,28 +70,28 @@
     "alloptionschecked": true
   },
   {
-    "title": "Map: Voter Turnout",
+    "title": "Map: Voter turnout",
     "type": "Map",
-    "optionslabel": "Map range",
+    "optionslabel": "Map turnout",
     "modulename": "voterTurnoutMap",
     "alloptionschecked": true
   },
   {
-    "title": "Map: Winners by Party",
+    "title": "Map: Winners by party",
     "type": "Map",
     "optionslabel": "Map parties",
     "modulename": "winnerMap",
     "alloptionschecked": true
   },
   {
-    "title": "Map: Winners by Gender",
+    "title": "Map: Winners by gender",
     "type": "Map",
     "optionslabel": "Map gender type",
     "modulename": "winnerGenderMap",
     "alloptionschecked": true
   },
   {
-    "title": "Map: Victory Margin",
+    "title": "Map: Victory margin",
     "type": "Map",
     "optionslabel": "Map margins",
     "modulename": "winnerMarginMap",
@@ -100,7 +100,7 @@
   {
     "title": "Map: Vote share of winners",
     "type": "Map",
-    "optionslabel": "Map voteshare range",
+    "optionslabel": "Map voteshare",
     "modulename": "winnerVoteShareMap",
     "alloptionschecked": true
   },
@@ -112,14 +112,14 @@
     "alloptionschecked": true
   },
   {
-    "title": "Map: Party-wise VoteShare",
+    "title": "Map: Party-wise voteshare",
     "type": "Map",
     "optionslabel": "Map voteshare range",
     "modulename": "partyVoteShareMap",
     "alloptionschecked": true
   },
   {
-    "title": "Map: NOTA Vote",
+    "title": "Map: Nota voteshare",
     "type": "Map",
     "optionslabel": "Map range",
     "modulename": "notaTurnoutMap",

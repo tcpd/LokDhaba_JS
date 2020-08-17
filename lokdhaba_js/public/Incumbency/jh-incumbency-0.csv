@@ -1,0 +1,6 @@
+pid,Assembly_No,Poll_No,Year,Candidate,State_Name,Constituency_Name,Party,Last_Party,Votes,Sex,Position,Contested,No_Terms,Turncoat,Incumbent,Vote_Share_Percentage,Margin,Margin_Percentage,Age,Terms,Terms_Contested
+AEBR20876,0,1,2003,PRASHANT KUMAR,Jharkhand,Poriyahat,JMM,,58924,M,1,1,1,FALSE,FALSE,45.39,608,0.47,,1,1
+AEBR42254,0,1,2001,Arjun Ram,Jharkhand,RAMGARH,JMM,,32584,M,3,1,0,FALSE,FALSE,25.3,29008,22.53,,,1
+AEJH103196,0,1,2001,Nadra Begum,Jharkhand,RAMGARH,CPI,,35966,F,2,1,0,FALSE,FALSE,27.93,3382,2.63,,,1
+AEJH104264,0,1,2003,AJIT KUMAR,Jharkhand,Poriyahat,BJP,,58316,M,2,1,0,FALSE,FALSE,44.93,53561,41.26,,,1
+GEBR42356,0,1,2001,Babu Lal Marandi,Jharkhand,RAMGARH,BJP,,55884,M,1,1,1,FALSE,FALSE,43.4,19918,15.47,,1,1

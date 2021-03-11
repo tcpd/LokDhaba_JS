@@ -1,7 +1,7 @@
 import React from 'react';
 import MapViz from './MapViz';
 import BarChart from './BarChart';
-import IncumbencyProfile from './IncumbencyProfile';
+//import IncumbencyProfile from './IncumbencyProfile';
 import PartyScatterChart from './PartyScatterChart';
 import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColorPalette.json';
 import PartyColorPalette from '../../Assets/Data/PartyColourPalette.json';
@@ -848,16 +848,16 @@ export default class DataVizWrapper extends React.Component {
         )
       }
     }
-    else if (visualizationType === "IP"){
-      const { data, electionType, assemblyNo, stateName } = this.props;
-      return (
-        <IncumbencyProfile
-          electionType={electionType}
-          assemblyNumber={assemblyNo}
-          stateName={stateName}
-          data = {data}
-        />
-      )
-    }
+    // else if (visualizationType === "IP"){
+    //   const { data, electionType, assemblyNo, stateName } = this.props;
+    //   return (
+    //     <IncumbencyProfile
+    //       electionType={electionType}
+    //       assemblyNumber={assemblyNo}
+    //       stateName={stateName}
+    //       data = {data}
+    //     />
+    //   )
+    // }
   }
 }

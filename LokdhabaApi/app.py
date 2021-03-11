@@ -1,17 +1,21 @@
 # !flask/bin/python
+import decimal
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import mysql.connector
-from mysql.connector import Error
-import simplejson
 from math import ceil
-import pandas as pd
-import geopandas
 import simplejson as json
+import spacy
+from spacy.matcher import PhraseMatcher, Matcher
+from StateNames import stateNamesDict
+import re
+import operator
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path="",
+            static_folder="Maps/json")
 CORS(app)
-#Dummy json to check api is running or not.
+# Dummy json to check api is running or not.
 tasks = [
     {
         'id': 1,
@@ -27,86 +31,6 @@ tasks = [
     }
 ]
 
-
-class DecimalEncoder(json.JSONEncoder):
-    def _iterencode(self, o, markers=None):
-        if isinstance(o, decimal.Decimal):
-            # wanted a simple yield str(o) in the next line,
-            # but that would mean a yield on the line with super(...),
-            # which wouldn't work (see my comment below), so...
-            return (str(o) for o in [o])
-        return super(DecimalEncoder, self)._iterencode(o, markers)
-
-
-def module_to_table(argument):
-    switcher = {
-        "voterTurnoutChart": "voter_turnout",
-        "cvoteShareChart": "voteshares_cont",
-        "tvoteShareChart": "voteshares_total",
-        "seatShareChart": "seatshares",
-        "strikeRateChart": "partysummary",
-        "partiesPresentedChart": "parties_contests",
-        "contestedDepositSavedChart": "contested_deposit_losts",
-        "winnerCasteMap": "maps",
-        "numCandidatesMap": "maps",
-        "voterTurnoutMap": "maps",
-        "winnerMap": "maps",
-        "winnerGenderMap": "maps",
-        "winnerMarginMap": "maps",
-        "winnerVoteShareMap": "maps",
-        "partyPositionsMap": "partys",
-        "partyVoteShareMap": "partys",
-        "notaTurnoutMap": "maps"
-    }
-
-    # get() method of dictionary data type returns
-    # value of passed argument if it is present
-    # in dictionary otherwise second argument will
-    # be assigned as default value of passed argument
-    return switcher.get(argument, "nothing")
-
-
-def get_map_data(rep, election, state, data):
-    if election == "GE":
-        shp = geopandas.read_file(rep+"/GE/India_PC_Updated.shp")
-        left_key = ["STATE_UT","PC_NO"]
-        right_key = ["State_Name","Constituency_No"]
-    if election == "AE":
-        shp = geopandas.read_file (rep+"/AE/"+state+"/"+state+"_Assembly_con.shp")
-        left_key = ["ASSEMBLY"]
-        right_key = ["Constituency_No"]
-    shp = shp.merge(data, left_on=left_key, right_on=right_key, how="left")
-    return shp
-
-
-def map_to_var(argument):
-    switcher = {
-        "voterTurnoutChart": "voter_turnout",
-        "cvoteShareChart": "voteshares_cont",
-        "tvoteShareChart": "voteshares_total",
-        "seatShareChart": "seatshares",
-        "strikeRateChart": "partysummary",
-        "partiesPresentedChart": "parties_contests",
-        "contestedDepositSavedChart": "contested_deposit_losts",
-        "winnerCasteMap": "maps",
-        "numCandidatesMap": "maps",
-        "voterTurnoutMap": "maps",
-        "winnerMap": "maps",
-        "winnerGenderMap": "maps",
-        "winnerMarginMap": "maps",
-        "winnerVoteShareMap": "maps",
-        "partyPositionsMap": "partys",
-        "partyVoteShareMap": "partys",
-        "notaTurnoutMap": "maps"
-    }
-
-    # get() method of dictionary data type returns
-    # value of passed argument if it is present
-    # in dictionary otherwise second argument will
-    # be assigned as default value of passed argument
-    return switcher.get(argument, "nothing")
-
-
 config_file = open("db_config.properties", "r")
 fl = config_file.readlines()
 db_config = []
@@ -114,14 +38,51 @@ for r in fl:
     w = r.split(" = ")
     db_config.append(w[1].strip("\n"))
 
+
 def connectdb(config):
-    return mysql.connector.connect(host=config[0], database=config[1], user=config[2], password=config[3], auth_plugin='mysql_native_password',port=32000)
+    return mysql.connector.connect(host=config[0], database=config[1], user=config[2], password=config[3],
+                                   auth_plugin='mysql_native_password',use_pure=True)
+
+def connectdb1(config):
+    return mysql.connector.connect(host='0.0.0.0',port = 32000, database=config[1], user=config[2], password=config[3],
+                                   auth_plugin='mysql_native_password')
+
+def module_to_table(argument):
+    switcher = {
+        "voterTurnoutChart": "voter_turnout",
+        "cvoteShareChart": "party_statistics",
+        "tvoteShareChart": "party_statistics",
+        "seatShareChart": "party_statistics",
+        "strikeRateChart": "party_statistics",
+        "partiesPresentedChart": "parties_contests",
+        "contestedDepositSavedChart": "contested_deposit_losts",
+        "winnerCasteMap": "maps",
+        "numCandidatesMap": "maps",
+        "voterTurnoutMap": "maps",
+        "winnerMap": "maps",
+        "winnerGenderMap": "maps",
+        "winnerMarginMap": "maps",
+        "winnerVoteShareMap": "maps",
+        "partyPositionsMap": "partys",
+        "partyVoteShareMap": "partys",
+        "notaTurnoutMap": "maps",
+        "incumbencyProfile":"incumbency"
+    }
+    # get() method of dictionary data type returns
+    # value of passed argument if it is present
+    # in dictionary otherwise second argument will
+    # be assigned as default value of passed argument
+    return switcher.get(argument, "nothing")
+
+
+
+
+
 
 ## Dummy route to check functioning of api
 @app.route('/data/api/v1.0/tasks', methods=['GET'])
 def get_tasks_data():
     return jsonify({'tasks': tasks})
-
 
 
 @app.route('/data/api/v2.0/getDerivedData', methods=['POST'])
@@ -154,12 +115,12 @@ def get_paginated_data():
         count_input.append(electionType)
 
         get_state = ""
-        if (stateName != "all"):
+        if stateName != "all":
             get_state = "and State_Name = %s "
             query_input.append(stateName)
             count_input.append(stateName)
         get_assembly = ""
-        if (assemblyNo != "all"):
+        if assemblyNo != "all":
             get_assembly = "and Assembly_No in (" + ",".join(["%s"] * len(assem)) + ") "
             for x in assem:
                 query_input.append(int(x))
@@ -276,32 +237,33 @@ def get_select_options():
     print('st', stateName)
     module = req.get('ModuleName')
     print('mod', module)
-    type= req.get('VizType')
-    print('type',type)
+    type = req.get('VizType')
+    print('type', type)
     if module == "voterTurnoutChart":
-        return (jsonify({'data':["male", "female", "total"]}))
+        return (jsonify({'data': ["male", "female", "total"]}))
     if module == "partiesPresentedChart":
-        return (jsonify({'data':["Parties_Contested", "Parties_Represented"]}))
+        return (jsonify({'data': ["Parties_Contested", "Parties_Represented"]}))
     if module == "contestedDepositSavedChart":
-        return (jsonify({'data':["Total_Candidates", "Deposit_Lost"]}))
-    if module =="winnerCasteMap":
-        return (jsonify({"data" : ["General","SC","ST"]}))
+        return (jsonify({'data': ["Total_Candidates", "Deposit_Lost"]}))
+    if module == "winnerCasteMap":
+        return (jsonify({"data": ["General", "SC", "ST"]}))
     if module == "numCandidatesMap":
-        return(jsonify({"data":["<5","5-15",">15"]}))
+        return (jsonify({"data": ["<5", "5-15", ">15"]}))
     if module == "voterTurnoutMap":
-        return (jsonify({"data":["<50%","50%-60%","60%-70%","70%-75%","75%-80%","80%-85%","85%-90%","90%-95%",">95%"]}))
-    if module == "winnerGenderMap" :
-        return (jsonify({"data":["Male","Female","Others"]}))
-    if module == "winnerMarginMap" :
-        return (jsonify({"data":["<5%","5%-10%","10%-20%",">20%"]}))
-    if module in ["winnerVoteShareMap","partyVoteShareMap"] :
-        return (jsonify({"data":["<20%","20%-30%","30%-40%","40%-50%","50%-60%",">60%"]}))
+        return (jsonify(
+            {"data": ["<50%", "50%-60%", "60%-70%", "70%-75%", "75%-80%", "80%-85%", "85%-90%", "90%-95%", ">95%"]}))
+    if module == "winnerGenderMap":
+        return (jsonify({"data": ["Male", "Female", "Others"]}))
+    if module == "winnerMarginMap":
+        return (jsonify({"data": ["<5%", "5%-10%", "10%-20%", ">20%"]}))
+    if module in ["winnerVoteShareMap", "partyVoteShareMap"]:
+        return (jsonify({"data": ["<20%", "20%-30%", "30%-40%", "40%-50%", "50%-60%", ">60%"]}))
     if module == "partyPositionsMap":
-        return (jsonify({"data":["1","2","3",">3"]}))
+        return (jsonify({"data": ["1", "2", "3", ">3"]}))
     if module == "partyVoteShareMap":
-        return (jsonify({"data":["1","2","3",">3"]}))
+        return (jsonify({"data": ["1", "2", "3", ">3"]}))
     if module == "notaTurnoutMap":
-        return (jsonify({"data":["<1%","1%-3%","3%-5%",">5%"]}))
+        return (jsonify({"data": ["<1%", "1%-3%", "3%-5%", ">5%"]}))
     connection = connectdb(db_config)
     if connection.is_connected():
         cursor = connection.cursor()
@@ -315,52 +277,85 @@ def get_select_options():
             if tableName in db_tables:
                 cursor = connection.cursor(prepared=True)
                 query_input = list()
-                get_table = "Select distinct Party from "+tableName
-                #query_input.append(tableName)
+                get_table = "Select distinct Party from " + tableName
+                get_count = "Select count(distinct Party) as count from " + tableName
+                get_full_names = "Select distinct Party,Expanded_Party_Name from " + tableName
+                # query_input.append(tableName)
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
                 get_state = ""
-                if(electionType=="AE"):
+                if stateName is not None:
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
-                sql_parameterized_data_query = get_table + get_election + get_state
+                sql_parameterized_data_query = get_table + get_election + get_state + " and position < 10" #+" order by Party"
                 print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
                 cursor.execute(sql_parameterized_data_query, tuple(query_input))
                 records = cursor.fetchall()
-                options= []
-                #print(records)
+                options = []
+                # print(records)
                 for (row,) in records:
                     options.append(row)
                 options.sort()
-                return(jsonify({'data' : options}))
+                #sorted_parties = sorted(options, key = lambda i: i['Party'])
+                sql_parameterized_selected_query = get_table + get_election + get_state  + " and position < 3"
+                print("Selected Query : ", sql_parameterized_selected_query, "\n query_input :", query_input)
+                cursor.execute(sql_parameterized_selected_query,tuple(query_input))
+                selected_records = cursor.fetchall()
+                selected_options = []
+                for (row,) in selected_records:
+                    selected_options.append(row)
+
+                sql_parameterized_count_query = get_count + get_election + get_state
+                print("Count Query : ", sql_parameterized_count_query, "\n query_input :", query_input)
+                cursor.execute(sql_parameterized_count_query, tuple(query_input))
+                tr = [x[0] for x in cursor.fetchall()]
+                total_parties = tr[0]
+
+                selected_count_query = get_count + get_election + get_state + " and position < 10"
+                print("selected Count Query : ", selected_count_query, "\n query_input :", query_input)
+                cursor.execute(selected_count_query,tuple(query_input))
+                tr = [x[0] for x in cursor.fetchall()]
+                shown_parties = tr[0]
+
+                party_names_query = get_full_names + get_election + get_state + " and position <10"
+                cursor.execute(party_names_query, tuple(query_input))
+                party_names = cursor.fetchall()
+                full_party_names = {}
+                for (name, full_name) in party_names:
+                    print(name)
+                    print(full_name)
+                    full_party_names.update({name: full_name})
+                return jsonify({'data': options, 'selected': selected_options, 'total_parties': total_parties, 'parties_displayed': shown_parties, 'names': full_party_names})
+
         if type == "Map":
             a_no = req.get('AssemblyNo')
-            #assembly = year[year.find("(")+1:year.find(")")]
-            #a_no = int(assembly.replace("#",""))
+            # assembly = year[year.find("(")+1:year.find(")")]
+            # a_no = int(assembly.replace("#",""))
             tableName = module_to_table(module)
             if tableName in db_tables:
                 cursor = connection.cursor(prepared=True)
                 query_input = list()
-                get_table = "Select distinct Party from "+tableName
-                #query_input.append(tableName)
+                get_table = "Select distinct Party from " + tableName
+                # query_input.append(tableName)
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
                 get_assembly = " and Assembly_No = %s"
                 query_input.append(a_no)
                 get_state = ""
-                if(electionType=="AE"):
+                if stateName != "Lok_Sabha":
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
                 sql_parameterized_data_query = get_table + get_election + get_assembly + get_state
                 print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
                 cursor.execute(sql_parameterized_data_query, tuple(query_input))
                 records = cursor.fetchall()
-                options= []
-                #print(records)
+                options = []
+                # print(records)
                 for (row,) in records:
                     options.append(row)
                 options.sort()
-                return(jsonify({'data' : options}))
+                return jsonify({'data': options})
+
 
 @app.route('/data/api/v1.0/getMapYear', methods=['POST'])
 def get_year_options():
@@ -372,8 +367,8 @@ def get_year_options():
     print('st', stateName)
     module = req.get('ModuleName')
     print('mod', module)
-    type= req.get('VizType')
-    print('type',type)
+    type = req.get('VizType')
+    print('type', type)
     if type == 'Map':
         connection = connectdb(db_config)
         if connection.is_connected():
@@ -383,19 +378,19 @@ def get_year_options():
             db_tables = []
             for (table,) in tables:
                 db_tables.append(table)
-            tableName= module_to_table(module)
+            tableName = module_to_table(module)
             if tableName in db_tables:
                 cursor = connection.cursor(prepared=True)
                 query_input = list()
-                get_table = "Select distinct Year,Assembly_No from "+tableName
-                #query_input.append(tableName)
+                get_table = "Select distinct Year,Assembly_No from " + tableName
+                # query_input.append(tableName)
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
                 get_state = ""
-                if(electionType=="AE"):
+                if stateName != "Lok_Sabha":
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
-                sql_parameterized_data_query = get_table + get_election+ get_state + " and Year >2007"
+                sql_parameterized_data_query = get_table + get_election + get_state + " and Year >2007"
                 print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
                 cursor.execute(sql_parameterized_data_query, tuple(query_input))
                 records = cursor.fetchall()
@@ -403,7 +398,8 @@ def get_year_options():
                 json_data = []
                 for row in records:
                     json_data.append(dict(zip(row_headers, row)))
-                return(jsonify({'data' : json_data}))
+                return (jsonify({'data': json_data}))
+
 
 @app.route('/data/api/v1.0/getMapYearParty', methods=['POST'])
 def get_party_options():
@@ -415,10 +411,10 @@ def get_party_options():
     print('st', stateName)
     module = req.get('ModuleName')
     print('mod', module)
-    type= req.get('VizType')
-    print('type',type)
-    a_no = req.get('AssemblyNo')
-    print('an',a_no)
+    type = req.get('VizType')
+    print('type', type)
+    #a_no = req.get('AssemblyNo')
+    #print('an', a_no)
     if type == 'Map':
         connection = connectdb(db_config)
         if connection.is_connected():
@@ -428,21 +424,21 @@ def get_party_options():
             db_tables = []
             for (table,) in tables:
                 db_tables.append(table)
-            tableName= module_to_table(module)
+            tableName = module_to_table(module)
             if tableName in db_tables:
                 cursor = connection.cursor(prepared=True)
                 query_input = list()
-                get_table = "Select distinct Party from "+tableName
-                #query_input.append(tableName)
+                get_table = "Select distinct Party from " + tableName
+                # query_input.append(tableName)
                 get_election = " where Election_Type = %s"
                 query_input.append(electionType)
-                get_assembly = " and Assembly_No = %s"
-                query_input.append(a_no)
+                get_assembly = " and Year > %s"
+                query_input.append(2007)
                 get_state = ""
-                if(electionType=="AE"):
+                if (stateName != "Lok_Sabha"):
                     get_state = " and State_Name = %s"
                     query_input.append(stateName)
-                sql_parameterized_data_query = get_table + get_election+ get_assembly +get_state
+                sql_parameterized_data_query = get_table + get_election + get_assembly + get_state
                 print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
                 cursor.execute(sql_parameterized_data_query, tuple(query_input))
                 records = cursor.fetchall()
@@ -450,11 +446,12 @@ def get_party_options():
                 parties = []
                 for (row,) in records:
                     parties.append(row)
-                return(jsonify({'data' : parties}))
+                return (jsonify({'data': parties}))
+
 
 @app.route('/data/api/v1.0/getVizData', methods=['POST'])
 def get_viz_data():
-    print("inside chart data")
+    print("inside viz data")
     req = request.get_json()
     electionType = req.get('ElectionType')  # if key doesn't exist, returns None
     print('et', electionType)
@@ -472,66 +469,207 @@ def get_viz_data():
         db_tables = []
         for (table,) in tables:
             db_tables.append(table)
-        tableName= module_to_table(module)
+            #db_tables.append(table.decode())  ## to be used if decoding from bytearray needs to be done
+        tableName = module_to_table(module)
+        #print('table', tableName)
+        print('tables', db_tables)
+        print(tables)
         if tableName in db_tables:
             cursor = connection.cursor(prepared=True)
             query_input = list()
-            get_table = "Select * from "+tableName
-            #query_input.append(tableName)
+            get_table = "Select * from " + tableName
+            # query_input.append(tableName)
             get_election = " where Election_Type = %s"
             query_input.append(electionType)
+
             get_state = ""
-            if(electionType=="AE"):
+            if type == "Chart":
                 get_state = " and State_Name = %s"
                 query_input.append(stateName)
-            get_party=""
-            if module in ["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart"]:
+            else :
+                if stateName !="Lok_Sabha":
+                    get_state = " and State_Name = %s"
+                    query_input.append(stateName)
+
+            get_party = ""
+            if module in ["cvoteShareChart", "seatShareChart", "tvoteShareChart", "strikeRateChart"]:
                 parties = req.get('Legends')
-                #parties = party.split(",")
+                # parties = party.split(",")
                 get_party = " and Party in (" + ",".join(["%s"] * len(parties)) + ") "
                 for x in parties:
                     query_input.append(x)
+
             get_assembly = ""
-            if type=="Map":
-                a_no = req.get('AssemblyNo')
-                print('an', a_no)
+            a_no = req.get('AssemblyNo')
+            print('an', a_no)
+            if type == "Map":
                 get_assembly = " and Assembly_No = %s"
                 query_input.append(a_no)
+            if type == "IP":
+                get_assembly = " and Incm_Assembly_No = %s"
+                query_input.append(a_no)
+
+
             get_map_party = ""
             if module in ["partyPositionsMap", "partyVoteShareMap"]:
                 party = req.get('Party')
-                print('party',party)
+                print('party', party)
                 get_map_party = " and Party = %s"
                 query_input.append(party)
-
 
             sql_parameterized_data_query = get_table + get_election + get_state + get_party + get_assembly + get_map_party
             print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
             cursor.execute(sql_parameterized_data_query, tuple(query_input))
 
-            if type == "Chart":
-                records = cursor.fetchall()
-                row_headers = [x[0] for x in cursor.description]  # this will extract row headers
-                json_data = []
-                for row in records:
-                    json_data.append(dict(zip(row_headers, row)))
-                return jsonify({'data': json_data})
-            if type == "Map":
-                df = pd.DataFrame(cursor.fetchall())
-                df.columns = [x[0] for x in cursor.description]
-                shp = get_map_data(rep=db_config[4], election=electionType, state=stateName, data=df)
-                print(shp.geometry)
-                return jsonify({'data': [shp.to_json(cls=DecimalEncoder)]})
+            records = cursor.fetchall()
+            row_headers = [x[0] for x in cursor.description]  # this will extract row headers
+            print(row_headers)
+
+            json_data = []
+            for row in records:
+                json_data.append(dict(zip(row_headers, row)))
+
+            return jsonify({'data': json_data})
+        else:
+            print("table not found")
+            return "table not found"
 
 
+nlp = spacy.load('en_core_web_md')
 
+@app.route('/data/api/v1.0/getSearchResults', methods=['POST'])
+def get_search_result():
 
+    req = request.get_json()
+    query = req.get('Query')
+    process_query = query   # query after removing all matched patterns
+    doc = nlp(query)
+    phraseMatcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    tokenMatcher = Matcher(nlp.vocab)
 
+    GE_terms = ["lok sabha", "ls", "ge", "general election", "general elections", "national"]
+    GE_patterns = list(nlp.tokenizer.pipe(GE_terms))
+    phraseMatcher.add("GE_PATTERN", None, *GE_patterns)
 
+    AE_terms = ["ae", "vidhan sabha", "state election", "state elections", "assembly election", "assembly elections"]
+    AE_patterns = list(nlp.tokenizer.pipe(AE_terms))
+    phraseMatcher.add("AE_PATTERN", None, *AE_patterns)
 
+    state_patterns = [nlp.make_doc(key) for key in stateNamesDict]
+    phraseMatcher.add("STATE_PATTERN", None, *state_patterns)
 
+    matches = phraseMatcher(doc)
+    electionType = ""
+    stateName = "Lok_Sabha"
+    party = []
+    years = []
 
+    for i in range(len(matches)):
+        string_id = nlp.vocab.strings[matches[i][0]]
+        if string_id == "GE_PATTERN":
+            electionType = "GE"
+        elif string_id == "AE_PATTERN":
+            electionType = "AE"
+        elif string_id == "STATE_PATTERN":
+            start, end = matches[i][1], matches[i][2]
+            span = doc[start:end]
+            stateName = stateNamesDict.get(span.text.lower())
+
+        if i < len(matches) - 1 and (matches[i][1] != matches[i+1][1]):
+            start, end = matches[i][1], matches[i][2]
+            span = doc[start:end]
+            process_query = re.sub(span.text, '', process_query)
+
+    tokenMatcher.add("YEAR_PATTERN", None, [{"TEXT": {"REGEX": "[1-9][0-9][0-9][0-9]"}}])
+    matches2 = tokenMatcher(doc)
+    for match_id, start, end in matches2:
+        span = doc[start:end]
+        years.append(span.text)
+        process_query = re.sub(span.text, '', process_query)
+
+    new_doc = nlp(process_query)
+    codes_json = open('ChartsMapsCodes.json')
+    codes_data = json.load(codes_json)
+    similar_modules = {}
+
+    for code in codes_data:
+        similar_modules[code['modulename']] = new_doc.similarity(nlp(code['title']))
+
+    sorted_modules = sorted(similar_modules.items(), key=operator.itemgetter(1), reverse=True)
+    module = ""
+    full_party_names = {}
+    party_options_modules = ["cvoteShareChart", "seatShareChart", "tvoteShareChart", "strikeRateChart"]
+
+    for i in range(len(sorted_modules)):
+        module_name = sorted_modules[i][0]
+        if module_name in party_options_modules:
+            module = module_name
+            break
+
+    connection = connectdb(db_config)
+    if connection.is_connected():
+        cursor = connection.cursor()
+        cursor.execute("show tables")
+        tables = cursor.fetchall()
+        db_tables = []
+        for (table,) in tables:
+            db_tables.append(table)
+        tableName = module_to_table(module)
+        if tableName in db_tables:
+            cursor = connection.cursor(prepared=True)
+            query_input = list()
+            get_table = "Select distinct Party from " + tableName
+            get_count = "Select count(distinct Party) as count from " + tableName
+            get_full_names = "Select distinct Party,Expanded_Party_Name from " + tableName
+            # query_input.append(tableName)
+            get_election = " where Election_Type = %s"
+            if electionType == "":
+                query_input.append("GE")
+            else:
+                query_input.append(electionType)
+            get_state = ""
+            if stateName is not None:
+                get_state = " and State_Name = %s"
+                query_input.append(stateName)
+
+            party_names_query = get_full_names + get_election + get_state + " and position <10"
+            cursor.execute(party_names_query, tuple(query_input))
+            party_names = cursor.fetchall()
+
+            print(query_input)
+            for (name, full_name) in party_names:
+                # print(name)
+                # print(full_name)
+                full_party_names.update({name: full_name})
+
+    party_patterns = []
+    for key, value in full_party_names.items():
+        print(key, value)
+        if key is not None:
+            party_patterns.append(nlp.make_doc(key))
+        if value is not None:
+            party_patterns.append(nlp.make_doc(value))
+
+    partyMatcher = PhraseMatcher(nlp.vocab, attr='LOWER')
+    partyMatcher.add("PARTY_PATTERN", None, *party_patterns)
+    party_matches = partyMatcher(new_doc)
+
+    for match_id, start, end in party_matches:
+        span = doc[start:end]
+        party_match = span.text.upper()
+        for key, value in full_party_names.items():
+            if party_match == key or party_match == value:
+                party.append(key)
+
+    results = {}
+    results["electionType"] = electionType
+    results["stateName"] = stateName
+    results["year"] = years
+    results["similarModules"] = sorted_modules
+    results["party"] = party
+
+    return jsonify({'results': results})
 
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')

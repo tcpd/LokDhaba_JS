@@ -55,6 +55,7 @@ export default class BrowseData extends Component {
     // var et = inputs.get("et") || "";
     this.state = {
       electionType: "",
+      segmentWise : false,
       stateName: "",
       GE_States: [],
       AE_States: [],
@@ -94,9 +95,10 @@ export default class BrowseData extends Component {
       console.log(searchYears)
     }
 
-    var GE_States = StateCodes.map(function (item) { return { value: item.State_Name.replace(/_/g, " "), label: item.State_Name.replace(/_/g, " ") } });
+
+    var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
-    var AE_States = unique_AE_States.map(function (item) { return { value: item.replace(/_/g, " "), label: item.replace(/_/g, " ") } });
+    var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
     this.state.GE_States = GE_States;
     this.state.AE_States = AE_States;
     //this.setState({'GE_States': GE_States, 'AE_States': AE_States });
@@ -126,6 +128,7 @@ export default class BrowseData extends Component {
     if (nextState.filters !== this.state.filters) {
       this.setState({ isDataDownloadable: false });
     }
+
   }
 
   updateURL = (props) => {
@@ -138,6 +141,14 @@ export default class BrowseData extends Component {
     if (checked) {
       this.fetchDownloadData(checked);
     }
+  }
+  onAcSegmentClick = (key, checked) => {
+    this.setState({ segmentWise: checked },
+      () => {
+        this.fetchTableData();
+    });
+    ;
+
   }
 
   CancelTermsAndConditionsPopup = () => {
@@ -181,7 +192,7 @@ export default class BrowseData extends Component {
     this.setState({ stateName: newValue });
     let assemblies;
     if (this.state.electionType === "AE") {
-      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name.replace(/_/g, " ") === newValue });
+      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name === newValue });
     } else if (this.state.electionType === "GE") {
       if (newValue === "all") {
         assemblies = [...new Set(LokSabhaNumber.map(s => s.Assembly_No))]
@@ -192,7 +203,7 @@ export default class BrowseData extends Component {
             };
           });
       } else {
-        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name.replace(/_/g, " ") === newValue });
+        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name === newValue });
       }
     }
     this.setState(
@@ -212,6 +223,10 @@ export default class BrowseData extends Component {
     let stateName = this.state.stateName;
     let filters = this.state.filters;
     let assemblyNumber = [...this.state.assembliesChecked].join(",");
+    let segmentwise = this.state.segmentWise;
+    if(segmentwise && electionType ==="GE"){
+      electionType = "GA"
+    }
     const url = Constants.baseUrl + "/data/api/v1.0/DataDownload";
     fetch(url, {
       method: "POST",
@@ -235,6 +250,10 @@ export default class BrowseData extends Component {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
+      let segmentwise = this.state.segmentWise;
+      if(segmentwise && electionType ==="GE"){
+        electionType = "GA"
+      }
       const url = Constants.baseUrl + "/data/api/v2.0/getDerivedData";
       this.setState({ filters: filtered });
       fetch(url, {
@@ -303,7 +322,7 @@ export default class BrowseData extends Component {
     var electionTypeOptions = [{ value: "", label: "Select Election Type" },
     { value: "GE", label: "General Elections" },
     { value: "AE", label: "Assembly Elections" }];
-    var columns = Constants.tableColumns;
+    var columns = this.state.segmentWise? Constants.segmentTableColumns:Constants.tableColumns;
     var today = new Date();
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
     var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${date}.csv`;
@@ -354,7 +373,9 @@ export default class BrowseData extends Component {
                 <Select id="bd_electiontype_selector" label="Election Type" options={electionTypeOptions} selectedValue={electionType} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 <br></br>
+                {electionType === "GE" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
+
                 {assembliesChecked.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
             </div>

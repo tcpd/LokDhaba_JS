@@ -22,14 +22,16 @@ export default class MapViz extends React.Component {
 
   highlightFeature = (e) => {
     var layer = e.target;
-    const { vizParameter } = this.props;
+    const { vizParameter, segmentWise } = this.props;
 
 
     var tooltip = '';
     for (var key in layer.feature.properties) {
-      if (layer.feature.properties.hasOwnProperty(key) && (key === "State_Name"|| key === "Constituency_Name" || key === vizParameter )) {
+      if (layer.feature.properties.hasOwnProperty(key) && (key === "State_Name"|| key === "Constituency_Name" || key === vizParameter  || (segmentWise && key==="P_NAME"))) {
         var value = layer.feature.properties[key];
-        tooltip += `<b>${key}:</b> ${value}<br/>`;
+        var label = key ==="P_NAME"?"PC_Name":segmentWise && key ==="Constituency_Name"?"AC_Segment_Name":key;
+        //var label = segmentWise && key ==="Constituency_Name"?"AC_Segment_Name":key;
+        tooltip += `<b>${label}:</b> ${value}<br/>`;
       }
     }
     this.setState({info:tooltip});
@@ -52,13 +54,14 @@ export default class MapViz extends React.Component {
 
   zoomToFeature = (e) => {
     var layer = e.target;
-    const { vizParameter } = this.props;
+    const { vizParameter, segmentWise } = this.props;
 
     var info = '';
     for (var key in layer.feature.properties) {
-      if (layer.feature.properties.hasOwnProperty(key) && (key === "State_Name"|| key === "Election_Type" || key === "Assembly_No" || key === "Constituency_Name" || key === "Candidate" || key === "Party" || key === "Position" || key === "Constituency_No" || key === "Constituency_Type"|| key === vizParameter )) {
+      if (layer.feature.properties.hasOwnProperty(key) && (key === "State_Name"|| key === "Election_Type" || key === "Assembly_No" || key === "Constituency_Name" || key === "Elected" || key === "Candidate" || key === "Party" || key === "Position" || key === "Constituency_No" || key === "Constituency_Type"|| key === vizParameter || (segmentWise && (key==="P_NAME") ))) {
         var value = layer.feature.properties[key];
-        info += `<b>${key}:</b> ${value}<br/>`;
+        var label = key ==="P_NAME"?"PC_Name":segmentWise && key ==="Constituency_Name"?"AC_Segment_Name":key;
+        info += `<b>${label}:</b> ${value}<br/>`;
       }
     }
     this.setState({info:info});
@@ -110,10 +113,10 @@ export default class MapViz extends React.Component {
     return mapGeoJson.map((constituency) => {
       let style = {
         fillColor: getMapColor(constituency, dataFilterOptions),
-        weight: 1,
+        weight: 0.2,
         opacity: 1,
-        color: 'black',
-        fillOpacity: 0.7
+        color: "black",
+        fillOpacity: 1,
       };
 
       return (
@@ -124,6 +127,30 @@ export default class MapViz extends React.Component {
             return ({ fillColor: style.fillColor, weight: style.weight, opacity: style.opacity, color: style.color, fillOpacity: style.fillOpacity })
           }}
           onEachFeature={this.onEachFeature}
+        />
+      );
+    });
+  };
+
+  renderOverlay = (mapGeoJson) => {
+    const { getMapColor } = this.props;
+
+    return mapGeoJson.map((constituency) => {
+      let style = {
+        fill : false,
+        weight: 1,
+        opacity: 1,
+        color: 'black',
+        fillOpacity: 0
+      };
+
+      return (
+        <GeoJSON
+          key={constituency.id + "-" + constituency.properties.Assembly_No}
+          data={constituency}
+          style={() => {
+            return ({ fillColor: style.fillColor, weight: style.weight, opacity: style.opacity, color: style.color, fillOpacity: style.fillOpacity })
+          }}
         />
       );
     });
@@ -167,15 +194,21 @@ export default class MapViz extends React.Component {
   render() {
     const { title, enableChangeMap, showChangeMap, onShowChangeMapChange, enableBaseMap, showBaseMap, onShowBaseMapChange, enableNormalizedMap, showNormalizedMap, onShowNormalizedMapChange, vizParameter } = this.props;
     var data = this.props.data;
-    var electionType = this.props.electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
+    let segmentwise = this.props.segmentWise;
+    let et = this.props.electionType;
+    if(segmentwise && et ==="GE"){
+      et = "GA"
+    }
+    var electionType = et === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const PrintControl = withLeaflet(PrintControlDefault);
     var dataFilterOptions = this.props.dataFilterOptions;
     var shape = this.props.map;
+    var overlay = this.props.mapOverlay;
     var state = this.props.stateName;
     let joinMap = {};
     const {info} = this.state;
 
-    if (electionType === 'Lok Sabha') {
+    if (electionType === 'Lok Sabha' || segmentwise) {
       for (var i = 0; i < data.length; i++) {
         data[i].key = data[i].State_Name + '_' + data[i].Constituency_No;
       }
@@ -194,6 +227,7 @@ export default class MapViz extends React.Component {
     extendGeoJSON(shape, data, joinMap);
 
     var leaflet= this.renderConstituencies(shape, dataFilterOptions);
+    var map_overlay  = this.renderOverlay(overlay);
 
     var st = state !== '' ? state : 'Lok_Sabha';
     var centerX = StateCentroids.filter(function (item) {
@@ -268,6 +302,7 @@ export default class MapViz extends React.Component {
     );
   }
 }
+//{segmentwise && map_overlay}
 // <PrintControl
 //   ref={(ref) => {
 //     this.printControl = ref;

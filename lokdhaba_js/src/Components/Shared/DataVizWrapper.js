@@ -1,6 +1,7 @@
 import React from 'react';
 import MapViz from './MapViz';
 import BarChart from './BarChart';
+import IncumbencyProfile from './IncumbencyProfile';
 import PartyScatterChart from './PartyScatterChart';
 import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColorPalette.json';
 import PartyColorPalette from '../../Assets/Data/PartyColourPalette.json';
@@ -177,7 +178,7 @@ export default class DataVizWrapper extends React.Component {
   }
 
   render() {
-    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap,showBaseMap, showNormalizedMap } = this.props;
+    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap,showBaseMap, showNormalizedMap, segmentWise, mapOverlay } = this.props;
     const electionTypeDisplay = electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const stateNameDisplay = stateName === 'Lok_Sabha' ? '' : stateName.replace(/_/g, " ");
 
@@ -589,6 +590,8 @@ export default class DataVizWrapper extends React.Component {
           enableNormalizedMap={enableNormalizedMap}
           showNormalizedMap={showNormalizedMap}
           onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}
+          segmentWise = {this.props.segmentWise}
+          mapOverlay = {mapOverlay}
         />
       }
 
@@ -638,6 +641,8 @@ export default class DataVizWrapper extends React.Component {
               enableNormalizedMap={enableNormalizedMap}
               showNormalizedMap={showNormalizedMap}
               onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}
+              segmentWise = {this.props.segmentWise}
+              mapOverlay = {mapOverlay}
             />
           )
         }
@@ -672,6 +677,8 @@ export default class DataVizWrapper extends React.Component {
               enableNormalizedMap={enableNormalizedMap}
               showNormalizedMap={showNormalizedMap}
               onShowNormalizedMapChange={this.props.onShowNormalizedMapChange}
+              segmentWise = {this.props.segmentWise}
+              mapOverlay = {mapOverlay}
             />
           )
         }
@@ -840,6 +847,17 @@ export default class DataVizWrapper extends React.Component {
           />
         )
       }
+    }
+    else if (visualizationType === "IP"){
+      const { data, electionType, assemblyNo, stateName } = this.props;
+      return (
+        <IncumbencyProfile
+          electionType={electionType}
+          assemblyNumber={assemblyNo}
+          stateName={stateName}
+          data = {data}
+        />
+      )
     }
   }
 }

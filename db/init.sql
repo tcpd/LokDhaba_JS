@@ -45,6 +45,9 @@ CREATE table if not exists `mastersheet` (
 	`Recontest` varchar(10),
 	`Age` INT,
 	`District_Name` varchar(255),
+	`PC_Name` varchar(255),
+	`PC_No` INT,
+	`CandID` INT,
 	PRIMARY KEY (`Election_Type`,`State_Name`, `Assembly_No`,`Constituency_No`,`Poll_No`,`Position`)
 );
 create table `contested_deposit_losts` (
@@ -72,7 +75,7 @@ create table `maps` (
 	`Sex` varchar(10),
 	`Party` varchar(50) NOT NULL,
 	`Votes` INT,
-	`Candidate` varchar(255) NOT NULL,
+	`Elected` varchar(255) NOT NULL,
 	`Margin_Percentage` Numeric(4,2) ,
 	`Runner` varchar(255),
 	`Runner_Party` varchar(50),
@@ -83,6 +86,7 @@ create table `maps` (
 	`Margin_Change_pct` decimal(4,2),
 	`Last_Party` varchar(50),
 	`Party_Change` varchar(50),
+	`Last_Elected` varchar(255),
 	PRIMARY KEY (`Election_Type`, `State_Name`,`Assembly_No`,`Constituency_No`)
 );
 
@@ -111,6 +115,8 @@ create table `partys` (
 	`Candidate` varchar(255) NOT NULL,
 	`Position_Change` decimal(4,2),
 	`Vote_Share_Change_pct` decimal(4,2),
+	`Last_Position` INT,
+	`Last_Candidate` varchar(255),
 	PRIMARY KEY (`Election_Type`, `State_Name`,`Assembly_No`,`Constituency_No`,`Position`)
 );
 create table party_statistics (
@@ -133,56 +139,6 @@ create table party_statistics (
 	Expanded_Party_Name varchar(50),
 	PRIMARY KEY (Election_Type, State_Name,Assembly_No,Party)
 );
-create table partysummary (
-	Election_Type varchar(2) NOT NULL,
-	State_Name varchar(50) NOT NULL,
-	Assembly_No INT NOT NULL,
-	Year INT NOT NULL,
-	Party varchar(50) NOT NULL,
-	Total_Cand INT ,
-	Winners INT NOT NULL,
-	Deposit_Lost INT,
-	Avg_Winning_Margin Numeric(4,2),
-	Strike_Rate Numeric(4,2),
-	position INT,
-	PRIMARY KEY (Election_Type, State_Name,Assembly_No,Party)
-);
-create table seatshares (
-	Election_Type varchar(2) NOT NULL,
-	State_Name varchar(50) NOT NULL,
-	Assembly_No INT NOT NULL,
-	Year INT NOT NULL,
-	Party varchar(50) NOT NULL,
-	partyseats INT,
-	totalseats INT,
-	Seats Numeric(4,2),
-	position INT,
-	PRIMARY KEY (Election_Type, State_Name,Assembly_No,Party)
-
-);
-create table voteshares_cont (
-	Election_Type varchar(2) NOT NULL,
-	State_Name varchar(50) NOT NULL,
-	Assembly_No INT NOT NULL,
-	Year INT NOT NULL,
-	Party varchar(50) NOT NULL,
-	partyvotes INT,
-	totalvotes INT,
-	Vote_Share_Percentage Numeric(4,2),
-	position INT,
-	PRIMARY KEY (Election_Type, State_Name,Assembly_No,Party)
-
-);
-create table voteshares_total (
-	Election_Type varchar(2) NOT NULL,
-	State_Name varchar(50) NOT NULL,
-	Assembly_No INT NOT NULL,
-	Year INT NOT NULL,
-	Party varchar(50) NOT NULL,
-	Vote_Share_Percentage Numeric(4,2),
-	position INT,
-	PRIMARY KEY (Election_Type, State_Name,Assembly_No,Party)
-);
 
 create table womens (
 	Election_Type varchar(2) NOT NULL,
@@ -203,6 +159,32 @@ create table voter_turnout (
 	PRIMARY KEY (Election_Type, State_Name, Assembly_No)
 );
 
+CREATE table if not exists `incumbency` (
+	`Election_Type` varchar(2) NOT NULL,
+	`State_Name` varchar(50) NOT NULL,
+	`Incm_Assembly_No` INT NOT NULL,
+	`Assembly_No` INT NOT NULL,
+	`Constituency_No` INT NOT NULL,
+	`Year` INT NOT NULL,
+	`Poll_No` INT NOT NULL,
+	`Position` INT NOT NULL,
+	`Candidate` varchar(255),
+	`Sex` varchar(3),
+	`Party` varchar(255),
+	`Votes` INT,
+	`Constituency_Name` varchar(255),
+	`Vote_Share_Percentage` Numeric(4,2),
+	`Margin` INT,
+	`Age` INT,
+	`Margin_Percentage` Numeric(4,2),
+	`pid` varchar(255),
+	`Contested` INT,
+	`Last_Party` varchar(255),
+	`No_Terms` INT,
+	`Turncoat` varchar(10),
+	`Incumbent` varchar(10),
+	PRIMARY KEY (`Election_Type`,`State_Name`,`Incm_Assembly_No`, `Assembly_No`,`Constituency_No`,`Poll_No`,`Position`)
+);
 
 CREATE USER 'ld_api'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
 

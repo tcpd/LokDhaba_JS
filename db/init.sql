@@ -72,7 +72,7 @@ create table `maps` (
 	`Sex` varchar(10),
 	`Party` varchar(50) NOT NULL,
 	`Votes` INT,
-	`Candidate` varchar(255) NOT NULL,
+	`Elected` varchar(255) NOT NULL,
 	`Margin_Percentage` Numeric(4,2) ,
 	`Runner` varchar(255),
 	`Runner_Party` varchar(50),
@@ -83,6 +83,7 @@ create table `maps` (
 	`Margin_Change_pct` decimal(4,2),
 	`Last_Party` varchar(50),
 	`Party_Change` varchar(50),
+	`Last_Elected` varchar(255),
 	PRIMARY KEY (`Election_Type`, `State_Name`,`Assembly_No`,`Constituency_No`)
 );
 

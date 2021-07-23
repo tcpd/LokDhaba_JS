@@ -6,10 +6,10 @@ if(length(new.packages)) install.packages(new.packages)
 library(RMySQL)
 
 
-git_loc = "<relative location of tcpd data dir from LokDhaba JS folder>"
-db_user= "<mysql root user>"
+git_loc = "../tcpd/tcpd_data/data/"
+db_user= "root"
 db_host = "127.0.0.1"
-db_pass= "<mysql root password>"
+db_pass= "root"
 db_port = 32000
 db = "tcpd_data"
 
@@ -56,6 +56,9 @@ print(paste(c("adding :",nms,", columns to ae mastersheet"),collapse = " "))
 ae_mastersheet[,nms]= NA
 
 all_mastersheet = rbind(ge_mastersheet,ae_mastersheet)
+all_mastersheet$Candidate = gsub("'","",all_mastersheet$Candidate)
+all_mastersheet$Candidate = gsub('"','',all_mastersheet$Candidate)
+
 createTable(all_mastersheet,db_host,db,"mastersheet")
 
 

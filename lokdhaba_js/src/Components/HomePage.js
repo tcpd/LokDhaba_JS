@@ -18,7 +18,7 @@ export default class HomePage extends Component {
                 persons, policy makers and others to engage with our data. Read <a href="https://tcpd.ashoka.edu.in/press-articles/">what we have published</a> using this data
                 and <a href="https://tcpd.ashoka.edu.in/data-quoted/">how its been used by others</a>. Should
                 you have any query and/or notice an error, please send us a message or write us at <a href="mailto:tcpd-contact@ashoka.edu.in">tcpd-contact@ashoka.edu.in</a>.</p>
-          <p> We have recently updated Lok Dhaba with the results of the Delhi 2020 Vidhan Sabha elections. These results are provisional, and will be finalized once the Election
+          <p> We have recently updated Lok Dhaba with the results of the Assam, Kerala, Puducherry, Tamil Nadu and West Bengal Vidhan Sabha 2021 elections. These results are provisional, and will be finalized once the Election
                 Commission of India issues its final reports.</p>
           <p> For more information, please see the documentation tab, which includes a detailed
               codebook containing all the variables in Lok Dhaba. Should you use any information

@@ -294,7 +294,7 @@ export default class DataVizWrapper extends React.Component {
         }
 
         case "winnerGenderMap": {
-          title = `Constituency types for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
+          title = `Winners by gender for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Sex";
           legendType = "Discrete";
           ColorPalette = GenderColorPalette;

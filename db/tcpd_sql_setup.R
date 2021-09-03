@@ -7,7 +7,9 @@ library(RMySQL)
 library(data.table)
 
 
-git_loc = "../tcpd_data/data"
+
+git_loc = "../tcpd/tcpd_data/data/"
+
 db_user= "root"
 db_host = "127.0.0.1"
 db_pass= "root"
@@ -59,6 +61,7 @@ createTable(ge_mastersheet,db_host,db,"mastersheet")
 
 ##all_mastersheet = rbind(ge_mastersheet,ae_mastersheet)
 
+
 gae_mastersheet  = read.csv(paste(git_loc,"GE/Data/derived/ac_wise_pc_mastersheet.csv",sep = "/"),stringsAsFactors = F,na="")
 #gae_mastersheet$Votes = gae_mastersheet$Votes_In_AC
 gae_mastersheet$Election_Type = "GAE"
@@ -68,6 +71,7 @@ gae_mastersheet$Election_Type = "GAE"
 
 ##all_mastersheet = rbind(all_mastersheet,subset(gae_mastersheet,select=names(all_mastersheet)))
 createTable(gae_mastersheet,db_host,db,"mastersheet")
+
 
 
 ge_ld_files = list.files(paste(git_loc,"GE/Data/derived/lokdhaba/",sep="/"),pattern = "*.csv")

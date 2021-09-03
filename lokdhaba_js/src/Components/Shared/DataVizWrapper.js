@@ -296,7 +296,7 @@ export default class DataVizWrapper extends React.Component {
         }
 
         case "winnerGenderMap": {
-          title = `Constituency types for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
+          title = `Winners by gender for ${electionTypeDisplay} in Assembly #${assemblyNo}`;
           vizParameter = "Sex";
           legendType = "Discrete";
           ColorPalette = GenderColorPalette;
@@ -772,7 +772,7 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Seat_Share";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise Strike Rate across years in ${stateName} ${electionType}` : `Party wise Strike Rate across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Party wise seatshare across years in ${stateName} ${electionType}` : `Party wise seatshare across years in ${electionType}`,
             xaxis: {
               title: 'Year(Assembly Number)'
             },

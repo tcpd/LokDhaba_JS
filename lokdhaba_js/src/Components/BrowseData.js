@@ -323,8 +323,12 @@ export default class BrowseData extends Component {
     { value: "AE", label: "Assembly Elections" }];
     var columns = this.state.segmentWise? Constants.segmentTableColumns:Constants.tableColumns;
     var today = new Date();
+    let segmentwise = this.state.segmentWise;
+    if(segmentwise && electionType ==="GE"){
+      electionType = "GA"
+    }
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${date}.csv`;
+    var filename = `TCPD_${electionType}_${this.state.stateName}_${date}.csv`;
     const modalBody = <div><p>Lok Dhaba is an online web interface provided by the Trivedi Centre for
         Political Data. In these terms of use of the data provided by the Centre, 'Data'
         includes all visualizations, texts, graphics and compilations of data and other

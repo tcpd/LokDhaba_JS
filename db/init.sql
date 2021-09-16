@@ -48,6 +48,11 @@ CREATE table if not exists `mastersheet` (
 	`PC_Name` varchar(255),
 	`PC_No` INT,
 	`CandID` INT,
+	`MyNeta_education` varchar(100),
+	`TCPD_Prof_Main` varchar(100),
+	`TCPD_Prof_Main_Desc`	varchar(100),
+	`TCPD_Prof_Second`	varchar(100),
+	`TCPD_Prof_Second_Desc` varchar(100),
 	PRIMARY KEY (`Election_Type`,`State_Name`, `Assembly_No`,`Constituency_No`,`Poll_No`,`Position`)
 );
 create table `contested_deposit_losts` (

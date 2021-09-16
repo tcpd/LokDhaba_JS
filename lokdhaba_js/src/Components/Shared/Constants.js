@@ -7,7 +7,7 @@ import ReactTooltip from 'react-tooltip'
 import Tooltip from 'rc-tooltip'
 
 
-export const baseUrl = "https://lokdhaba.ashoka.edu.in/api";
+export const baseUrl = "http://0.0.0.0:15000";
 
 
 export const tableColumns = [
@@ -65,6 +65,26 @@ export const tableColumns = [
     {
       Header: "Candidate Type",
       accessor: "Candidate_Type"
+    },
+    {
+      Header: "Education Level",
+      accessor: "MyNeta_education"
+    },
+    {
+      Header: "Primary Profession Category",
+      accessor: "TCPD_Prof_Main"
+    },
+    {
+      Header: "Primary Profession Type",
+      accessor: "TCPD_Prof_Main_Desc"
+    },
+    {
+      Header: "Secondary Profession Category",
+      accessor: "TCPD_Prof_Second"
+    },
+    {
+      Header: "Secondary Profession Type",
+      accessor: "TCPD_Prof_Second_Desc"
     },
     {
       Header: "Valid Votes",

@@ -81,11 +81,13 @@ def module_to_table(argument):
 
 ## Dummy route to check functioning of api
 @app.route('/data/api/v1.0/tasks', methods=['GET'])
+@cross_origin()
 def get_tasks_data():
     return jsonify({'tasks': tasks})
 
 
 @app.route('/data/api/v2.0/getDerivedData', methods=['POST'])
+@cross_origin()
 def get_paginated_data():
     connection = connectdb(db_config)
     if connection.is_connected():
@@ -178,6 +180,7 @@ def get_paginated_data():
 
 
 @app.route('/data/api/v1.0/DataDownload', methods=['POST'])
+@cross_origin()
 def get_derived_data():
     connection = connectdb(db_config)
     print("Inside Download data api")
@@ -237,6 +240,7 @@ def get_derived_data():
 
 
 @app.route('/data/api/v1.0/getVizLegend', methods=['POST'])
+@cross_origin()
 def get_select_options():
     print("In get options")
     req = request.get_json()
@@ -371,6 +375,7 @@ def get_select_options():
 
 
 @app.route('/data/api/v1.0/getMapYear', methods=['POST'])
+@cross_origin()
 def get_year_options():
     print("In get years")
     req = request.get_json()
@@ -417,6 +422,7 @@ def get_year_options():
 
 
 @app.route('/data/api/v1.0/getMapYearParty', methods=['POST'])
+@cross_origin()
 def get_party_options():
     print("In get parties")
     req = request.get_json()
@@ -467,6 +473,7 @@ def get_party_options():
 
 
 @app.route('/data/api/v1.0/getVizData', methods=['POST'])
+@cross_origin()
 def get_viz_data():
     print("inside viz data")
     req = request.get_json()
@@ -558,6 +565,7 @@ def get_viz_data():
 nlp = spacy.load('en_core_web_md')
 
 @app.route('/data/api/v1.0/getSearchResults', methods=['POST'])
+@cross_origin()
 def get_search_result():
 
     req = request.get_json()

@@ -219,7 +219,7 @@ export default class DataVisualization extends Component {
     this.setState({ visualizationType: visualizationType }, () => {
       if (visualizationType === "Map") {
         this.fetchMapData();
-        if (newValue == "partyPositionsMap" || newValue == "partyVoteShareMap") {
+        if (newValue === "partyPositionsMap" || newValue === "partyVoteShareMap") {
           this.fetchMapYearParties();
         }
         this.fetchMapYearAndData(searchYear);
@@ -314,6 +314,7 @@ export default class DataVisualization extends Component {
       const url = Constants.baseUrl + "/data/api/v1.0/getVizData";
       fetch(url, {
         method: "POST",
+        mode:"cors",
         headers: new Headers({
           "content-type": "application/json"
         }),
@@ -346,7 +347,8 @@ export default class DataVisualization extends Component {
       var file = electionType === "GE" ? "/India_PC_json.geojson": "/"+stateName+"_AC_json.geojson";
       const url = Constants.baseUrl + file;
       fetch(url, {
-        method: "GET"
+        method: "GET",
+        mode:"cors",
       }).then(response => response.json()).then(resp => {
         if((electionType === "GE") && stateName !== "Lok_Sabha"){
           var map = resp.features.filter(function(item){return item.properties.State_Name=== stateName});
@@ -372,7 +374,8 @@ export default class DataVisualization extends Component {
       var file = electionType === "GE" ? "/India_PC_json.geojson": electionType === "GA"? "/India_AC_json.geojson" :"/"+stateName+"_AC_json.geojson";
       const url = Constants.baseUrl + file;
       fetch(url, {
-        method: "GET"
+        method: "GET",
+        mode:"cors",
       }).then(response => response.json()).then(resp => {
         if((electionType === "GE" || electionType === "GA") && stateName !== "Lok_Sabha"){
           var map = resp.features.filter(function(item){return item.properties.State_Name=== stateName});
@@ -395,6 +398,7 @@ export default class DataVisualization extends Component {
     const url = Constants.baseUrl + "/data/api/v1.0/getMapYearParty";
     fetch(url, {
       method: "POST",
+      mode:"cors",
       headers: new Headers({
         "content-type": "application/json"
       }),
@@ -420,6 +424,7 @@ export default class DataVisualization extends Component {
     const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
     fetch(url, {
       method: "POST",
+      mode:"cors",
       headers: new Headers({
         "content-type": "application/json"
       }),
@@ -455,6 +460,7 @@ export default class DataVisualization extends Component {
       const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
       fetch(url, {
         method: "POST",
+        mode:"cors",
         headers: new Headers({
           "content-type": "application/json"
         }),
@@ -481,6 +487,7 @@ export default class DataVisualization extends Component {
           const urlVizData = Constants.baseUrl + "/data/api/v1.0/getVizData";
           fetch(urlVizData, {
             method: "POST",
+            mode:"cors",
             headers: new Headers({
               "content-type": "application/json"
             }),
@@ -504,6 +511,7 @@ export default class DataVisualization extends Component {
           const urlVizLegend = Constants.baseUrl + "/data/api/v1.0/getVizLegend";
           fetch(urlVizLegend, {
             method: "POST",
+            mode:"cors",
             headers: new Headers({
               "content-type": "application/json"
             }),
@@ -537,6 +545,7 @@ export default class DataVisualization extends Component {
     const url = Constants.baseUrl + "/data/api/v1.0/getVizLegend";
     fetch(url, {
       method: "POST",
+      mode:"cors",
       headers: new Headers({
         "content-type": "application/json"
       }),

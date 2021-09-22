@@ -2,6 +2,7 @@
 import decimal
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_cors import cross_origin
 import mysql.connector
 from math import ceil
 import simplejson as json
@@ -160,12 +161,11 @@ def get_paginated_data():
         print("Count Query : ", sql_parameterized_count_query, "\n count input :", count_input)
         cursor = connection.cursor()
         cursor.execute(sql_parameterized_count_query, tuple(count_input))
-        #print("here1")
         rec = cursor.fetchall()
         tr = [x[0] for x in rec]
         total_records = tr[0]
         total_pages = ceil(total_records / pageSize)
-        #print("here")
+
 
         cursor.execute(sql_parameterized_data_query, tuple(query_input))
         records = cursor.fetchall()
@@ -177,7 +177,6 @@ def get_paginated_data():
         cursor.close()
         connection.close()
         return (jsonify({'pages': total_pages, 'data': json_data}))
-
 
 @app.route('/data/api/v1.0/DataDownload', methods=['POST'])
 @cross_origin()
@@ -284,7 +283,7 @@ def get_select_options():
         tables = cursor.fetchall()
         db_tables = []
         for (table,) in tables:
-            db_tables.append(table.decode())
+            db_tables.append(table)
         if type == "Chart":
             tableName = module_to_table(module)
             if tableName in db_tables:
@@ -395,7 +394,7 @@ def get_year_options():
             tables = cursor.fetchall()
             db_tables = []
             for (table,) in tables:
-                db_tables.append(table.decode())
+                db_tables.append(table)
             tableName = module_to_table(module)
             if tableName in db_tables:
                 cursor = connection.cursor()
@@ -444,7 +443,7 @@ def get_party_options():
             tables = cursor.fetchall()
             db_tables = []
             for (table,) in tables:
-                db_tables.append(table.decode())
+                db_tables.append(table)
             tableName = module_to_table(module)
             if tableName in db_tables:
                 cursor = connection.cursor()
@@ -492,8 +491,8 @@ def get_viz_data():
         tables = cursor.fetchall()
         db_tables = []
         for (table,) in tables:
-            #db_tables.append(table)
-            db_tables.append(table.decode())  ## to be used if decoding from bytearray needs to be done
+            db_tables.append(table)
+            #db_tables.append(table.decode())  ## to be used if decoding from bytearray needs to be done
 
         tableName = module_to_table(module)
         #print('table', tableName)
@@ -641,7 +640,7 @@ def get_search_result():
         tables = cursor.fetchall()
         db_tables = []
         for (table,) in tables:
-            db_tables.append(table.decode())
+            db_tables.append(table)
         tableName = module_to_table(module)
         if tableName in db_tables:
             cursor = connection.cursor()

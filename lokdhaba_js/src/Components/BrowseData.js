@@ -376,7 +376,7 @@ export default class BrowseData extends Component {
                 <Select id="bd_electiontype_selector" label="Election Type" options={electionTypeOptions} selectedValue={electionType} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 <br></br>
-                {electionType === "GE" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
+                {(electionType === "GE"||electionType === "GA") && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
 
                 {assembliesChecked.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}

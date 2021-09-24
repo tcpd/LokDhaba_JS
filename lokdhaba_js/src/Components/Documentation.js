@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Pdf from '../Assets/Documents/TCPDLokDhabaCodebook.pdf';
+import Pdf from '../Assets/Documents/2021Aug17LokDhabaCodebook_2_0.pdf';
 
 export default class Documentation extends Component {
   render() {
@@ -13,23 +13,15 @@ export default class Documentation extends Component {
           <h3>TCPD-IED: TCPD Indian Elections Dataset</h3>
           <p>If a variable(s) drawn from the TCDP-IED dataset plays an important role in your project (published or
   unpublished), please use all the suggested citations below: </p>
-          <p><strong>Data:</strong> Saloni Bhogale, Sudheendra Hangal, Francesca Refsum Jensenius, Mohit Kumar, Chinmay Narayan,
-            Basim U Nissa,
-            and Gilles Verniers. 2019. “TCPD Indian Elections Data v1", Trivedi Centre for Political Data, Ashoka University.
+          <p><strong>Data:</strong> Ananay Agarwal, Neelesh Agrawal, Saloni Bhogale, Sudheendra Hangal, Francesca Refsum Jensenius, Mohit Kumar, Chinmay Narayan, Basim U Nissa, Priyamvada Trivedi, and Gilles Verniers. 2021. “TCPD Indian Elections Data v2.0", Trivedi Centre for Political Data, Ashoka University.
 </p>
-          <p><strong>Codebook:</strong> Saloni Bhogale, Sudheendra Hangal, Francesca Refsum Jensenius, Mohit Kumar, Chinmay
-            Narayan, Basim U
-            Nissa, and Gilles Verniers. 2019. “TCPD Indian Election Data Codebook v1", Trivedi Centre for Political Data, Ashoka
-  University.</p>
+          <p><strong>Codebook:</strong> Ananay Agarwal, Neelesh Agrawal, Saloni Bhogale, Sudheendra Hangal, Francesca Refsum Jensenius, Mohit Kumar, Chinmay Narayan, Basim U Nissa, Priyamvada Trivedi, and Gilles Verniers. 2021. “TCPD Indian Election Data Codebook v2.0", Trivedi Centre for Political Data, Ashoka University</p>
           <h3>TCPD-IID: TCPD Individual Incumbency Dataset</h3>
           <p>If a variable(s) drawn from the TCPD-IID dataset plays an important role in your project (published or
   unpublished), please use all the suggested citations below: </p>
-          <p><strong>Data:</strong> Sudheendra Hangal, Mohit Kumar, Basim U Nissa and Gilles Verniers. 2019. "Individual
-            Incumbency Dataset, 1962-current". Trivedi Centre for Political Data, Ashoka University.
+          <p><strong>Data:</strong> “TCPD Individual Incumbency Dataset, 1962-current”. Trivedi Centre for Political Data, Ashoka University.
 </p>
-          <p><strong>Visualization:</strong> Tikekar, Shivangi and Sudheendra Hangal. 2019. Incumbency Profile of Candidates in
-            Indian General Elections. Trivedi Centre for Political Data, Ashoka University.
-            https://lokdhaba.ashoka.edu.in/incumbency/GE.html
+  <p><strong>Codebook:</strong> Ananay Agarwal, Saloni Bhogale, Sudheendra Hangal, Mohit Kumar, Basim U Nissa, and Gilles Verniers. 2021. “TCPD Individual Incumbency Dataset, 1962-current Codebook 2.0", Trivedi Centre for Political Data, Ashoka University.
 </p>
           <h3>Spatial Data</h3>
           <p><strong>Source:</strong> DataMeet Trust, Bangalore, India</p>

@@ -6,3 +6,5 @@ build/
 bundle.js
 # Dependency directories
 node_modules/
+LokdhabaApi/__pycache__/
+Lokdhaba_dj/__pycache__/

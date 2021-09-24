@@ -156,6 +156,8 @@ export default class DataVisualization extends Component {
     if(an !== "" ){this.onYearChange(an);}
     var pty = inputs.get("pty") || "";
     if(pty !== ""){this.onPartyChange(pty);}
+    var seg = inputs.get("seg") || "";
+    if(seg !== ""){this.onSegment(seg);}
 
     var options = inputs.get("opt") || "";
     if(options !== ""){
@@ -754,8 +756,7 @@ export default class DataVisualization extends Component {
       }, i * 800);
     }
   }
-  onAcSegmentClick = (key, checked) => {
-
+  onSegment = (checked)=>{
     this.setState({ segmentWise: checked },
       () => {
         if(this.state.visualizationType === "Map"){
@@ -770,11 +771,11 @@ export default class DataVisualization extends Component {
           this.fetchMapYearAndData("");
         }
         this.fetchVisualizationData();
-
-
     });
-    ;
-
+  }
+  onAcSegmentClick = (key, checked) => {
+    this.updateURL({variable:"seg",val:checked});
+    this.onSegment(checked);
   }
 
   render() {
@@ -854,10 +855,9 @@ export default class DataVisualization extends Component {
                 <br></br>
                 {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
-                {electionType === "GE" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
+                {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsCheckboxes()}
-                {(visualization === "incumbencyProfile") && <Select id="dv_n_assembly_selector" label="Assembly Number" selectedValue={year} options={assemblyOptions} onChange={this.onAssemblyNoChange} />}
                 {showVisualization && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
             </div>

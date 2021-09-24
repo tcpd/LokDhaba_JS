@@ -115,6 +115,8 @@ export default class BrowseData extends Component {
         this.onAssemblyChecked(assembly_numbers[an],true);
       }
     }
+    var seg = inputs.get("seg") || "";
+    if(seg !== ""){this.onSegment(seg);}
 
 
     // var an = inputs.get("an") || "";
@@ -141,12 +143,17 @@ export default class BrowseData extends Component {
       this.fetchDownloadData(checked);
     }
   }
-  onAcSegmentClick = (key, checked) => {
+  onSegment = (checked) =>{
+
     this.setState({ segmentWise: checked },
       () => {
         this.fetchTableData();
     });
-    ;
+  }
+
+  onAcSegmentClick = (key, checked) => {
+    this.updateURL({variable:"seg",val:checked});
+    this.onSegment(checked)
 
   }
 
@@ -301,7 +308,10 @@ export default class BrowseData extends Component {
     let checkboxes = [];
     let scope = this;
     var isChecked = this.state.allChecked;
-    var stateAssemblies = scope.state.stateAssemblies;
+    let stateAssemblies = scope.state.stateAssemblies;
+    if(this.state.segmentWise){
+      stateAssemblies = stateAssemblies.filter(function(x){return x.Year >= 1999;})
+    }
     checkboxes.push(<Checkbox id={"bd_year_selector_all"} key={0} label={"Select All"} checked={isChecked} onChange={scope.onAssemblyChecked} />)
     stateAssemblies.forEach(function (item) {
       var checked = scope.state.assembliesChecked.has(item.Assembly_No.toString()) ? true : isChecked;

@@ -95,7 +95,6 @@ export default class BrowseData extends Component {
       console.log(searchYears)
     }
 
-
     var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
     var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
@@ -116,6 +115,8 @@ export default class BrowseData extends Component {
         this.onAssemblyChecked(assembly_numbers[an],true);
       }
     }
+    var seg = inputs.get("seg") || "";
+    if(seg !== ""){this.onSegment(seg);}
 
 
     // var an = inputs.get("an") || "";
@@ -142,12 +143,17 @@ export default class BrowseData extends Component {
       this.fetchDownloadData(checked);
     }
   }
-  onAcSegmentClick = (key, checked) => {
+  onSegment = (checked) =>{
+
     this.setState({ segmentWise: checked },
       () => {
         this.fetchTableData();
     });
-    ;
+  }
+
+  onAcSegmentClick = (key, checked) => {
+    this.updateURL({variable:"seg",val:checked});
+    this.onSegment(checked)
 
   }
 
@@ -302,7 +308,10 @@ export default class BrowseData extends Component {
     let checkboxes = [];
     let scope = this;
     var isChecked = this.state.allChecked;
-    var stateAssemblies = scope.state.stateAssemblies;
+    let stateAssemblies = scope.state.stateAssemblies;
+    if(this.state.segmentWise){
+      stateAssemblies = stateAssemblies.filter(function(x){return x.Year >= 1999;})
+    }
     checkboxes.push(<Checkbox id={"bd_year_selector_all"} key={0} label={"Select All"} checked={isChecked} onChange={scope.onAssemblyChecked} />)
     stateAssemblies.forEach(function (item) {
       var checked = scope.state.assembliesChecked.has(item.Assembly_No.toString()) ? true : isChecked;
@@ -324,8 +333,12 @@ export default class BrowseData extends Component {
     { value: "AE", label: "Assembly Elections" }];
     var columns = this.state.segmentWise? Constants.segmentTableColumns:Constants.tableColumns;
     var today = new Date();
+    let segmentwise = this.state.segmentWise;
+    if(segmentwise && electionType ==="GE"){
+      electionType = "GA"
+    }
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    var filename = `TCPD_${this.state.electionType}_${this.state.stateName}_${date}.csv`;
+    var filename = `TCPD_${electionType}_${this.state.stateName}_${date}.csv`;
     const modalBody = <div><p>Lok Dhaba is an online web interface provided by the Trivedi Centre for
         Political Data. In these terms of use of the data provided by the Centre, 'Data'
         includes all visualizations, texts, graphics and compilations of data and other
@@ -373,7 +386,7 @@ export default class BrowseData extends Component {
                 <Select id="bd_electiontype_selector" label="Election Type" options={electionTypeOptions} selectedValue={electionType} onChange={this.onElectionTypeChange} />
                 {electionType !== "" && <Select id="bd_state_selector" label="State Name" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 <br></br>
-                {electionType === "GE" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
+                {(electionType === "GE"||electionType === "GA") && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
 
                 {assembliesChecked.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}

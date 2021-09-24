@@ -6,7 +6,9 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip'
 import Tooltip from 'rc-tooltip'
 
+
 export const baseUrl = "http://0.0.0.0:15000";
+
 
 export const tableColumns = [
     {
@@ -74,7 +76,6 @@ export const tableColumns = [
       accessor: "Electors",
       Cell: row => (<div style={{ textAlign: "right" }}>{row.value}</div>)
     },
-
     {
       Header: "Constituency Type",
       accessor: "Constituency_Type"
@@ -119,6 +120,33 @@ export const tableColumns = [
     {
       Header: "pid",
       accessor: "pid"
+    },{
+      Header: "Education Level",
+      accessor: "MyNeta_education"
+    },
+    {
+      Header: "Primary Profession Category",
+      accessor: "TCPD_Prof_Main"
+    },
+    {
+      Header: "Primary Profession Type",
+      accessor: "TCPD_Prof_Main_Desc"
+    },
+    {
+      Header: "Secondary Profession Category",
+      accessor: "TCPD_Prof_Second"
+    },
+    {
+      Header: "Secondary Profession Type",
+      accessor: "TCPD_Prof_Second_Desc"
+    },
+    {
+      Header: "Party ID",
+      accessor: "PartyID"
+    },
+    {
+      Header: "Party Type",
+      accessor: "Party_Type_TCPD"
     },
     {
       Header: "Normalized_Party",
@@ -300,6 +328,10 @@ export const segmentTableColumns = [
     {
       Header: "pid",
       accessor: "pid"
+    },
+    {
+      Header: "Party ID",
+      accessor: "PartyID"
     },
     {
       Header: "last_poll",

@@ -2,6 +2,7 @@
 import decimal
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_cors import cross_origin
 import mysql.connector
 from math import ceil
 import simplejson as json
@@ -81,11 +82,13 @@ def module_to_table(argument):
 
 ## Dummy route to check functioning of api
 @app.route('/data/api/v1.0/tasks', methods=['GET'])
+@cross_origin()
 def get_tasks_data():
     return jsonify({'tasks': tasks})
 
 
 @app.route('/data/api/v2.0/getDerivedData', methods=['POST'])
+@cross_origin()
 def get_paginated_data():
     connection = connectdb(db_config)
     if connection.is_connected():
@@ -103,7 +106,7 @@ def get_paginated_data():
         print("filters", filters)
         sort = req.get("SortOptions")
         print("sort ", sort)
-        cursor = connection.cursor(prepared=True)
+
         states = stateName.split(",")
         assem = assemblyNo.split(",")
         StartIndex = pageNo * pageSize
@@ -156,11 +159,13 @@ def get_paginated_data():
         print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
         sql_parameterized_count_query = get_count + get_state + get_assembly + get_filter
         print("Count Query : ", sql_parameterized_count_query, "\n count input :", count_input)
-
+        cursor = connection.cursor()
         cursor.execute(sql_parameterized_count_query, tuple(count_input))
-        tr = [x[0] for x in cursor.fetchall()]
+        rec = cursor.fetchall()
+        tr = [x[0] for x in rec]
         total_records = tr[0]
         total_pages = ceil(total_records / pageSize)
+
 
         cursor.execute(sql_parameterized_data_query, tuple(query_input))
         records = cursor.fetchall()
@@ -168,10 +173,13 @@ def get_paginated_data():
         json_data = []
         for row in records:
             json_data.append(dict(zip(row_headers, row)))
+
+        cursor.close()
+        connection.close()
         return (jsonify({'pages': total_pages, 'data': json_data}))
 
-
 @app.route('/data/api/v1.0/DataDownload', methods=['POST'])
+@cross_origin()
 def get_derived_data():
     connection = connectdb(db_config)
     print("Inside Download data api")
@@ -186,7 +194,7 @@ def get_derived_data():
         print('an', assemblyNo)
         filters = req.get('Filters')
         print("filters", filters)
-        cursor = connection.cursor(prepared=True)
+        cursor = connection.cursor()
         states = stateName.split(",")
         assem = assemblyNo.split(",")
         query_input = list()
@@ -220,14 +228,18 @@ def get_derived_data():
         cursor.execute(sql_parameterized_data_query, tuple(query_input))
         records = cursor.fetchall()
         row_headers = [x[0] for x in cursor.description]  # this will extract row headers
+        print(row_headers)
         csv_data = []
         csv_data.append(row_headers)
         for row in records:
             csv_data.append(list(row))
+        cursor.close()
+        connection.close()
         return (jsonify({'data': csv_data}))
 
 
 @app.route('/data/api/v1.0/getVizLegend', methods=['POST'])
+@cross_origin()
 def get_select_options():
     print("In get options")
     req = request.get_json()
@@ -275,7 +287,7 @@ def get_select_options():
         if type == "Chart":
             tableName = module_to_table(module)
             if tableName in db_tables:
-                cursor = connection.cursor(prepared=True)
+                cursor = connection.cursor()
                 query_input = list()
                 get_table = "Select distinct Party from " + tableName
                 get_count = "Select count(distinct Party) as count from " + tableName
@@ -321,6 +333,8 @@ def get_select_options():
                 cursor.execute(party_names_query, tuple(query_input))
                 party_names = cursor.fetchall()
                 full_party_names = {}
+                cursor.close()
+                connection.close()
                 for (name, full_name) in party_names:
                     print(name)
                     print(full_name)
@@ -333,7 +347,7 @@ def get_select_options():
             # a_no = int(assembly.replace("#",""))
             tableName = module_to_table(module)
             if tableName in db_tables:
-                cursor = connection.cursor(prepared=True)
+                cursor = connection.cursor()
                 query_input = list()
                 get_table = "Select distinct Party from " + tableName
                 # query_input.append(tableName)
@@ -350,6 +364,8 @@ def get_select_options():
                 cursor.execute(sql_parameterized_data_query, tuple(query_input))
                 records = cursor.fetchall()
                 options = []
+                cursor.close()
+                connection.close()
                 # print(records)
                 for (row,) in records:
                     options.append(row)
@@ -358,6 +374,7 @@ def get_select_options():
 
 
 @app.route('/data/api/v1.0/getMapYear', methods=['POST'])
+@cross_origin()
 def get_year_options():
     print("In get years")
     req = request.get_json()
@@ -380,7 +397,7 @@ def get_year_options():
                 db_tables.append(table)
             tableName = module_to_table(module)
             if tableName in db_tables:
-                cursor = connection.cursor(prepared=True)
+                cursor = connection.cursor()
                 query_input = list()
                 get_table = "Select distinct Year,Assembly_No from " + tableName
                 # query_input.append(tableName)
@@ -396,12 +413,15 @@ def get_year_options():
                 records = cursor.fetchall()
                 row_headers = [x[0] for x in cursor.description]  # this will extract row headers
                 json_data = []
+                cursor.close()
+                connection.close()
                 for row in records:
                     json_data.append(dict(zip(row_headers, row)))
                 return (jsonify({'data': json_data}))
 
 
 @app.route('/data/api/v1.0/getMapYearParty', methods=['POST'])
+@cross_origin()
 def get_party_options():
     print("In get parties")
     req = request.get_json()
@@ -426,7 +446,7 @@ def get_party_options():
                 db_tables.append(table)
             tableName = module_to_table(module)
             if tableName in db_tables:
-                cursor = connection.cursor(prepared=True)
+                cursor = connection.cursor()
                 query_input = list()
                 get_table = "Select distinct Party from " + tableName
                 # query_input.append(tableName)
@@ -444,12 +464,15 @@ def get_party_options():
                 records = cursor.fetchall()
                 row_headers = [x[0] for x in cursor.description]  # this will extract row headers
                 parties = []
+                cursor.close()
+                connection.close()
                 for (row,) in records:
                     parties.append(row)
                 return (jsonify({'data': parties}))
 
 
 @app.route('/data/api/v1.0/getVizData', methods=['POST'])
+@cross_origin()
 def get_viz_data():
     print("inside viz data")
     req = request.get_json()
@@ -470,12 +493,13 @@ def get_viz_data():
         for (table,) in tables:
             db_tables.append(table)
             #db_tables.append(table.decode())  ## to be used if decoding from bytearray needs to be done
+
         tableName = module_to_table(module)
         #print('table', tableName)
         print('tables', db_tables)
         print(tables)
         if tableName in db_tables:
-            cursor = connection.cursor(prepared=True)
+            cursor = connection.cursor()
             query_input = list()
             get_table = "Select * from " + tableName
             # query_input.append(tableName)
@@ -524,6 +548,8 @@ def get_viz_data():
             records = cursor.fetchall()
             row_headers = [x[0] for x in cursor.description]  # this will extract row headers
             print(row_headers)
+            cursor.close()
+            connection.close()
 
             json_data = []
             for row in records:
@@ -538,6 +564,7 @@ def get_viz_data():
 nlp = spacy.load('en_core_web_md')
 
 @app.route('/data/api/v1.0/getSearchResults', methods=['POST'])
+@cross_origin()
 def get_search_result():
 
     req = request.get_json()
@@ -616,7 +643,7 @@ def get_search_result():
             db_tables.append(table)
         tableName = module_to_table(module)
         if tableName in db_tables:
-            cursor = connection.cursor(prepared=True)
+            cursor = connection.cursor()
             query_input = list()
             get_table = "Select distinct Party from " + tableName
             get_count = "Select count(distinct Party) as count from " + tableName
@@ -635,7 +662,8 @@ def get_search_result():
             party_names_query = get_full_names + get_election + get_state + " and position <10"
             cursor.execute(party_names_query, tuple(query_input))
             party_names = cursor.fetchall()
-
+            cursor.close()
+            connection.close()
             print(query_input)
             for (name, full_name) in party_names:
                 # print(name)

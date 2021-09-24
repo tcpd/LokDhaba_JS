@@ -18,9 +18,9 @@ services:
     links:
       - db
     ports:
-      - "15000:5000"
+      - "15000:5000"  
     environment:
-      - FLASK_APP=test_app.py
+      - FLASK_APP=app.py
       - FLASK_DEBUG=1
     command : flask run --host=0.0.0.0
   node:
@@ -33,4 +33,3 @@ services:
       - '3001:3000'
     links :
       - api
-    

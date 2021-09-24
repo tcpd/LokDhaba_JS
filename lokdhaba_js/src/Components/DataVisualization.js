@@ -156,6 +156,8 @@ export default class DataVisualization extends Component {
     if(an !== "" ){this.onYearChange(an);}
     var pty = inputs.get("pty") || "";
     if(pty !== ""){this.onPartyChange(pty);}
+    var seg = inputs.get("seg") || "";
+    if(seg !== ""){this.onSegment(seg);}
 
     var options = inputs.get("opt") || "";
     if(options !== ""){
@@ -219,7 +221,7 @@ export default class DataVisualization extends Component {
     this.setState({ visualizationType: visualizationType }, () => {
       if (visualizationType === "Map") {
         this.fetchMapData();
-        if (newValue == "partyPositionsMap" || newValue == "partyVoteShareMap") {
+        if (newValue === "partyPositionsMap" || newValue === "partyVoteShareMap") {
           this.fetchMapYearParties();
         }
         this.fetchMapYearAndData(searchYear);
@@ -314,6 +316,7 @@ export default class DataVisualization extends Component {
       const url = Constants.baseUrl + "/data/api/v1.0/getVizData";
       fetch(url, {
         method: "POST",
+        mode:"cors",
         headers: new Headers({
           "content-type": "application/json"
         }),
@@ -346,7 +349,8 @@ export default class DataVisualization extends Component {
       var file = electionType === "GE" ? "/India_PC_json.geojson": "/"+stateName+"_AC_json.geojson";
       const url = Constants.baseUrl + file;
       fetch(url, {
-        method: "GET"
+        method: "GET",
+        mode:"cors",
       }).then(response => response.json()).then(resp => {
         if((electionType === "GE") && stateName !== "Lok_Sabha"){
           var map = resp.features.filter(function(item){return item.properties.State_Name=== stateName});
@@ -372,7 +376,8 @@ export default class DataVisualization extends Component {
       var file = electionType === "GE" ? "/India_PC_json.geojson": electionType === "GA"? "/India_AC_json.geojson" :"/"+stateName+"_AC_json.geojson";
       const url = Constants.baseUrl + file;
       fetch(url, {
-        method: "GET"
+        method: "GET",
+        mode:"cors",
       }).then(response => response.json()).then(resp => {
         if((electionType === "GE" || electionType === "GA") && stateName !== "Lok_Sabha"){
           var map = resp.features.filter(function(item){return item.properties.State_Name=== stateName});
@@ -395,6 +400,7 @@ export default class DataVisualization extends Component {
     const url = Constants.baseUrl + "/data/api/v1.0/getMapYearParty";
     fetch(url, {
       method: "POST",
+      mode:"cors",
       headers: new Headers({
         "content-type": "application/json"
       }),
@@ -420,6 +426,7 @@ export default class DataVisualization extends Component {
     const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
     fetch(url, {
       method: "POST",
+      mode:"cors",
       headers: new Headers({
         "content-type": "application/json"
       }),
@@ -455,6 +462,7 @@ export default class DataVisualization extends Component {
       const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
       fetch(url, {
         method: "POST",
+        mode:"cors",
         headers: new Headers({
           "content-type": "application/json"
         }),
@@ -481,6 +489,7 @@ export default class DataVisualization extends Component {
           const urlVizData = Constants.baseUrl + "/data/api/v1.0/getVizData";
           fetch(urlVizData, {
             method: "POST",
+            mode:"cors",
             headers: new Headers({
               "content-type": "application/json"
             }),
@@ -504,6 +513,7 @@ export default class DataVisualization extends Component {
           const urlVizLegend = Constants.baseUrl + "/data/api/v1.0/getVizLegend";
           fetch(urlVizLegend, {
             method: "POST",
+            mode:"cors",
             headers: new Headers({
               "content-type": "application/json"
             }),
@@ -537,6 +547,7 @@ export default class DataVisualization extends Component {
     const url = Constants.baseUrl + "/data/api/v1.0/getVizLegend";
     fetch(url, {
       method: "POST",
+      mode:"cors",
       headers: new Headers({
         "content-type": "application/json"
       }),
@@ -745,8 +756,7 @@ export default class DataVisualization extends Component {
       }, i * 800);
     }
   }
-  onAcSegmentClick = (key, checked) => {
-
+  onSegment = (checked)=>{
     this.setState({ segmentWise: checked },
       () => {
         if(this.state.visualizationType === "Map"){
@@ -761,11 +771,11 @@ export default class DataVisualization extends Component {
           this.fetchMapYearAndData("");
         }
         this.fetchVisualizationData();
-
-
     });
-    ;
-
+  }
+  onAcSegmentClick = (key, checked) => {
+    this.updateURL({variable:"seg",val:checked});
+    this.onSegment(checked);
   }
 
   render() {
@@ -845,10 +855,9 @@ export default class DataVisualization extends Component {
                 <br></br>
                 {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
-                {electionType === "GE" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
+                {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsCheckboxes()}
-                {(visualization === "incumbencyProfile") && <Select id="dv_n_assembly_selector" label="Assembly Number" selectedValue={year} options={assemblyOptions} onChange={this.onAssemblyNoChange} />}
                 {showVisualization && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
             </div>

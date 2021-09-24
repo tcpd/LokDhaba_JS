@@ -56,6 +56,14 @@
     "vizComponent": "ContestedDepositLostChart"
   },
   {
+    "title": "Chart: Rerunning Candidates",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "rerunningCandidates",
+    "alloptionschecked": false,
+    "vizComponent": "RerunningCandidates"
+  },
+  {
     "title": "Map: Constituency type",
     "type": "Map",
     "optionslabel": "Map Constituency type",

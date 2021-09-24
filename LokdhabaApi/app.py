@@ -67,7 +67,7 @@ def module_to_table(argument):
         "partyPositionsMap": "partys",
         "partyVoteShareMap": "partys",
         "notaTurnoutMap": "maps",
-        "incumbencyProfile":"incumbency"
+        "rerunningCandidates":"party_statistics"
     }
     # get() method of dictionary data type returns
     # value of passed argument if it is present

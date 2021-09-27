@@ -60,7 +60,7 @@
     "type": "Chart",
     "optionslabel": "Chart",
     "modulename": "rerunningCandidates",
-    "alloptionschecked": false,
+    "alloptionschecked": true,
     "vizComponent": "RerunningCandidates"
   },
   {
@@ -68,7 +68,7 @@
     "type": "Chart",
     "optionslabel": "Chart",
     "modulename": "timesContested",
-    "alloptionschecked": false,
+    "alloptionschecked": true,
     "vizComponent": "TimesContested"
   },
   {
@@ -76,7 +76,7 @@
     "type": "Chart",
     "optionslabel": "Chart",
     "modulename": "incumbentsChart",
-    "alloptionschecked": false,
+    "alloptionschecked": true,
     "vizComponent": "IncumbentsChart"
   },
   {
@@ -92,7 +92,7 @@
     "type": "Chart",
     "optionslabel": "Chart",
     "modulename": "incumbentsStrike",
-    "alloptionschecked": false,
+    "alloptionschecked": true,
     "vizComponent": "IncumbentsStrike"
   },
   {
@@ -108,7 +108,7 @@
     "type": "Chart",
     "optionslabel": "Chart",
     "modulename": "turncoatsStrike",
-    "alloptionschecked": false,
+    "alloptionschecked": true,
     "vizComponent": "TurncoatsStrike"
   },
   {
@@ -118,7 +118,7 @@
     "modulename": "turncoatsStrikeParty",
     "alloptionschecked": false,
     "vizComponent": "TurncoatsStrikeParty"
-  }, 
+  },
   {
     "title": "Map: Constituency type",
     "type": "Map",

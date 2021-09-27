@@ -5,7 +5,7 @@ const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export default class StackBarChart extends Component {
   render() {
-    const { layout, vizParameters } = this.props;
+    const { vizParameters } = this.props;
     var vizData = this.props.data;
     var dataFilterOptions = this.props.dataFilterOptions;
     var x_labels = vizData.map(function (item) { return item.Year + " (#" + item.Assembly_No + ")" });
@@ -24,14 +24,12 @@ export default class StackBarChart extends Component {
       }
     })
 
-    layout.push({barmode: 'stack'});
-
     let config = {
       showLink: false,
       displayModeBar: true
     };
     return (
-      <PlotlyComponent className="chart" data={data} layout={layout} config={config} />
+      <PlotlyComponent className="chart" data={data} layout={{barmode: 'stack'}} config={config} />
     );
   }
 }

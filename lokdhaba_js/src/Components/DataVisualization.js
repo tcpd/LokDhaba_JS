@@ -599,10 +599,13 @@ export default class DataVisualization extends Component {
     } else {
       vizOptionsSelected.delete(key);
     }
+
+    const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty"]
+    
     let visualization = this.state.visualization;
     this.setState({ vizOptionsSelected: vizOptionsSelected }, () => {
 
-      if (visualization === "cvoteShareChart" || visualization === "seatShareChart" || visualization === "tvoteShareChart" || visualization === "strikeRateChart") {
+      if (vis_list.includes(visualization)) {
         this.fetchVisualizationData();
         this.setState({ showVisualization: true });
       }

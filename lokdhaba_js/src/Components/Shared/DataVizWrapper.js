@@ -706,7 +706,7 @@ export default class DataVizWrapper extends React.Component {
 
       switch (visualization) {
         case "voterTurnoutChart": {
-          chartType = "BarChart";
+          chartType = "StackBarChart";
           layout = {
             title: stateNameDisplay !== "" ? `Voter turnout across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Voter turnout across years in ${electionTypeDisplay}`,
             xaxis: {
@@ -841,7 +841,7 @@ export default class DataVizWrapper extends React.Component {
         }
 
         case "timesContested": {
-          chartType = "StackBarChart";
+          chartType = "BarChart";
           layout = {
             title: stateNameDisplay !== "" ? `Candidates by times contested across years in ${stateName} ${electionType}` : `Candidates by times contested across years in ${electionType}`,
             xaxis: {
@@ -960,6 +960,16 @@ export default class DataVizWrapper extends React.Component {
       if (chartType === "BarChart") {
         return (
           <BarChart
+            layout={layout}
+            vizParameters={vizParameters}
+            data={data}
+            dataFilterOptions={dataFilterOptions}
+          />
+        )
+      }
+      else if (chartType === "StackBarChart") {
+        return (
+          <StackBarChart
             layout={layout}
             vizParameters={vizParameters}
             data={data}

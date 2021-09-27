@@ -1,6 +1,7 @@
 import React from 'react';
 import MapViz from './MapViz';
 import BarChart from './BarChart';
+import StackBarChart from './StackBarChart';
 //import IncumbencyProfile from './IncumbencyProfile';
 import PartyScatterChart from './PartyScatterChart';
 import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColorPalette.json';
@@ -818,6 +819,136 @@ export default class DataVizWrapper extends React.Component {
             },
             yaxis: {
               title: 'Number of Candidates'
+            }
+          };
+          break;
+        }
+
+        case "rerunningCandidates": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Rerunning candidates across years in ${stateName} ${electionType}` : `Rerunning candidates across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage of Candidates',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+        case "timesContested": {
+          chartType = "StackBarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Candidates by times contested across years in ${stateName} ${electionType}` : `Candidates by times contested across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage of Candidates',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+        case "incumbentsChart": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Performance of incumbents across years in ${stateName} ${electionType}` : `Performance of incumbents across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage (out of total seats)',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+        case "incumbentsParty": {
+          chartType = "StackBarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Incumbents by party across years in ${stateName} ${electionType}` : `Incumbents by party across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage of total incumbents',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+        case "incumbentsStrike": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Strike rate of incumbents across years in ${stateName} ${electionType}` : `Strike rate of incumbents across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Strike Rate',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+        case "incumbentsStrikeParty": {
+          chartType = "PartyScatterChart";
+          //vizParameter = "Vote_Share_in_Contested_Seats";
+          layout = {
+            title: stateNameDisplay !== "" ? `Party wise strike rate of incumbents across years in ${stateName} ${electionType}` : `Party wise strike rate of incumbents across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Strike Rate',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+        case "turncoatsStrike": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Strike rate of turncoats across years in ${stateName} ${electionType}` : `Strike rate of turncoats across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Strike Rate',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+        case "turncoatsStrikeParty": {
+          chartType = "PartyScatterChart";
+          //vizParameter = "Vote_Share_in_Contested_Seats";
+          layout = {
+            title: stateNameDisplay !== "" ? `Party wise strike rate of turncoats across years in ${stateName} ${electionType}` : `Party wise strike rate of turncoats across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Strike Rate',
+              range: [0, 100],
+              autorange: false
             }
           };
           break;

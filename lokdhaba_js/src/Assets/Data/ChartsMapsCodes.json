@@ -64,6 +64,62 @@
     "vizComponent": "RerunningCandidates"
   },
   {
+    "title": "Chart: Times Contested",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "timesContested",
+    "alloptionschecked": false,
+    "vizComponent": "TimesContested"
+  },
+  {
+    "title": "Chart: Incumbents",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "incumbentsChart",
+    "alloptionschecked": false,
+    "vizComponent": "IncumbentsChart"
+  },
+  {
+    "title": "Chart: Incumbents (Party-wise)",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "incumbentsParty",
+    "alloptionschecked": false,
+    "vizComponent": "IncumbentsParty"
+  },
+  {
+    "title": "Chart: Strike Rate of Incumbents",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "incumbentsStrike",
+    "alloptionschecked": false,
+    "vizComponent": "IncumbentsStrike"
+  },
+  {
+    "title": "Chart: Strike Rate of Incumbents (Party-wise)",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "incumbentsStrikeParty",
+    "alloptionschecked": false,
+    "vizComponent": "IncumbentsStrikeParty"
+  },
+  {
+    "title": "Chart: Strike Rate of Turncoats",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "turncoatsStrike",
+    "alloptionschecked": false,
+    "vizComponent": "TurncoatsStrike"
+  },
+  {
+    "title": "Chart: Strike Rate of Turncoats (Party-wise)",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "turncoatsStrikeParty",
+    "alloptionschecked": false,
+    "vizComponent": "TurncoatsStrikeParty"
+  }, 
+  {
     "title": "Map: Constituency type",
     "type": "Map",
     "optionslabel": "Map Constituency type",

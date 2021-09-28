@@ -70,11 +70,11 @@ def module_to_table(argument):
         "rerunningCandidates":"incumbency",
         "timesContested": "incumbency",
         "incumbentsChart" : "incumbency",
-        "incumbentsParty" : "incumbency",
+        "incumbentsParty" : "pty_incumbency",
         "incumbentsStrike":"incumbency",
-        "incumbentsStrikeParty": "incumbency",
+        "incumbentsStrikeParty": "pty_incumbency",
         "turncoatsStrike": "incumbency",
-        "turncoatsStrikeParty": "incumbency"
+        "turncoatsStrikeParty": "pty_incumbency"
     }
     # get() method of dictionary data type returns
     # value of passed argument if it is present
@@ -299,15 +299,15 @@ def get_select_options():
     if module == "notaTurnoutMap":
         return (jsonify({"data": ["<1%", "1%-3%", "3%-5%", ">5%"]}))
     if module == "rerunningCandidates":
-        return (jsonify({"data": ["Rerunning_Candidates"]}))
+        return (jsonify({"data": ["Recontesting_Candidates_pct"]}))
     if module == "timesContested":
-        return (jsonify({"data": ["First_contests","Second_contests","Multiple_contests"]}))
+        return (jsonify({"data": ["First_Contests_pct","Second_Contests_pct","Multiple_Contests_pct"]}))
     if module == "incumbentsChart":
-        return (jsonify({"data": ["Contesting Incumbents","Successful Incumbents"]}))
+        return (jsonify({"data": ["Contesting_Incumbents_pct","Sucessful_Incumbents_pct"]}))
     if module == "incumbentsStrike":
-        return (jsonify({"data": ["Strike_Rate"]}))
+        return (jsonify({"data": ["Incumbent_Strike_Rate"]}))
     if module == "turncoatsStrike":
-        return (jsonify({"data": ["Strike_Rate"]}))
+        return (jsonify({"data": ["Turncoat_Strike_Rate"]}))
     connection = connectdb(db_config)
     if connection.is_connected():
         cursor = connection.cursor()

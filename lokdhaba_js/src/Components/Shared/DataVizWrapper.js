@@ -1,7 +1,7 @@
 import React from 'react';
 import MapViz from './MapViz';
 import BarChart from './BarChart';
-import StackBarChart from './StackBarChart';
+import PartyBarChart from './PartyBarChart';
 //import IncumbencyProfile from './IncumbencyProfile';
 import PartyScatterChart from './PartyScatterChart';
 import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColorPalette.json';
@@ -843,6 +843,7 @@ export default class DataVizWrapper extends React.Component {
         case "timesContested": {
           chartType = "BarChart";
           layout = {
+            barmode:'stack',
             title: stateNameDisplay !== "" ? `Candidates by times contested across years in ${stateName} ${electionType}` : `Candidates by times contested across years in ${electionType}`,
             xaxis: {
               title: 'Year(Assembly Number)'
@@ -873,8 +874,10 @@ export default class DataVizWrapper extends React.Component {
         }
 
         case "incumbentsParty": {
-          chartType = "StackBarChart";
+          chartType = "PartyBarChart";
+          vizParameter = "pty_incm_recontests_pct";
           layout = {
+            barmode: 'stack',
             title: stateNameDisplay !== "" ? `Incumbents by party across years in ${stateName} ${electionType}` : `Incumbents by party across years in ${electionType}`,
             xaxis: {
               title: 'Year(Assembly Number)'
@@ -906,7 +909,7 @@ export default class DataVizWrapper extends React.Component {
 
         case "incumbentsStrikeParty": {
           chartType = "PartyScatterChart";
-          //vizParameter = "Vote_Share_in_Contested_Seats";
+          vizParameter = "pty_incm_Strike_Rate";
           layout = {
             title: stateNameDisplay !== "" ? `Party wise strike rate of incumbents across years in ${stateName} ${electionType}` : `Party wise strike rate of incumbents across years in ${electionType}`,
             xaxis: {
@@ -939,7 +942,7 @@ export default class DataVizWrapper extends React.Component {
 
         case "turncoatsStrikeParty": {
           chartType = "PartyScatterChart";
-          //vizParameter = "Vote_Share_in_Contested_Seats";
+          vizParameter = "pty_turn_Strike_Rate";
           layout = {
             title: stateNameDisplay !== "" ? `Party wise strike rate of turncoats across years in ${stateName} ${electionType}` : `Party wise strike rate of turncoats across years in ${electionType}`,
             xaxis: {
@@ -967,11 +970,11 @@ export default class DataVizWrapper extends React.Component {
           />
         )
       }
-      else if (chartType === "StackBarChart") {
+      else if (chartType === "PartyBarChart") {
         return (
-          <StackBarChart
+          <PartyBarChart
             layout={layout}
-            vizParameters={vizParameters}
+            vizParameter={vizParameter}
             data={data}
             dataFilterOptions={dataFilterOptions}
           />

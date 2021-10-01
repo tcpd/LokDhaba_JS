@@ -223,11 +223,23 @@ CREATE table if not exists pty_incumbency (
 	hover_pty_incm_recontests_pct varchar(255),
 	hover_pty_incm_Strike_Rate varchar(255),
 	hover_pty_turn_Strike_Rate varchar(255),
-
 	Color varchar(7),
 	PRIMARY KEY (Election_Type,State_Name, Assembly_No,Party_ID)
 );
 
+CREATE table if not exists pty_profession (
+	Election_Type varchar(2) NOT NULL,
+	State_Name varchar(50) NOT NULL,
+	Assembly_No INT NOT NULL,
+	Party_ID INT,
+	Party varchar(255),
+	Year INT,
+	TCPD_Prof_Main varchar(255),
+	MLAs_Prof_Party INT,
+	Party_MLAs INT,
+	pty_mla_prof_perc REAL,
+	PRIMARY KEY (Election_Type,State_Name, Assembly_No,Party_ID)
+);
 
 CREATE USER 'ld_api'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
 

@@ -74,7 +74,8 @@ def module_to_table(argument):
         "incumbentsStrike":"incumbency",
         "incumbentsStrikeParty": "pty_incumbency",
         "turncoatsStrike": "incumbency",
-        "turncoatsStrikeParty": "pty_incumbency"
+        "turncoatsStrikeParty": "pty_incumbency",
+        "occupationParty": "pty_profession"
     }
     # get() method of dictionary data type returns
     # value of passed argument if it is present
@@ -92,7 +93,8 @@ def module_to_table_legend(argument):
         "winnerMap": "maps",
         "incumbentsParty" : "party_statistics",
         "incumbentsStrikeParty": "party_statistics",
-        "turncoatsStrikeParty": "party_statistics"
+        "turncoatsStrikeParty": "party_statistics",
+        "occupationParty": "party_statistics"
     }
     # get() method of dictionary data type returns
     # value of passed argument if it is present

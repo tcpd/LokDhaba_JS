@@ -120,6 +120,14 @@
     "vizComponent": "TurncoatsStrikeParty"
   },
   {
+    "title": "Chart: Occupation of Elected (Party-wise)",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "occupationParty",
+    "alloptionschecked": false,
+    "vizComponent": "TurncoatsStrikeParty"
+  },
+  {
     "title": "Map: Constituency type",
     "type": "Map",
     "optionslabel": "Map Constituency type",

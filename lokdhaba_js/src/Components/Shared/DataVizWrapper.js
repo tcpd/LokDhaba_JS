@@ -690,6 +690,7 @@ export default class DataVizWrapper extends React.Component {
       let layout = {};
       let vizParameters = [];
       let vizParameter = "";
+      let varName="";
       let showAdditionalText = false;
       let getAdditionalText;
 
@@ -957,6 +958,24 @@ export default class DataVizWrapper extends React.Component {
           break;
         }
 
+        case "occupationParty": {
+          chartType = "AssemblyStepBarChart";
+          vizParameter = "pty_mla_prof_perc";
+          varName ="TCPD_Prof_Main";
+          layout = {
+            title: stateNameDisplay !== "" ? `Party wise professions of elected members in ${stateName} ${electionType}` : `Party wise strike rate of turncoats across years in ${electionType}`,
+            xaxis: {
+              title: 'Party'
+            },
+            yaxis: {
+              title: 'percentage of elected',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
         default:
           break;
       }
@@ -986,6 +1005,18 @@ export default class DataVizWrapper extends React.Component {
             layout={layout}
             data={data}
             vizParameter={vizParameter}
+            showAdditionalText={showAdditionalText}
+            getAdditionalText={getAdditionalText}
+          />
+        )
+      }
+      else if (chartType === "AssemblyStepBarChart") {
+        return (
+          <PartyScatterChart
+            layout={layout}
+            data={data}
+            vizParameter={vizParameter}
+            varName = {varName}
             showAdditionalText={showAdditionalText}
             getAdditionalText={getAdditionalText}
           />

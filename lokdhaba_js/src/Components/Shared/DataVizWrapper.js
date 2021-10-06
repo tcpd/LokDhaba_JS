@@ -2,6 +2,7 @@ import React from 'react';
 import MapViz from './MapViz';
 import BarChart from './BarChart';
 import PartyBarChart from './PartyBarChart';
+import AssemblyStepBarChart from './AssemblyStepBarChart';
 //import IncumbencyProfile from './IncumbencyProfile';
 import PartyScatterChart from './PartyScatterChart';
 import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColorPalette.json';
@@ -707,7 +708,7 @@ export default class DataVizWrapper extends React.Component {
 
       switch (visualization) {
         case "voterTurnoutChart": {
-          chartType = "StackBarChart";
+          chartType = "BarChart";
           layout = {
             title: stateNameDisplay !== "" ? `Voter turnout across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Voter turnout across years in ${electionTypeDisplay}`,
             xaxis: {
@@ -922,7 +923,14 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (party, idx) => {
+            var y_win = data.filter(x => x.Party === party).map(x => x.pty_Sucessful_Incumbents);
+            var total_inc = data.filter(x => x.Party === party).map(x => x.pty_Incumbents);
+            return y_win[idx]+"/" + total_inc[idx]+" Incumbents";
+          }
           break;
+          //additional text=hover_pty_incm_Strike_Rate
         }
 
         case "turncoatsStrike": {
@@ -955,7 +963,14 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (party, idx) => {
+            var y_win = data.filter(x => x.Party === party).map(x => x.pty_Sucessful_Turncoats);
+            var total_inc = data.filter(x => x.Party === party).map(x => x.pty_Turncoats);
+            return y_win[idx]+"/" + total_inc[idx]+" Turncoats";
+          }
           break;
+          //additionaltext=hover_pty_turn_Strike_Rate
         }
 
         case "occupationParty": {
@@ -1012,13 +1027,12 @@ export default class DataVizWrapper extends React.Component {
       }
       else if (chartType === "AssemblyStepBarChart") {
         return (
-          <PartyScatterChart
+          <AssemblyStepBarChart
             layout={layout}
             data={data}
             vizParameter={vizParameter}
             varName = {varName}
-            showAdditionalText={showAdditionalText}
-            getAdditionalText={getAdditionalText}
+            dataFilterOptions={dataFilterOptions}
           />
         )
       }

@@ -189,14 +189,8 @@ CREATE table if not exists incumbency (
 	Sucessful_Incumbents_pct REAL,
 	Incumbent_Strike_Rate REAL,
 	Turncoat_Strike_Rate REAL,
-	hover_Recontesting_Candidates varchar(255),
-	hover_First_Contests varchar(255),
-	hover_Second_Contests varchar(255),
-	hover_Multiple_Contests varchar(255),
-	hover_Contesting_Incumbents varchar(255),
-	hover_Sucessful_Incumbents varchar(255),
-	hover_Incumbent_Strike_Rate varchar(255),
-	hover_Turncoat_Strike_Rate varchar(255),
+	No_first_time_winners_pct REAL,
+	First_Contest_Winners_pct REAL,
 	PRIMARY KEY (Election_Type,State_Name, Assembly_No)
 );
 CREATE table if not exists pty_incumbency (
@@ -220,9 +214,9 @@ CREATE table if not exists pty_incumbency (
 	pty_incm_recontests_pct REAL,
 	pty_incm_Strike_Rate REAL,
 	pty_turn_Strike_Rate REAL,
-	hover_pty_incm_recontests_pct varchar(255),
-	hover_pty_incm_Strike_Rate varchar(255),
-	hover_pty_turn_Strike_Rate varchar(255),
+	pty_fist_time_winners_pct REAL,
+	No_Incumbents INT,
+	No_first_time_winners INT,
 	Color varchar(7),
 	PRIMARY KEY (Election_Type,State_Name, Assembly_No,Party_ID)
 );

@@ -4,15 +4,15 @@ import Plotly from 'plotly.js/dist/plotly-cartesian';
 import ColPalette from '../../Assets/Data/PartyColourPalette.json';
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
-export default class PartyBarChart extends Component {
+export default class AssemblyStepBarChart extends Component {
   render() {
     const {  vizParameter, varName } = this.props;
-    var layout = this.props.layout
-    var vizData = this.props.data;
+    var layout = this.props.layout;
+    const vizData = this.props.data;
     var data = [];
     var steps = [];
     var frames = [];
-    var x_axis_labels = new Set(vizData.map(x => x.Party));
+    var x_axis_labels = this.props.dataFilterOptions;
     //var x_axis_labels = vizData.map(function (item) { return item.Year + " (#" + item.Assembly_No + ")" });
     //x_axis_labels = [...new Set(x_axis_labels)];
     var names = new Set(vizData.map(x=>x[varName]));
@@ -26,7 +26,7 @@ export default class PartyBarChart extends Component {
         //var y_text = new Array(x_axis_labels.length).fill(NaN);
         for (var i = 0; i < x_axis_labels.length; i++) {
           var label = x_axis_labels[i];
-          var idx = x_labels.findIndex(function (x) { return x === label })
+          var idx = x_labels.findIndex(function (x) { return x === label });
           if (idx !== -1) {
             y_vals[i] = y_contested[idx];
           }
@@ -55,9 +55,9 @@ export default class PartyBarChart extends Component {
       steps.push(step);
       var frame = {
         name:year,
-        data:data.filter(x.Assembly_No === year)
+        data:data.filter(x => x.Assembly_No === year)
       }
-      frames.push(frame)
+      frames.push(frame);
     });
 
     var sliders=[{

@@ -8,7 +8,7 @@ library(data.table)
 
 
 
-git_loc = "../tcpd_data/data/"
+git_loc = "/home/blusoul/Documents/TCPD/Projects/tcpd-data"
 
 db_user= "root"
 db_host = "127.0.0.1"

@@ -6,7 +6,7 @@ const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export default class PartyBarChart extends Component {
   render() {
-    const { layout, vizParameter } = this.props;
+    const { layout, vizParameter, showAdditionalText, getAdditionalText } = this.props;
     var vizData = this.props.data;
     var data = [];
     var parties = new Set(vizData.map(x => x.Party));
@@ -16,13 +16,15 @@ export default class PartyBarChart extends Component {
       var y_contested = vizData.filter(x => x.Party === party).map(x => x[vizParameter]);
       var x_labels = vizData.filter(x => x.Party === party).map(function (item) { return item.Year + " (#" + item.Assembly_No + ")" });
       var y_vals = new Array(x_axis_labels.length).fill(NaN);
-      //var y_text = new Array(x_axis_labels.length).fill(NaN);
+      var y_text = new Array(x_axis_labels.length).fill(NaN);
       for (var i = 0; i < x_axis_labels.length; i++) {
         var label = x_axis_labels[i];
         var idx = x_labels.findIndex(function (x) { return x === label })
         if (idx !== -1) {
           y_vals[i] = y_contested[idx];
-
+          if (showAdditionalText) {
+            y_text[i] = getAdditionalText(party, idx);
+          }
         }
       }
 
@@ -42,6 +44,7 @@ export default class PartyBarChart extends Component {
         x: x_axis_labels,
         y: y_vals,
         name: party,
+        text: y_text,
         marker: {color: party_color}
       }
       data.push(trace);

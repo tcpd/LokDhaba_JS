@@ -120,6 +120,22 @@
     "vizComponent": "TurncoatsStrikeParty"
   },
   {
+    "title": "Chart: First-Time Winners",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "firstTimeWinners",
+    "alloptionschecked": false,
+    "vizComponent": "FirstTimeWinners"
+  },
+  {
+    "title": "Chart: First-Time Winners (Party-wise)",
+    "type": "Chart",
+    "optionslabel": "Chart",
+    "modulename": "firstTimeParty",
+    "alloptionschecked": false,
+    "vizComponent": "FirstTimeParty"
+  },
+  {
     "title": "Chart: Occupation of Elected (Party-wise)",
     "type": "Chart",
     "optionslabel": "Chart",

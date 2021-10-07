@@ -702,7 +702,7 @@ export default class DataVizWrapper extends React.Component {
         })
 
         if (found) {
-          vizParameters.push({ label: element.replace(/_/g, " "), value: element, dataFilterOptionName: x });
+          vizParameters.push({ label: element.replace(/_|pct/g, " "), value: element, dataFilterOptionName: x });
         }
       });
 
@@ -839,6 +839,13 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","")
+            var y_in = data.map(x => x[[new_val]]);
+            var total_inc =data.map(x => x.Total_Candidates);
+            return y_in[i]+"/" + total_inc[i]+" Candidates";
+          }
           break;
         }
 
@@ -856,6 +863,13 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","")
+            var y_in = data.map(x => x[[new_val]]);
+            var total_inc =data.map(x => x.Total_Candidates);
+            return y_in[i]+"/" + total_inc[i]+" Candidates";
+          }
           break;
         }
 
@@ -872,6 +886,13 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","")
+            var y_in = data.map(x => x[[new_val]]);
+            var total_inc =data.map(x => x.Total_Seats);
+            return y_in[i]+"/" + total_inc[i]+" Seats";
+          }
           break;
         }
 
@@ -890,6 +911,12 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (party, idx) => {
+            var y_in = data.filter(x => x.Party === party).map(x => x.pty_Incumbents);
+            //var total_inc = data.filter(x => x.Party === party).map(x => x.Incumbents);
+            return y_in[idx]+" Incumbents";//+"/" + total_inc[idx]+" Incumbents";
+          }
           break;
         }
 
@@ -906,6 +933,13 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","")
+            var y_in = data.map(x => x.Sucessful_Incumbents);
+            var total_inc =data.map(x => x.Contesting_Incumbents);
+            return y_in[i]+"/" + total_inc[i]+" Incumbents";
+          }
           break;
         }
 
@@ -946,6 +980,12 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var y_in = data.map(x => x.Sucessful_Turncoats);
+            var total_inc =data.map(x => x.Turncoats);
+            return y_in[i]+"/" + total_inc[i]+" Turncoats";
+          }
           break;
         }
 
@@ -986,12 +1026,19 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var y_in = data.map(x => x.No_first_time_winners);
+            var total_inc =data.map(x => x.Total_Seats);
+            return y_in[i]+"/" + total_inc[i]+" Seats";
+          }
           break;
         }
 
         case "firstTimeParty": {
           chartType = "PartyBarChart";
-          //vizParameter = "pty_incm_recontests_pct";
+          vizParameter = "pty_first_time_winners_pct";
           layout = {
             barmode: 'stack',
             title: stateNameDisplay !== "" ? `First-time winners by party across years in ${stateName} ${electionType}` : `First-time winners by party across years in ${electionType}`,
@@ -1004,6 +1051,13 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
+          showAdditionalText = true;
+          getAdditionalText = (party, idx) => {
+            var y_in = data.filter(x => x.Party === party).map(x => x.pty_first_time_winners);
+            //var total_inc = data.filter(x => x.Party === party).map(x => x.first_time_winners);
+            return y_in[idx]+" First-time winners";//+"/" + total_inc[idx]+" first time winners";
+          }
+          break;
           break;
         }
 
@@ -1036,6 +1090,8 @@ export default class DataVizWrapper extends React.Component {
             vizParameters={vizParameters}
             data={data}
             dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText}
+            getAdditionalText={getAdditionalText}
           />
         )
       }
@@ -1046,6 +1102,8 @@ export default class DataVizWrapper extends React.Component {
             vizParameter={vizParameter}
             data={data}
             dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText}
+            getAdditionalText={getAdditionalText}
           />
         )
       }

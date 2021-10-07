@@ -973,6 +973,41 @@ export default class DataVizWrapper extends React.Component {
           //additionaltext=hover_pty_turn_Strike_Rate
         }
 
+        case "firstTimeWinners": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `First-time winners across years in ${stateName} ${electionType}` : `First-time winners across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage (out of total seats)',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+        case "firstTimeParty": {
+          chartType = "PartyBarChart";
+          //vizParameter = "pty_incm_recontests_pct";
+          layout = {
+            barmode: 'stack',
+            title: stateNameDisplay !== "" ? `First-time winners by party across years in ${stateName} ${electionType}` : `First-time winners by party across years in ${electionType}`,
+            xaxis: {
+              title: 'Year(Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage of total first-time winners',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          break;
+        }
+
+
         case "occupationParty": {
           chartType = "AssemblyStepBarChart";
           vizParameter = "pty_mla_prof_perc";

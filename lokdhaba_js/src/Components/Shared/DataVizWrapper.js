@@ -914,8 +914,8 @@ export default class DataVizWrapper extends React.Component {
           showAdditionalText = true;
           getAdditionalText = (party, idx) => {
             var y_in = data.filter(x => x.Party === party).map(x => x.pty_Incumbents);
-            //var total_inc = data.filter(x => x.Party === party).map(x => x.Incumbents);
-            return y_in[idx]+" Incumbents";//+"/" + total_inc[idx]+" Incumbents";
+            var total_inc = data.filter(x => x.Party === party).map(x => x.No_Incumbents);
+            return y_in[idx]+"/" + total_inc[idx]+" Incumbents";
           }
           break;
         }
@@ -1026,10 +1026,10 @@ export default class DataVizWrapper extends React.Component {
               autorange: false
             }
           };
-
           showAdditionalText = true;
           getAdditionalText = (i, val) => {
-            var y_in = data.map(x => x.No_first_time_winners);
+            var new_val=val.replace("_pct","");
+            var y_in = data.map(x => x[[new_val]]);
             var total_inc =data.map(x => x.Total_Seats);
             return y_in[i]+"/" + total_inc[i]+" Seats";
           }
@@ -1038,7 +1038,7 @@ export default class DataVizWrapper extends React.Component {
 
         case "firstTimeParty": {
           chartType = "PartyBarChart";
-          vizParameter = "pty_first_time_winners_pct";
+          vizParameter = "pty_fist_time_winners_pct";
           layout = {
             barmode: 'stack',
             title: stateNameDisplay !== "" ? `First-time winners by party across years in ${stateName} ${electionType}` : `First-time winners by party across years in ${electionType}`,
@@ -1054,8 +1054,8 @@ export default class DataVizWrapper extends React.Component {
           showAdditionalText = true;
           getAdditionalText = (party, idx) => {
             var y_in = data.filter(x => x.Party === party).map(x => x.pty_first_time_winners);
-            //var total_inc = data.filter(x => x.Party === party).map(x => x.first_time_winners);
-            return y_in[idx]+" First-time winners";//+"/" + total_inc[idx]+" first time winners";
+            var total_inc = data.filter(x => x.Party === party).map(x => x.No_first_time_winners);
+            return y_in[idx]+"/" + total_inc[idx]+" First-time winners";
           }
           break;
           break;

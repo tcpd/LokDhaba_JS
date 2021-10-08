@@ -75,6 +75,8 @@ def module_to_table(argument):
         "incumbentsStrikeParty": "pty_incumbency",
         "turncoatsStrike": "incumbency",
         "turncoatsStrikeParty": "pty_incumbency",
+        "firstTimeWinners": "incumbency",
+        "firstTimeParty": "pty_incumbency",
         "occupationParty": "pty_profession"
     }
     # get() method of dictionary data type returns
@@ -94,6 +96,7 @@ def module_to_table_legend(argument):
         "incumbentsParty" : "party_statistics",
         "incumbentsStrikeParty": "party_statistics",
         "turncoatsStrikeParty": "party_statistics",
+        "firstTimeParty": "party_statistics",
         "occupationParty": "party_statistics"
     }
     # get() method of dictionary data type returns
@@ -310,6 +313,8 @@ def get_select_options():
         return (jsonify({"data": ["Incumbent_Strike_Rate"]}))
     if module == "turncoatsStrike":
         return (jsonify({"data": ["Turncoat_Strike_Rate"]}))
+    if module == "firstTimeWinners":
+        return (jsonify({"data": ["No_first_time_winners_pct"]}))
     connection = connectdb(db_config)
     if connection.is_connected():
         cursor = connection.cursor()
@@ -550,7 +555,7 @@ def get_viz_data():
                     query_input.append(stateName)
 
             get_party = ""
-            if module in ["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty"]:
+            if module in ["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]:
                 parties = req.get('Legends')
                 # parties = party.split(",")
                 get_party = " and Party in (" + ",".join(["%s"] * len(parties)) + ") "

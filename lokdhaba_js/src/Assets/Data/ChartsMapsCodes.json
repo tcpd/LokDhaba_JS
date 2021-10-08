@@ -124,7 +124,7 @@
     "type": "Chart",
     "optionslabel": "Chart",
     "modulename": "firstTimeWinners",
-    "alloptionschecked": false,
+    "alloptionschecked": true,
     "vizComponent": "FirstTimeWinners"
   },
   {

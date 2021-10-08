@@ -600,7 +600,7 @@ export default class DataVisualization extends Component {
       vizOptionsSelected.delete(key);
     }
 
-    const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty"]
+    const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]
     
     let visualization = this.state.visualization;
     this.setState({ vizOptionsSelected: vizOptionsSelected }, () => {

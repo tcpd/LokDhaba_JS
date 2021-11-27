@@ -876,7 +876,7 @@ export default class DataVizWrapper extends React.Component {
         case "incumbentsChart": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Performance of incumbents across years in ${stateName} ${electionType}` : `Performance of incumbents across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Rerunning Incumbents across years in ${stateName} ${electionType}` : `Rerunning Incumbents across years in ${electionType}`,
             xaxis: {
               title: 'Year(Assembly Number)'
             },
@@ -901,7 +901,7 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "pty_incm_recontests_pct";
           layout = {
             barmode: 'stack',
-            title: stateNameDisplay !== "" ? `Incumbents by party across years in ${stateName} ${electionType}` : `Incumbents by party across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Rerunning Incumbents by party across years in ${stateName} ${electionType}` : `Rerunning Incumbents by party across years in ${electionType}`,
             xaxis: {
               title: 'Year(Assembly Number)'
             },
@@ -936,7 +936,7 @@ export default class DataVizWrapper extends React.Component {
           showAdditionalText = true;
           getAdditionalText = (i, val) => {
             var new_val=val.replace("_pct","")
-            var y_in = data.map(x => x.Sucessful_Incumbents);
+            var y_in = data.map(x => x.Successful_Incumbents);
             var total_inc =data.map(x => x.Contesting_Incumbents);
             return y_in[i]+"/" + total_inc[i]+" Incumbents";
           }
@@ -959,7 +959,7 @@ export default class DataVizWrapper extends React.Component {
           };
           showAdditionalText = true;
           getAdditionalText = (party, idx) => {
-            var y_win = data.filter(x => x.Party === party).map(x => x.pty_Sucessful_Incumbents);
+            var y_win = data.filter(x => x.Party === party).map(x => x.pty_Successful_Incumbents);
             var total_inc = data.filter(x => x.Party === party).map(x => x.pty_Incumbents);
             return y_win[idx]+"/" + total_inc[idx]+" Incumbents";
           }
@@ -982,7 +982,7 @@ export default class DataVizWrapper extends React.Component {
           };
           showAdditionalText = true;
           getAdditionalText = (i, val) => {
-            var y_in = data.map(x => x.Sucessful_Turncoats);
+            var y_in = data.map(x => x.Successful_Turncoats);
             var total_inc =data.map(x => x.Turncoats);
             return y_in[i]+"/" + total_inc[i]+" Turncoats";
           }
@@ -1005,7 +1005,7 @@ export default class DataVizWrapper extends React.Component {
           };
           showAdditionalText = true;
           getAdditionalText = (party, idx) => {
-            var y_win = data.filter(x => x.Party === party).map(x => x.pty_Sucessful_Turncoats);
+            var y_win = data.filter(x => x.Party === party).map(x => x.pty_Successful_Turncoats);
             var total_inc = data.filter(x => x.Party === party).map(x => x.pty_Turncoats);
             return y_win[idx]+"/" + total_inc[idx]+" Turncoats";
           }

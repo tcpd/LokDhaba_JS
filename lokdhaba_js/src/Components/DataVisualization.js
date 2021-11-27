@@ -62,6 +62,7 @@ export default class DataVisualization extends Component {
       GE_States: [],
       visualization: "",
       visualizationType: "",
+      visualizationVar: "",
       visualizationOptions: [],
       chartMapOptions: [],
       year: "",
@@ -228,6 +229,8 @@ export default class DataVisualization extends Component {
 
       }
     });
+    var visualizationVar = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].varType;
+    this.setState({visualizationVar:visualizationVar});
     this.updateURL({variable:"viz",val:newValue});
   }
 
@@ -601,7 +604,7 @@ export default class DataVisualization extends Component {
     }
 
     const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]
-    
+
     let visualization = this.state.visualization;
     this.setState({ vizOptionsSelected: vizOptionsSelected }, () => {
 
@@ -631,7 +634,7 @@ export default class DataVisualization extends Component {
       if(typeof optionNames === "object"){
         name = optionNames[item]
       }
-      checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item.replace(/_/g, "")} checked={checked} key={item.replace(/_/g, "")} title={name} label={item.replace(/_/g, " ")} onChange={scope.chartMapOptionChecked} />)
+      checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item.replace(/_/g, "")} checked={checked} key={item.replace(/_/g, "")} title={name} label={item.replace(/_/g, " ").replace(/ pct/g,"")} onChange={scope.chartMapOptionChecked} />)
     });
     if (checkboxes.length > 0) {
       return <div>
@@ -788,6 +791,7 @@ export default class DataVisualization extends Component {
     var visualization = this.state.visualization;
     var visualizationOptions = this.state.visualizationOptions;
     var visualizationType = this.state.visualizationType;
+    var visualizationVar = this.state.visualizationVar;
     var yearOptions = this.state.yearOptions;
     var assemblyOptions = this.state.stateAssemblies;
     var year = this.state.year;
@@ -858,7 +862,7 @@ export default class DataVisualization extends Component {
                 <br></br>
                 {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
-                {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
+                {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && visualizationVar !="Incumbency" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsCheckboxes()}
                 {showVisualization && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}

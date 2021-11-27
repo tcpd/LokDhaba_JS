@@ -22,7 +22,7 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_DEBUG=1
-    command : tail -f /dev/null
+    command : flask run --host=0.0.0.0
   node:
     container_name : ld_ui
     build : ./lokdhaba_js

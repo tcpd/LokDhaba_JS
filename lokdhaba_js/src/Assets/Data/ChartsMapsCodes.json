@@ -2,6 +2,7 @@
   {
     "title": "Chart: Voter Turnout",
     "type": "Chart",
+    "varType":"Turnout",
     "optionslabel": "Chart turnout for",
     "modulename": "voterTurnoutChart",
     "alloptionschecked": true,
@@ -10,6 +11,7 @@
   {
     "title": "Chart: Party vote share (contested)",
     "type": "Chart",
+    "varType":"PartyStats",
     "optionslabel": "Chart voteshare for",
     "modulename": "cvoteShareChart",
     "alloptionschecked": false,
@@ -18,6 +20,7 @@
   {
     "title": "Chart: Party vote share (all seats)",
     "type": "Chart",
+    "varType":"PartyStats",
     "optionslabel": "Chart voteshare for",
     "modulename": "tvoteShareChart",
     "alloptionschecked": false,
@@ -26,6 +29,7 @@
   {
     "title": "Chart: Party seat share",
     "type": "Chart",
+    "varType":"PartyStats",
     "optionslabel": "Chart seatshare for",
     "modulename": "seatShareChart",
     "alloptionschecked": false,
@@ -34,6 +38,7 @@
   {
     "title": "Chart: Party strike rate",
     "type": "Chart",
+    "varType":"PartyStats",
     "optionslabel": "Chart strike rate for",
     "modulename": "strikeRateChart",
     "alloptionschecked": false,
@@ -42,6 +47,7 @@
   {
     "title": "Chart: Parties contested and represented",
     "type": "Chart",
+    "varType":"PartyContests",
     "optionslabel": "Chart",
     "modulename": "partiesPresentedChart",
     "alloptionschecked": true,
@@ -50,6 +56,7 @@
   {
     "title": "Chart: Candidates contested /deposit lost",
     "type": "Chart",
+    "varType":"Candidates",
     "optionslabel": "Chart",
     "modulename": "contestedDepositSavedChart",
     "alloptionschecked": true,
@@ -58,6 +65,7 @@
   {
     "title": "Chart: Rerunning Candidates",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "rerunningCandidates",
     "alloptionschecked": true,
@@ -66,22 +74,25 @@
   {
     "title": "Chart: Times Contested",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "timesContested",
     "alloptionschecked": true,
     "vizComponent": "TimesContested"
   },
   {
-    "title": "Chart: Incumbents",
+    "title": "Chart: Rerunning Incumbents",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "incumbentsChart",
     "alloptionschecked": true,
     "vizComponent": "IncumbentsChart"
   },
   {
-    "title": "Chart: Incumbents (Party-wise)",
+    "title": "Chart: Rerunning Incumbents (Party-wise)",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "incumbentsParty",
     "alloptionschecked": false,
@@ -90,6 +101,7 @@
   {
     "title": "Chart: Strike Rate of Incumbents",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "incumbentsStrike",
     "alloptionschecked": true,
@@ -98,6 +110,7 @@
   {
     "title": "Chart: Strike Rate of Incumbents (Party-wise)",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "incumbentsStrikeParty",
     "alloptionschecked": false,
@@ -106,6 +119,7 @@
   {
     "title": "Chart: Strike Rate of Turncoats",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "turncoatsStrike",
     "alloptionschecked": true,
@@ -114,6 +128,7 @@
   {
     "title": "Chart: Strike Rate of Turncoats (Party-wise)",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "turncoatsStrikeParty",
     "alloptionschecked": false,
@@ -122,6 +137,7 @@
   {
     "title": "Chart: First-Time Winners",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "firstTimeWinners",
     "alloptionschecked": true,
@@ -130,18 +146,11 @@
   {
     "title": "Chart: First-Time Winners (Party-wise)",
     "type": "Chart",
+    "varType":"Incumbency",
     "optionslabel": "Chart",
     "modulename": "firstTimeParty",
     "alloptionschecked": false,
     "vizComponent": "FirstTimeParty"
-  },
-  {
-    "title": "Chart: Occupation of Elected (Party-wise)",
-    "type": "Chart",
-    "optionslabel": "Chart",
-    "modulename": "occupationParty",
-    "alloptionschecked": false,
-    "vizComponent": "TurncoatsStrikeParty"
   },
   {
     "title": "Map: Constituency type",

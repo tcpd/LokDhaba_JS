@@ -308,7 +308,7 @@ def get_select_options():
     if module == "timesContested":
         return (jsonify({"data": ["First_Contests_pct","Second_Contests_pct","Multiple_Contests_pct"]}))
     if module == "incumbentsChart":
-        return (jsonify({"data": ["Contesting_Incumbents_pct","Sucessful_Incumbents_pct"]}))
+        return (jsonify({"data": ["Contesting_Incumbents_pct","Successful_Incumbents_pct"]}))
     if module == "incumbentsStrike":
         return (jsonify({"data": ["Incumbent_Strike_Rate"]}))
     if module == "turncoatsStrike":

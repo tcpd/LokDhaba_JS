@@ -637,9 +637,11 @@ export default class DataVisualization extends Component {
       checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item.replace(/_/g, "")} checked={checked} key={item.replace(/_/g, "")} title={name} label={item.replace(/_/g, " ").replace(/ pct/g,"")} onChange={scope.chartMapOptionChecked} />)
     });
     if (checkboxes.length > 0) {
-      return <div>
+      return <div >
         <label>{label}</label>
+        <div style={{height:"40vh",overflow:"scroll",outline:".5px dotted gray"}}>
         {checkboxes}
+        </div>
       </div>;
     }
   }
@@ -865,7 +867,8 @@ export default class DataVisualization extends Component {
                 {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && visualizationVar !="Incumbency" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsCheckboxes()}
-                {showVisualization && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
+                <br/>
+                {showVisualization && <Button className="btn" variant="primary" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
             </div>
             <div className="vis column" style={{width: "80%", padding: "10px"}}>

@@ -5,13 +5,15 @@ import VidhanSabhaNumber from '../Assets/Data/VidhanSabhaNumber.json';
 import LokSabhaNumber from '../Assets/Data/LokSabhaNumber.json';
 import ChartsMapsCodes from '../Assets/Data/ChartsMapsCodes.json';
 import Checkbox from './Shared/Checkbox.js';
-import Select from './Shared/Select.js';
+import LdSelect from './Shared/Select.js';
 import DataVizWrapper from './Shared/DataVizWrapper';
 import * as Constants from './Shared/Constants.js';
 import Popup from './Shared/Popup.js';
 import { CSVLink } from "react-csv";
 import { Button } from 'react-bootstrap';
 import $ from 'jquery';
+import { components } from "react-select";
+import Select from "react-select";
 
 function compareValues(key, order = 'asc') {
   return function innerSort(a, b) {
@@ -47,6 +49,21 @@ function setParams(props ) {
   searchParams.set(variable, val || "");
   return searchParams.toString();
 }
+
+const Option = (props) => {
+  return (
+    <div>
+      <components.Option {...props}>
+        <input
+          type="checkbox"
+          checked={props.isSelected}
+          onChange={() => null}
+        />{" "}
+        <label title ={props.name}>{props.label}</label>
+      </components.Option>
+    </div>
+  );
+};
 
 
 export default class DataVisualization extends Component {
@@ -163,10 +180,11 @@ export default class DataVisualization extends Component {
     var options = inputs.get("opt") || "";
     if(options !== ""){
       var selected_options = options.replace(/%2C/g,",").split(",");
-      this.state.vizOptionsSelected = new Set(selected_options);
-      for(var an =0; an < selected_options.length;an++){
-        this.chartMapOptionChecked(selected_options[an],true);
-      }
+      this.setState({vizOptionsSelected : new Set(selected_options)}, () => {
+        this.createOptionsSelect()
+      });
+      //this.state.vizOptionsSelected = new Set(selected_options);
+
     }
 
 
@@ -636,12 +654,76 @@ export default class DataVisualization extends Component {
       }
       checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item.replace(/_/g, "")} checked={checked} key={item.replace(/_/g, "")} title={name} label={item.replace(/_/g, " ").replace(/ pct/g,"")} onChange={scope.chartMapOptionChecked} />)
     });
+
     if (checkboxes.length > 0) {
       return <div >
         <label>{label}</label>
         <div style={{height:"40vh",overflow:"scroll",outline:".5px dotted gray"}}>
         {checkboxes}
         </div>
+      </div>;
+    }
+  }
+  optionChange = (selected) => {
+    const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]
+    var selectedOpts = new Set(selected.map(x=>x.value))
+    let visualization = this.state.visualization;
+    this.setState({
+      vizOptionsSelected: selectedOpts
+    }, () => {
+
+      if (vis_list.includes(visualization)) {
+        this.fetchVisualizationData();
+        this.setState({ showVisualization: true });
+      }
+    });
+    this.updateURL({variable:"opt",val:[...selectedOpts]});
+
+  };
+  createOptionsSelect = () => {
+    var selectOptions = [];
+    var scope = this;
+    var visualization = scope.state.visualization;
+    var vizOptionsSelected = scope.state.vizOptionsSelected;
+    var label = "";
+    var foundLabel = ChartsMapsCodes.find(function (item) { return item.modulename === scope.state.visualization });
+    if (foundLabel) {
+      label = foundLabel.optionslabel;
+    }
+    var chartMapOptions = scope.state.chartMapOptions;
+    var optionNames = scope.state.vizOptionsNames;
+    chartMapOptions.forEach(function (item) {
+      var option = {}
+      option["value"]= item.replace(/_/g, "")
+      option["label"]=item.replace(/_/g, " ").replace(/ pct/g,"")
+
+      var checked = vizOptionsSelected.has(item.replace(/_/g, "").replace(/ pct/g,""));
+      var name = ""
+      if(typeof optionNames === "object"){
+        name = optionNames[item]
+      }
+      option["isSelected"]= checked
+      option["name"] = name
+
+      selectOptions.push(option)
+    });
+
+    if (selectOptions.length > 0) {
+      return <div >
+        <label>{label}</label>
+        <Select
+          options={selectOptions}
+          isMulti
+          closeMenuOnSelect={false}
+          hideSelectedOptions={false}
+          menuColor = "#B83027"
+          components={{
+            Option
+          }}
+          onChange={this.optionChange}
+          allowSelectAll={true}
+          value={selectOptions.filter(x=> x.isSelected===true)}
+        />
       </div>;
     }
   }
@@ -862,11 +944,11 @@ export default class DataVisualization extends Component {
                   </li>
                 </ul>
                 <br></br>
-                {<Select id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
-                {stateName !== "" && <Select id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
+                {<LdSelect id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
+                {stateName !== "" && <LdSelect id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
                 {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && visualizationVar !="Incumbency" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
-                {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <Select id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
-                {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsCheckboxes()}
+                {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <LdSelect id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
+                {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsSelect()}
                 <br/>
                 {showVisualization && <Button className="btn" variant="primary" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
@@ -881,3 +963,5 @@ export default class DataVisualization extends Component {
     )
   }
 }
+
+//{((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsCheckboxes()}

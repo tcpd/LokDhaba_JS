@@ -11,7 +11,7 @@ onChange: function to call when selection is made
 import React, { Component } from 'react';
 import '../../Assets/Styles/select.css'
 
-export default class Select extends Component {
+export default class LdSelect extends Component {
   constructor(props){
         super(props);
         this.state = {selectedValue: ""};

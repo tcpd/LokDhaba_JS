@@ -195,23 +195,33 @@ export default class DataVisualization extends Component {
       //this.onElectionTypeChange(evt);
     }
     var st = inputs.get("st") || "";
-    if(st !== "" ){this.onStateNameChange(st);}
     var vizVar = inputs.get("var") || "";
+    var viz = inputs.get("viz") || "";
+    var options = inputs.get("opt") || "";
+    var an = inputs.get("an") || "";
+    var pty = inputs.get("pty") || "";
+    var seg = inputs.get("seg") || "";
+    if(st !== "" ){this.onStateNameChange(st);}
+
     if(vizVar !== "" ){this.onVisualizationVarChange(vizVar);}
     var viz = inputs.get("viz") || "";
-    if(viz !== "" ){this.onVisualizationChange(viz, searchYear);}
-    var an = inputs.get("an") || "";
+    if(viz !== "" ){
+      this.onVisualizationChange(viz, searchYear);
+      if(options !== ""){
+        var selected_options = new Set(options.replace(/%2C/g,",").split(","));
+        this.optionChange([...selected_options],viz);
+        //this.fetchVisualizationData()
+      }
+    }
+
     if(an !== "" ){this.onYearChange(an);}
-    var pty = inputs.get("pty") || "";
+
     if(pty !== ""){this.onPartyChange(pty);}
-    var seg = inputs.get("seg") || "";
+
     if(seg !== ""){this.onSegment(seg);}
 
-    var options = inputs.get("opt") || "";
-    if(options !== ""){
-      var selected_options = new Set(options.replace(/%2C/g,",").split(","));
-      this.optionChange([...selected_options]);
-    }
+
+
     //this.fetchVisualizationData();
 
   }
@@ -264,7 +274,7 @@ export default class DataVisualization extends Component {
       ,vizOptionsSelected: new Set()
       ,year: ""
       , visualizationType: visualizationType }, async () => {
-      await this.fetchChartMapOptions(this.state);
+      //await this.fetchChartMapOptions(this.state);
       if (visualizationType === "Map") {
         await this.fetchMapData();
         if (newValue === "partyPositionsMap" || newValue === "partyVoteShareMap") {
@@ -318,9 +328,10 @@ export default class DataVisualization extends Component {
       }
     }
     this.setState(
-      { visualization: "",visualizationType: "",vizOptionsSelected: new Set(),showVisualization: false,stateName: newValue, stateAssemblies: assemblies },
-      () => {
+      { stateName: newValue, stateAssemblies: assemblies },
+      async() => {
         this.setYearsFromSearch(searchYears)
+        await this.fetchVisualizationData();
       }
     );
     this.updateURL({variable:"st",val:newValue});
@@ -616,6 +627,7 @@ export default class DataVisualization extends Component {
       this.setState({ vizOptionsNames : resp.names});
       var checked = ChartsMapsCodes.filter(function (item) { return item.modulename === visualization })[0].alloptionschecked;
       if (checked) {
+
         this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) }, async () => {
           await this.fetchVisualizationData();
           if(visualizationType==="Map"){
@@ -645,61 +657,12 @@ export default class DataVisualization extends Component {
     });
   }
 
-  chartMapOptionChecked = (key, checked) => {
-    var vizOptionsSelected = this.state.vizOptionsSelected;
-    if (checked) {
-      vizOptionsSelected.add(key);
-    } else {
-      vizOptionsSelected.delete(key);
-    }
+  
 
-    const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]
-
-    let visualization = this.state.visualization;
-    this.setState({ vizOptionsSelected: vizOptionsSelected }, () => {
-
-      if (vis_list.includes(visualization)) {
-        this.fetchVisualizationData();
-        this.setState({ showVisualization: true });
-      }
-    });
-    this.updateURL({variable:"opt",val:[...vizOptionsSelected]});
-  }
-
-  createOptionsCheckboxes = () => {
-    var checkboxes = [];
-    var scope = this;
-    var visualization = scope.state.visualization;
-    var vizOptionsSelected = scope.state.vizOptionsSelected;
-    var label = "";
-    var foundLabel = ChartsMapsCodes.find(function (item) { return item.modulename === scope.state.visualization });
-    if (foundLabel) {
-      label = foundLabel.optionslabel;
-    }
-    var chartMapOptions = scope.state.chartMapOptions;
-    var optionNames = scope.state.vizOptionsNames;
-    chartMapOptions.forEach(function (item) {
-      var checked = vizOptionsSelected.has(item.replace(/_/g, ""));
-      var name = ""
-      if(typeof optionNames === "object"){
-        name = optionNames[item]
-      }
-      checkboxes.push(<Checkbox id={"dv_" + visualization + "_filter_" + item.replace(/_/g, "")} checked={checked} key={item.replace(/_/g, "")} title={name} label={item.replace(/_/g, " ").replace(/ pct/g,"")} onChange={scope.chartMapOptionChecked} />)
-    });
-
-    if (checkboxes.length > 0) {
-      return <div >
-        <label>{label}</label>
-        <div style={{height:"40vh",overflow:"scroll",outline:".5px dotted gray"}}>
-        {checkboxes}
-        </div>
-      </div>;
-    }
-  }
-  optionChange = (selected) => {
+  optionChange = (selected,viz) => {
     const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]
     var selectedOpts = new Set(selected.map(x=>x.value || x))
-    let visualization = this.state.visualization;
+    let visualization = this.state.visualization || viz;
     this.setState({
       vizOptionsSelected: selectedOpts
     }, async () => {
@@ -712,15 +675,12 @@ export default class DataVisualization extends Component {
     this.updateURL({variable:"opt",val:[...selectedOpts]});
 
   };
-  createOptionsSelect = (props) => {
+  createOptionsSelect = () => {
     var selectOptions = [];
     var scope = this;
     var visualization = scope.state.visualization;
-    if(props){
-      var vizOptionsSelected = props
-    }else{
-      var vizOptionsSelected = scope.state.vizOptionsSelected;
-    }
+    var vizOptionsSelected = scope.state.vizOptionsSelected;
+
     var label = "";
     var foundLabel = ChartsMapsCodes.find(function (item) { return item.modulename === scope.state.visualization });
     if (foundLabel) {

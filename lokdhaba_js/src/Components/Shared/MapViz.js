@@ -37,8 +37,8 @@ export default class MapViz extends React.Component {
     this.setState({info:tooltip});
 
     layer.setStyle({
-      weight: 3,
-      color:'#ffffff'
+      weight:4
+      //,color:'#ffffff'
     });
 
   };

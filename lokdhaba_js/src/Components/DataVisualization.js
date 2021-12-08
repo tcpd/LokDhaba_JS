@@ -81,7 +81,12 @@ const customStyles = {
     ...provided,
     backgroundColor: state.isSelected ? '#B83027' : state.isFocused ? '#F9E6E5' : 'whitesmoke' ,
     color : state.isSelected ? 'white':'black',
-  })
+  }),
+  // dropdownIndicator:(provided, state)=>({
+  //   ...provided,
+  //   title:"red"
+  // })
+
 
 }
 
@@ -165,7 +170,7 @@ export default class DataVisualization extends Component {
 
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
     //var visualizationOptions = [{ value: "", label: "Chart/Map" }].concat(ChartsMapsCodes.map(function (item) { return { value: item.modulename, label: item.title } }));
-    var visualizationVarOptions = [{ value: "", label: "select variable" }].concat(removeDuplicatesFromArray(ChartsMapsCodes.map(function(x){return{value:x.varType,label:x.varLabel}})));
+    var visualizationVarOptions = [{ value: "", label: "Select Level" }].concat(removeDuplicatesFromArray(ChartsMapsCodes.map(function(x){return{value:x.varType,label:x.varLabel}})));
     var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
 
     var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
@@ -657,7 +662,7 @@ export default class DataVisualization extends Component {
     });
   }
 
-  
+
 
   optionChange = (selected,viz) => {
     const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]
@@ -944,7 +949,7 @@ export default class DataVisualization extends Component {
                 {<LdSelect id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
                 {stateName !== "" && <LdSelect id="dv_var_selector" label="Visualize" options={visualizationVarOptions} selectedValue={visualizationVar} onChange={this.onVisualizationVarChange} />}
                 {visualizationVar !== "" && <LdSelect id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
-                {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && visualizationVar !="Incumbency" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
+                {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && visualizationVar !="Candidate" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <LdSelect id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsSelect()}
                 <br/>

@@ -719,7 +719,7 @@ export default class DataVisualization extends Component {
           hideSelectedOptions={false}
           menuColor = "#B83027"
           components={{
-            Option
+            Option, ClearIndicator :() => null
           }}
           styles={customStyles}
           onChange={this.optionChange}

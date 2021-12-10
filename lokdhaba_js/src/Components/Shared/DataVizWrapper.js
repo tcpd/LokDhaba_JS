@@ -1,6 +1,8 @@
 import React from 'react';
 import MapViz from './MapViz';
 import BarChart from './BarChart';
+import PartyBarChart from './PartyBarChart';
+import AssemblyStepBarChart from './AssemblyStepBarChart';
 //import IncumbencyProfile from './IncumbencyProfile';
 import PartyScatterChart from './PartyScatterChart';
 import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColorPalette.json';
@@ -689,6 +691,7 @@ export default class DataVizWrapper extends React.Component {
       let layout = {};
       let vizParameters = [];
       let vizParameter = "";
+      let varName="";
       let showAdditionalText = false;
       let getAdditionalText;
 
@@ -699,7 +702,7 @@ export default class DataVizWrapper extends React.Component {
         })
 
         if (found) {
-          vizParameters.push({ label: element.replace(/_/g, " "), value: element, dataFilterOptionName: x });
+          vizParameters.push({ label: element.replace(/_|pct/g, " "), value: element, dataFilterOptionName: x });
         }
       });
 
@@ -709,7 +712,7 @@ export default class DataVizWrapper extends React.Component {
           layout = {
             title: stateNameDisplay !== "" ? `Voter turnout across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Voter turnout across years in ${electionTypeDisplay}`,
             xaxis: {
-              title: 'Year(Assembly Number)'
+              title: 'Year (Assembly Number)'
             },
             yaxis: {
               title: 'Turnout in %',
@@ -723,9 +726,9 @@ export default class DataVizWrapper extends React.Component {
         case "partiesPresentedChart": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Parties Contested and Represented across years in ${stateName} ${electionType}` : `Parties Contested and Represented across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Parties Contested and Represented across years in ${stateName} ${electionTypeDisplay}` : `Parties Contested and Represented across years in ${electionTypeDisplay}`,
             xaxis: {
-              title: 'Year(Assembly Number)'
+              title: 'Year (Assembly Number)'
             },
             yaxis: {
               title: 'Number of Parties'
@@ -738,9 +741,9 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Vote_Share_in_Assembly";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise voteshare in all seats across years in ${stateName} ${electionType}` : `Party wise voteshare in all seats across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Party wise voteshare in all seats across years in ${stateName} ${electionTypeDisplay}` : `Party wise voteshare in all seats across years in ${electionTypeDisplay}`,
             xaxis: {
-              title: 'Year(Assembly Number)'
+              title: 'Year (Assembly Number)'
             },
             yaxis: {
               title: 'Vote share %',
@@ -755,9 +758,9 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Vote_Share_in_Contested_Seats";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise voteshare in seats contested across years in ${stateName} ${electionType}` : `Party wise voteshare in seats contested across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Party wise voteshare in seats contested across years in ${stateName} ${electionTypeDisplay}` : `Party wise voteshare in seats contested across years in ${electionTypeDisplay}`,
             xaxis: {
-              title: 'Year(Assembly Number)'
+              title: 'Year (Assembly Number)'
             },
             yaxis: {
               title: 'Vote share %',
@@ -772,9 +775,9 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Seat_Share";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise seatshare across years in ${stateName} ${electionType}` : `Party wise seatshare across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Party wise seatshare across years in ${stateName} ${electionTypeDisplay}` : `Party wise seatshare across years in ${electionTypeDisplay}`,
             xaxis: {
-              title: 'Year(Assembly Number)'
+              title: 'Year (Assembly Number)'
             },
             yaxis: {
               title: 'Seat share %',
@@ -796,9 +799,9 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Strike_Rate";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise Strike Rate across years in ${stateName} ${electionType}` : `Party wise Strike Rate across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Party wise Strike Rate across years in ${stateName} ${electionTypeDisplay}` : `Party wise Strike Rate across years in ${electionTypeDisplay}`,
             xaxis: {
-              title: 'Year(Assembly Number)'
+              title: 'Year (Assembly Number)'
             },
             yaxis: {
               title: 'Strike Rate %',
@@ -812,12 +815,266 @@ export default class DataVizWrapper extends React.Component {
         case "contestedDepositSavedChart": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Contested and deposit lost across years in ${stateName} ${electionType}` : `Contested and deposit lost across years in ${electionType}`,
+            title: stateNameDisplay !== "" ? `Contested and deposit lost across years in ${stateName} ${electionTypeDisplay}` : `Contested and deposit lost across years in ${electionTypeDisplay}`,
             xaxis: {
-              title: 'Year(Assembly Number)'
+              title: 'Year (Assembly Number)'
             },
             yaxis: {
               title: 'Number of Candidates'
+            }
+          };
+          break;
+        }
+
+        case "rerunningCandidates": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Rerunning candidates across years in ${stateName} ${electionTypeDisplay}` : `Rerunning candidates across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage of Candidates',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","")
+            var y_in = data.map(x => x[[new_val]]);
+            var total_inc =data.map(x => x.Total_Candidates);
+            return y_in[i]+"/" + total_inc[i]+" Candidates";
+          }
+          break;
+        }
+
+        case "timesContested": {
+          chartType = "BarChart";
+          layout = {
+            barmode:'stack',
+            title: stateNameDisplay !== "" ? `Candidates by times contested across years in ${stateName} ${electionTypeDisplay}` : `Candidates by times contested across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage of Candidates',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","")
+            var y_in = data.map(x => x[[new_val]]);
+            var total_inc =data.map(x => x.Total_Candidates);
+            return y_in[i]+"/" + total_inc[i]+" Candidates";
+          }
+          break;
+        }
+
+        case "incumbentsChart": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Rerunning Incumbents across years in ${stateName} ${electionTypeDisplay}` : `Rerunning Incumbents across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage (out of total seats)',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","")
+            var y_in = data.map(x => x[[new_val]]);
+            var total_inc =data.map(x => x.Total_Seats);
+            return y_in[i]+"/" + total_inc[i]+" Seats";
+          }
+          break;
+        }
+
+        case "incumbentsParty": {
+          chartType = "PartyBarChart";
+          vizParameter = "pty_incm_recontests_pct";
+          layout = {
+            barmode: 'stack',
+            title: stateNameDisplay !== "" ? `Rerunning Incumbents by party across years in ${stateName} ${electionTypeDisplay}` : `Rerunning Incumbents by party across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage of total incumbents',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (party, idx) => {
+            var y_in = data.filter(x => x.Party === party).map(x => x.pty_Incumbents);
+            var total_inc = data.filter(x => x.Party === party).map(x => x.No_Incumbents);
+            return y_in[idx]+"/" + total_inc[idx]+" Incumbents";
+          }
+          break;
+        }
+
+        case "incumbentsStrike": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Strike rate of incumbents across years in ${stateName} ${electionTypeDisplay}` : `Strike rate of incumbents across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Strike Rate',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","")
+            var y_in = data.map(x => x.Successful_Incumbents);
+            var total_inc =data.map(x => x.Contesting_Incumbents);
+            return y_in[i]+"/" + total_inc[i]+" Incumbents";
+          }
+          break;
+        }
+
+        case "incumbentsStrikeParty": {
+          chartType = "PartyScatterChart";
+          vizParameter = "pty_incm_Strike_Rate";
+          layout = {
+            title: stateNameDisplay !== "" ? `Party wise strike rate of incumbents across years in ${stateName} ${electionTypeDisplay}` : `Party wise strike rate of incumbents across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Strike Rate',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (party, idx) => {
+            var y_win = data.filter(x => x.Party === party).map(x => x.pty_Successful_Incumbents);
+            var total_inc = data.filter(x => x.Party === party).map(x => x.pty_Incumbents);
+            return y_win[idx]+"/" + total_inc[idx]+" Incumbents";
+          }
+          break;
+          //additional text=hover_pty_incm_Strike_Rate
+        }
+
+        case "turncoatsStrike": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `Strike rate of turncoats across years in ${stateName} ${electionTypeDisplay}` : `Strike rate of turncoats across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Strike Rate',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var y_in = data.map(x => x.Successful_Turncoats);
+            var total_inc =data.map(x => x.Turncoats);
+            return y_in[i]+"/" + total_inc[i]+" Turncoats";
+          }
+          break;
+        }
+
+        case "turncoatsStrikeParty": {
+          chartType = "PartyScatterChart";
+          vizParameter = "pty_turn_Strike_Rate";
+          layout = {
+            title: stateNameDisplay !== "" ? `Party wise strike rate of turncoats across years in ${stateName} ${electionTypeDisplay}` : `Party wise strike rate of turncoats across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Strike Rate',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (party, idx) => {
+            var y_win = data.filter(x => x.Party === party).map(x => x.pty_Successful_Turncoats);
+            var total_inc = data.filter(x => x.Party === party).map(x => x.pty_Turncoats);
+            return y_win[idx]+"/" + total_inc[idx]+" Turncoats";
+          }
+          break;
+          //additionaltext=hover_pty_turn_Strike_Rate
+        }
+
+        case "firstTimeWinners": {
+          chartType = "BarChart";
+          layout = {
+            title: stateNameDisplay !== "" ? `First-time winners across years in ${stateName} ${electionTypeDisplay}` : `First-time winners across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage (out of total seats)',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (i, val) => {
+            var new_val=val.replace("_pct","");
+            var y_in = data.map(x => x[[new_val]]);
+            var total_inc =data.map(x => x.Total_Seats);
+            return y_in[i]+"/" + total_inc[i]+" Seats";
+          }
+          break;
+        }
+
+        case "firstTimeParty": {
+          chartType = "PartyBarChart";
+          vizParameter = "pty_fist_time_winners_pct";
+          layout = {
+            barmode: 'stack',
+            title: stateNameDisplay !== "" ? `First-time winners by party across years in ${stateName} ${electionTypeDisplay}` : `First-time winners by party across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Year (Assembly Number)'
+            },
+            yaxis: {
+              title: 'Percentage of total first-time winners',
+              range: [0, 100],
+              autorange: false
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (party, idx) => {
+            var y_in = data.filter(x => x.Party === party).map(x => x.pty_first_time_winners);
+            var total_inc = data.filter(x => x.Party === party).map(x => x.No_first_time_winners);
+            return y_in[idx]+"/" + total_inc[idx]+" First-time winners";
+          }
+          break;
+          break;
+        }
+
+
+        case "occupationParty": {
+          chartType = "AssemblyStepBarChart";
+          vizParameter = "pty_mla_prof_perc";
+          varName ="TCPD_Prof_Main";
+          layout = {
+            title: stateNameDisplay !== "" ? `Party wise professions of elected members in ${stateName} ${electionTypeDisplay}` : `Party wise strike rate of turncoats across years in ${electionTypeDisplay}`,
+            xaxis: {
+              title: 'Party'
+            },
+            yaxis: {
+              title: 'percentage of elected',
+              range: [0, 100],
+              autorange: false
             }
           };
           break;
@@ -833,6 +1090,20 @@ export default class DataVizWrapper extends React.Component {
             vizParameters={vizParameters}
             data={data}
             dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText}
+            getAdditionalText={getAdditionalText}
+          />
+        )
+      }
+      else if (chartType === "PartyBarChart") {
+        return (
+          <PartyBarChart
+            layout={layout}
+            vizParameter={vizParameter}
+            data={data}
+            dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText}
+            getAdditionalText={getAdditionalText}
           />
         )
       }
@@ -844,6 +1115,17 @@ export default class DataVizWrapper extends React.Component {
             vizParameter={vizParameter}
             showAdditionalText={showAdditionalText}
             getAdditionalText={getAdditionalText}
+          />
+        )
+      }
+      else if (chartType === "AssemblyStepBarChart") {
+        return (
+          <AssemblyStepBarChart
+            layout={layout}
+            data={data}
+            vizParameter={vizParameter}
+            varName = {varName}
+            dataFilterOptions={dataFilterOptions}
           />
         )
       }

@@ -67,7 +67,17 @@ def module_to_table(argument):
         "partyPositionsMap": "partys",
         "partyVoteShareMap": "partys",
         "notaTurnoutMap": "maps",
-        "incumbencyProfile":"incumbency"
+        "rerunningCandidates":"incumbency",
+        "timesContested": "incumbency",
+        "incumbentsChart" : "incumbency",
+        "incumbentsParty" : "pty_incumbency",
+        "incumbentsStrike":"incumbency",
+        "incumbentsStrikeParty": "pty_incumbency",
+        "turncoatsStrike": "incumbency",
+        "turncoatsStrikeParty": "pty_incumbency",
+        "firstTimeWinners": "incumbency",
+        "firstTimeParty": "pty_incumbency",
+        "occupationParty": "pty_profession"
     }
     # get() method of dictionary data type returns
     # value of passed argument if it is present
@@ -75,6 +85,25 @@ def module_to_table(argument):
     # be assigned as default value of passed argument
     return switcher.get(argument, "nothing")
 
+
+def module_to_table_legend(argument):
+    switcher = {
+        "cvoteShareChart": "party_statistics",
+        "tvoteShareChart": "party_statistics",
+        "seatShareChart": "party_statistics",
+        "strikeRateChart": "party_statistics",
+        "winnerMap": "maps",
+        "incumbentsParty" : "party_statistics",
+        "incumbentsStrikeParty": "party_statistics",
+        "turncoatsStrikeParty": "party_statistics",
+        "firstTimeParty": "party_statistics",
+        "occupationParty": "party_statistics"
+    }
+    # get() method of dictionary data type returns
+    # value of passed argument if it is present
+    # in dictionary otherwise second argument will
+    # be assigned as default value of passed argument
+    return switcher.get(argument, "nothing")
 
 
 
@@ -272,10 +301,20 @@ def get_select_options():
         return (jsonify({"data": ["<20%", "20%-30%", "30%-40%", "40%-50%", "50%-60%", ">60%"]}))
     if module == "partyPositionsMap":
         return (jsonify({"data": ["1", "2", "3", ">3"]}))
-    if module == "partyVoteShareMap":
-        return (jsonify({"data": ["1", "2", "3", ">3"]}))
     if module == "notaTurnoutMap":
         return (jsonify({"data": ["<1%", "1%-3%", "3%-5%", ">5%"]}))
+    if module == "rerunningCandidates":
+        return (jsonify({"data": ["Recontesting_Candidates_pct"]}))
+    if module == "timesContested":
+        return (jsonify({"data": ["First_Contests_pct","Second_Contests_pct","Multiple_Contests_pct"]}))
+    if module == "incumbentsChart":
+        return (jsonify({"data": ["Contesting_Incumbents_pct","Successful_Incumbents_pct"]}))
+    if module == "incumbentsStrike":
+        return (jsonify({"data": ["Incumbent_Strike_Rate"]}))
+    if module == "turncoatsStrike":
+        return (jsonify({"data": ["Turncoat_Strike_Rate"]}))
+    if module == "firstTimeWinners":
+        return (jsonify({"data": ["No_first_time_winners_pct"]}))
     connection = connectdb(db_config)
     if connection.is_connected():
         cursor = connection.cursor()
@@ -285,7 +324,7 @@ def get_select_options():
         for (table,) in tables:
             db_tables.append(table)
         if type == "Chart":
-            tableName = module_to_table(module)
+            tableName = module_to_table_legend(module)
             if tableName in db_tables:
                 cursor = connection.cursor()
                 query_input = list()
@@ -345,7 +384,7 @@ def get_select_options():
             a_no = req.get('AssemblyNo')
             # assembly = year[year.find("(")+1:year.find(")")]
             # a_no = int(assembly.replace("#",""))
-            tableName = module_to_table(module)
+            tableName = module_to_table_legend(module)
             if tableName in db_tables:
                 cursor = connection.cursor()
                 query_input = list()
@@ -516,7 +555,7 @@ def get_viz_data():
                     query_input.append(stateName)
 
             get_party = ""
-            if module in ["cvoteShareChart", "seatShareChart", "tvoteShareChart", "strikeRateChart"]:
+            if module in ["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]:
                 parties = req.get('Legends')
                 # parties = party.split(",")
                 get_party = " and Party in (" + ",".join(["%s"] * len(parties)) + ") "

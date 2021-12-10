@@ -2,6 +2,8 @@
   {
     "title": "Chart: Voter Turnout",
     "type": "Chart",
+    "varType":"Turnout",
+    "varLabel":"Voter Turnout",
     "optionslabel": "Chart turnout for",
     "modulename": "voterTurnoutChart",
     "alloptionschecked": true,
@@ -10,6 +12,8 @@
   {
     "title": "Chart: Party vote share (contested)",
     "type": "Chart",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Chart voteshare for",
     "modulename": "cvoteShareChart",
     "alloptionschecked": false,
@@ -18,6 +22,8 @@
   {
     "title": "Chart: Party vote share (all seats)",
     "type": "Chart",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Chart voteshare for",
     "modulename": "tvoteShareChart",
     "alloptionschecked": false,
@@ -26,6 +32,8 @@
   {
     "title": "Chart: Party seat share",
     "type": "Chart",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Chart seatshare for",
     "modulename": "seatShareChart",
     "alloptionschecked": false,
@@ -34,6 +42,8 @@
   {
     "title": "Chart: Party strike rate",
     "type": "Chart",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Chart strike rate for",
     "modulename": "strikeRateChart",
     "alloptionschecked": false,
@@ -42,6 +52,8 @@
   {
     "title": "Chart: Parties contested and represented",
     "type": "Chart",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Chart",
     "modulename": "partiesPresentedChart",
     "alloptionschecked": true,
@@ -50,14 +62,118 @@
   {
     "title": "Chart: Candidates contested /deposit lost",
     "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
     "optionslabel": "Chart",
     "modulename": "contestedDepositSavedChart",
     "alloptionschecked": true,
     "vizComponent": "ContestedDepositLostChart"
   },
   {
+    "title": "Chart: Rerunning Candidates",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "rerunningCandidates",
+    "alloptionschecked": true,
+    "vizComponent": "RerunningCandidates"
+  },
+  {
+    "title": "Chart: Times Contested",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "timesContested",
+    "alloptionschecked": true,
+    "vizComponent": "TimesContested"
+  },
+  {
+    "title": "Chart: Rerunning Incumbents",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "incumbentsChart",
+    "alloptionschecked": true,
+    "vizComponent": "IncumbentsChart"
+  },
+  {
+    "title": "Chart: Rerunning Incumbents (Party-wise)",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "incumbentsParty",
+    "alloptionschecked": false,
+    "vizComponent": "IncumbentsParty"
+  },
+  {
+    "title": "Chart: Strike Rate of Incumbents",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "incumbentsStrike",
+    "alloptionschecked": true,
+    "vizComponent": "IncumbentsStrike"
+  },
+  {
+    "title": "Chart: Strike Rate of Incumbents (Party-wise)",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "incumbentsStrikeParty",
+    "alloptionschecked": false,
+    "vizComponent": "IncumbentsStrikeParty"
+  },
+  {
+    "title": "Chart: Strike Rate of Turncoats",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "turncoatsStrike",
+    "alloptionschecked": true,
+    "vizComponent": "TurncoatsStrike"
+  },
+  {
+    "title": "Chart: Strike Rate of Turncoats (Party-wise)",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "turncoatsStrikeParty",
+    "alloptionschecked": false,
+    "vizComponent": "TurncoatsStrikeParty"
+  },
+  {
+    "title": "Chart: First-Time Winners",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "firstTimeWinners",
+    "alloptionschecked": true,
+    "vizComponent": "FirstTimeWinners"
+  },
+  {
+    "title": "Chart: First-Time Winners (Party-wise)",
+    "type": "Chart",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
+    "optionslabel": "Chart",
+    "modulename": "firstTimeParty",
+    "alloptionschecked": false,
+    "vizComponent": "FirstTimeParty"
+  },
+  {
     "title": "Map: Constituency type",
     "type": "Map",
+    "varType":"ConstMap",
+    "varLabel":"Constituency Level",
     "optionslabel": "Map Constituency type",
     "modulename": "winnerCasteMap",
     "alloptionschecked": true
@@ -65,6 +181,8 @@
   {
     "title": "Map: Number of candidates",
     "type": "Map",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
     "optionslabel": "Map number of candidates",
     "modulename": "numCandidatesMap",
     "alloptionschecked": true
@@ -72,6 +190,8 @@
   {
     "title": "Map: Voter turnout",
     "type": "Map",
+    "varType":"Turnout",
+    "varLabel":"Voter Turnout",
     "optionslabel": "Map turnout",
     "modulename": "voterTurnoutMap",
     "alloptionschecked": true
@@ -79,6 +199,8 @@
   {
     "title": "Map: Winners by party",
     "type": "Map",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Map parties",
     "modulename": "winnerMap",
     "alloptionschecked": true
@@ -86,6 +208,8 @@
   {
     "title": "Map: Winners by gender",
     "type": "Map",
+    "varType":"ConstMap",
+    "varLabel":"Constituency Level",
     "optionslabel": "Map gender type",
     "modulename": "winnerGenderMap",
     "alloptionschecked": true
@@ -93,6 +217,8 @@
   {
     "title": "Map: Victory margin",
     "type": "Map",
+    "varType":"ConstMap",
+    "varLabel":"Constituency Level",
     "optionslabel": "Map margins",
     "modulename": "winnerMarginMap",
     "alloptionschecked": true
@@ -100,6 +226,8 @@
   {
     "title": "Map: Vote share of winners",
     "type": "Map",
+    "varType":"ConstMap",
+    "varLabel":"Constituency Level",
     "optionslabel": "Map voteshare",
     "modulename": "winnerVoteShareMap",
     "alloptionschecked": true
@@ -107,6 +235,8 @@
   {
     "title": "Map: Party-wise positions",
     "type": "Map",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Map positions",
     "modulename": "partyPositionsMap",
     "alloptionschecked": true
@@ -114,6 +244,8 @@
   {
     "title": "Map: Party-wise voteshare",
     "type": "Map",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Map voteshare range",
     "modulename": "partyVoteShareMap",
     "alloptionschecked": true
@@ -121,6 +253,8 @@
   {
     "title": "Map: Nota voteshare",
     "type": "Map",
+    "varType":"PartyStats",
+    "varLabel":"Party Level",
     "optionslabel": "Map range",
     "modulename": "notaTurnoutMap",
     "alloptionschecked": true

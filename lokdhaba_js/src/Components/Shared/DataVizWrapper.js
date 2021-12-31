@@ -49,8 +49,8 @@ export default class DataVizWrapper extends React.Component {
 
   isDataUnavailable = (vizParameter, constituency) => {
     if (!constituency  // if constituency does not exist
-        | !(constituency.hasOwnProperty('properties'))  // if constituency does not have properties (record is incomplete/missing/corrupted)
-        | !(constituency.properties.hasOwnProperty(vizParameter))  // if constituency does not have data for the property being visualized (eg: Margin_Percentage)
+        || !(constituency.hasOwnProperty('properties'))  // if constituency does not have properties (record is incomplete/missing/corrupted)
+        || !(constituency.properties.hasOwnProperty(vizParameter))  // if constituency does not have data for the property being visualized (eg: Margin_Percentage)
         ) {  
       return true;
     }

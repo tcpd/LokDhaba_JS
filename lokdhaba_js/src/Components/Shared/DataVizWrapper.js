@@ -592,20 +592,6 @@ export default class DataVizWrapper extends React.Component {
         />
       }
 
-        // get {x} colours
-        if 
-
-        // get normalized colours
-        if (showNormalizedMap) {
-          maxVizParameter = Number.NEGATIVE_INFINITY;
-          minVizParameter = Number.POSITIVE_INFINITY;
-            let val = data[index][vizParameter];
-            if (parseFloat(val) > parseFloat(maxVizParameter)) {
-              maxVizParameter = val;
-            }
-            if (parseFloat(val) < parseFloat(minVizParameter)) {
-              minVizParameter = val;
-            }
       else {
         if (showNormalizedMap) {
           maxVizParameter = Number.NEGATIVE_INFINITY;

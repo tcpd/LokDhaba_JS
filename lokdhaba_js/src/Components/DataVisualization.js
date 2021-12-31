@@ -276,7 +276,6 @@ export default class DataVisualization extends Component {
       ,showVisualization: false
       , showBaseMap: true
       ,showChangeMap: false
-      ,showNormalizedMap: false
       ,vizOptionsSelected: new Set()
       ,year: ""
       , visualizationType: visualizationType }, async () => {
@@ -741,9 +740,6 @@ export default class DataVisualization extends Component {
     var assemblyNo = this.state.year;
     const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showBaseMap, showNormalizedMap, party, showVisualization, segmentWise, mapOverlay } = this.state;
 
-    if (!data | stateName === "West Bengal") {
-      return <div>Something went wrong.</div>
-    }
     return (
       <DataVizWrapper
         visualization={visualization}

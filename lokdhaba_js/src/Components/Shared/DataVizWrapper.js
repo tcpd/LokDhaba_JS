@@ -106,15 +106,10 @@ export default class DataVizWrapper extends React.Component {
   }
 
   getMapColorFromPalette = (ColorPalette, vizParameter, constituency, dataFilterOptionName) => {
-    if (!constituency) {
+    if (this.isDataUnavailable(vizParameter, constituency)) {
       return Constants.mapColorCodes.dataUnavailabe.color;
     }
-    if (!constituency.hasOwnProperty('properties')) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
-    if (!constituency.properties.hasOwnProperty(vizParameter)) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
+
     let d = constituency.properties[vizParameter];
     let color = "#FFFFFF00";
 

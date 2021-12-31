@@ -14,6 +14,7 @@ import { Button } from 'react-bootstrap';
 import $ from 'jquery';
 import { components } from "react-select";
 import Select from "react-select";
+import ErrorScreen from "./Shared/ErrorScreen.js";
 
 function compareValues(key, order = 'asc') {
   return function innerSort(a, b) {
@@ -740,6 +741,14 @@ export default class DataVisualization extends Component {
     var assemblyNo = this.state.year;
     const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showBaseMap, showNormalizedMap, party, showVisualization, segmentWise, mapOverlay } = this.state;
 
+    if (!data) {
+      return (
+        <ErrorScreen
+          message="An error occured while trying to get this data."
+        />
+      )
+    }
+
     return (
       <DataVizWrapper
         visualization={visualization}
@@ -767,6 +776,7 @@ export default class DataVisualization extends Component {
       />
     );
   }
+
   onAssemblyNoChange = (newValue) => {
     this.setState({showVisualization: false, year : newValue},async ()=>{
 

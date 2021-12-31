@@ -47,16 +47,21 @@ export default class DataVizWrapper extends React.Component {
     return "#" + middle.toString();
   }
 
+  isDataUnavailable = (vizParameter, constituency) => {
+    if (!constituency  // if constituency does not exist
+        | !(constituency.hasOwnProperty('properties'))  // if constituency does not have properties (record is incomplete/missing/corrupted)
+        | !(constituency.properties.hasOwnProperty(vizParameter))  // if constituency does not have data for the property being visualized (eg: Margin_Percentage)
+        ) {  
+      return true;
+    }
+    return false;
+  }
+
   getColorForContinuous = (minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
-    if (!constituency) {
+    if (this.isDataUnavailable(vizParameter, constituency)) {
       return Constants.mapColorCodes.dataUnavailabe.color;
     }
-    if (!constituency.hasOwnProperty('properties')) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
-    if (!constituency.properties.hasOwnProperty(vizParameter)) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
+
     let val = constituency.properties[vizParameter];
     if (val) {
       return this.getColorFromRatio(val / 100, minColor, maxColor);
@@ -65,15 +70,10 @@ export default class DataVizWrapper extends React.Component {
   }
 
   getColorForNormalizedMap = (min, max, minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
-    if (!constituency) {
+    if (this.isDataUnavailable(vizParameter, constituency)) {
       return Constants.mapColorCodes.dataUnavailabe.color;
     }
-    if (!constituency.hasOwnProperty('properties')) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
-    if (!constituency.properties.hasOwnProperty(vizParameter)) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
+
     let val = constituency.properties[vizParameter];
     if (!val) {
       return Constants.mapColorCodes.dataUnavailabe.color;
@@ -85,15 +85,10 @@ export default class DataVizWrapper extends React.Component {
   }
 
   getColorForChangeMap = (min, max, minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
-    if (!constituency) {
+    if (this.isDataUnavailable(vizParameter, constituency)) {
       return Constants.mapColorCodes.dataUnavailabe.color;
     }
-    if (!constituency.hasOwnProperty('properties')) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
-    if (!constituency.properties.hasOwnProperty(vizParameter)) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
+
     let val = constituency.properties[vizParameter];
     let ratio;
     if (!val) {
@@ -597,6 +592,20 @@ export default class DataVizWrapper extends React.Component {
         />
       }
 
+        // get {x} colours
+        if 
+
+        // get normalized colours
+        if (showNormalizedMap) {
+          maxVizParameter = Number.NEGATIVE_INFINITY;
+          minVizParameter = Number.POSITIVE_INFINITY;
+            let val = data[index][vizParameter];
+            if (parseFloat(val) > parseFloat(maxVizParameter)) {
+              maxVizParameter = val;
+            }
+            if (parseFloat(val) < parseFloat(minVizParameter)) {
+              minVizParameter = val;
+            }
       else {
         if (showNormalizedMap) {
           maxVizParameter = Number.NEGATIVE_INFINITY;

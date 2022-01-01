@@ -15,6 +15,7 @@ import $ from 'jquery';
 import { components } from "react-select";
 import Select from "react-select";
 import ErrorScreen from "./Shared/ErrorScreen.js";
+import ErrorBoundary from "./Shared/ErrorBoundary.js";
 
 function compareValues(key, order = 'asc') {
   return function innerSort(a, b) {
@@ -750,30 +751,32 @@ export default class DataVisualization extends Component {
     }
 
     return (
-      <DataVizWrapper
-        visualization={visualization}
-        visualizationType={visualizationType}
-        data={data}
-        map={shape}
-        party = {party}
-        electionType={electionType}
-        assemblyNo={assemblyNo}
-        stateName={stateName}
-        showMapYearOptions={true}
-        yearOptions={yearOptions}
-        chartMapOptions={chartMapOptions}
-        dataFilterOptions={dataFilterOptions}
-        playChangeYears={this.playChangeYears}
-        onMapYearChange={this.onMapYearChange}
-        showChangeMap={showChangeMap}
-        onShowChangeMapChange={this.onShowChangeMapChange}
-        showBaseMap = {showBaseMap}
-        onShowBaseMapChange = {this.onShowBaseMapChange}
-        showNormalizedMap={showNormalizedMap}
-        onShowNormalizedMapChange={this.onShowNormalizedMapChange}
-        segmentWise={segmentWise}
-        mapOverlay = {mapOverlay}
-      />
+      <ErrorBoundary>
+        <DataVizWrapper
+          visualization={visualization}
+          visualizationType={visualizationType}
+          data={data}
+          map={shape}
+          party = {party}
+          electionType={electionType}
+          assemblyNo={assemblyNo}
+          stateName={stateName}
+          showMapYearOptions={true}
+          yearOptions={yearOptions}
+          chartMapOptions={chartMapOptions}
+          dataFilterOptions={dataFilterOptions}
+          playChangeYears={this.playChangeYears}
+          onMapYearChange={this.onMapYearChange}
+          showChangeMap={showChangeMap}
+          onShowChangeMapChange={this.onShowChangeMapChange}
+          showBaseMap = {showBaseMap}
+          onShowBaseMapChange = {this.onShowBaseMapChange}
+          showNormalizedMap={showNormalizedMap}
+          onShowNormalizedMapChange={this.onShowNormalizedMapChange}
+          segmentWise={segmentWise}
+          mapOverlay = {mapOverlay}
+        />
+      </ErrorBoundary>
     );
   }
 

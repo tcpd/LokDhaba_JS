@@ -8,14 +8,14 @@ import Checkbox from './Shared/Checkbox.js';
 import LdSelect from './Shared/Select.js';
 import DataVizWrapper from './Shared/DataVizWrapper';
 import * as Constants from './Shared/Constants.js';
+import ErrorScreen from "./Shared/ErrorScreen.js";
+import ErrorBoundary from "./Shared/ErrorBoundary.js";
 import Popup from './Shared/Popup.js';
 import { CSVLink } from "react-csv";
 import { Button } from 'react-bootstrap';
 import $ from 'jquery';
 import { components } from "react-select";
 import Select from "react-select";
-import ErrorScreen from "./Shared/ErrorScreen.js";
-import ErrorBoundary from "./Shared/ErrorBoundary.js";
 
 function compareValues(key, order = 'asc') {
   return function innerSort(a, b) {

@@ -278,6 +278,7 @@ export default class DataVisualization extends Component {
       ,showVisualization: false
       , showBaseMap: true
       ,showChangeMap: false
+      ,showNormalizedMap: false
       ,vizOptionsSelected: new Set()
       ,year: ""
       , visualizationType: visualizationType }, async () => {

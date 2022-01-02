@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import ErrorScreen from './ErrorScreen.js';
 
+// Component that wraps a returned UI component and presents an error screen if the UI component throws an error
 class ErrorBoundary extends React.Component {
 
   constructor(props) {
@@ -10,17 +11,17 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    // Display fallback UI
     this.setState({ 
       hasError: true 
     });
 
-    // You can also log the error to an error reporting service
-    console.log(error, info);
+    // TODO: where to log errors?
+    // console.log(error, info);
   }
 
   render() {
     if (this.state.hasError) {
+      // return fallback UI
       return (
         <ErrorScreen
           message="An error occured while trying to get this data."

@@ -8,6 +8,8 @@ import Checkbox from './Shared/Checkbox.js';
 import LdSelect from './Shared/Select.js';
 import DataVizWrapper from './Shared/DataVizWrapper';
 import * as Constants from './Shared/Constants.js';
+import ErrorScreen from "./Shared/ErrorScreen.js";
+import ErrorBoundary from "./Shared/ErrorBoundary.js";
 import Popup from './Shared/Popup.js';
 import { CSVLink } from "react-csv";
 import { Button } from 'react-bootstrap';
@@ -745,33 +747,44 @@ export default class DataVisualization extends Component {
     var assemblyNo = this.state.year;
     const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showBaseMap, showNormalizedMap, party, showVisualization, segmentWise, mapOverlay } = this.state;
 
+    if (!data) {
+      return (
+        <ErrorScreen
+          message="An error occured while trying to get this data."
+        />
+      )
+    }
+
     return (
-      <DataVizWrapper
-        visualization={visualization}
-        visualizationType={visualizationType}
-        data={data}
-        map={shape}
-        party = {party}
-        electionType={electionType}
-        assemblyNo={assemblyNo}
-        stateName={stateName}
-        showMapYearOptions={true}
-        yearOptions={yearOptions}
-        chartMapOptions={chartMapOptions}
-        dataFilterOptions={dataFilterOptions}
-        playChangeYears={this.playChangeYears}
-        onMapYearChange={this.onMapYearChange}
-        showChangeMap={showChangeMap}
-        onShowChangeMapChange={this.onShowChangeMapChange}
-        showBaseMap = {showBaseMap}
-        onShowBaseMapChange = {this.onShowBaseMapChange}
-        showNormalizedMap={showNormalizedMap}
-        onShowNormalizedMapChange={this.onShowNormalizedMapChange}
-        segmentWise={segmentWise}
-        mapOverlay = {mapOverlay}
-      />
+      <ErrorBoundary>
+        <DataVizWrapper
+          visualization={visualization}
+          visualizationType={visualizationType}
+          data={data}
+          map={shape}
+          party = {party}
+          electionType={electionType}
+          assemblyNo={assemblyNo}
+          stateName={stateName}
+          showMapYearOptions={true}
+          yearOptions={yearOptions}
+          chartMapOptions={chartMapOptions}
+          dataFilterOptions={dataFilterOptions}
+          playChangeYears={this.playChangeYears}
+          onMapYearChange={this.onMapYearChange}
+          showChangeMap={showChangeMap}
+          onShowChangeMapChange={this.onShowChangeMapChange}
+          showBaseMap = {showBaseMap}
+          onShowBaseMapChange = {this.onShowBaseMapChange}
+          showNormalizedMap={showNormalizedMap}
+          onShowNormalizedMapChange={this.onShowNormalizedMapChange}
+          segmentWise={segmentWise}
+          mapOverlay = {mapOverlay}
+        />
+      </ErrorBoundary>
     );
   }
+
   onAssemblyNoChange = (newValue) => {
     this.setState({showVisualization: false, year : newValue},async ()=>{
 

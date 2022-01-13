@@ -35,7 +35,7 @@ class MapYearOptions extends MapControl {
                 <RadioGroup row aria-label="year" name="year" value={parseInt(props.year)} onChange={props.onMapYearChange}>
                   {yearOptions.map((year) => {
                     if (year.value !== "") {
-                      return <FormControlLabel value={year.value} control={<Radio />} label={year.label} />
+                      return <FormControlLabel key ={year.value} value={year.value} control={<Radio />} label={year.label} />
                     }
                     else return null;
                   })}

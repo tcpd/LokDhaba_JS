@@ -95,7 +95,7 @@ export default class BrowseData extends Component {
       console.log(searchYears)
     }
 
-    var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
+    var GE_States = StateCodes.sort(compareValues('State_Name')).map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
     var unique_AE_States = [...new Set(VidhanSabhaNumber.sort(compareValues('State_Name')).map(x => x.State_Name))];
     var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
     this.state.GE_States = GE_States;

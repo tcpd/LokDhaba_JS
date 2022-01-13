@@ -8,6 +8,8 @@ import Checkbox from './Shared/Checkbox.js';
 import LdSelect from './Shared/Select.js';
 import DataVizWrapper from './Shared/DataVizWrapper';
 import * as Constants from './Shared/Constants.js';
+import ErrorScreen from "./Shared/ErrorScreen.js";
+import ErrorBoundary from "./Shared/ErrorBoundary.js";
 import Popup from './Shared/Popup.js';
 import { CSVLink } from "react-csv";
 import { Button } from 'react-bootstrap';
@@ -46,17 +48,19 @@ function getParams(location) {
   return new URLSearchParams(location.search);
 }
 
+const refreshPage = ()=> {
+     window.location.reload();
+}
 
 function setParams(props) {
-  const { location, variable, val } = props;
+  const { location, variable, val, remove } = props;
   let searchParams = new URLSearchParams(location.search);
-  searchParams.set(variable, val || "");
-  return searchParams.toString();
-}
-function deleteParam(props){
-  const {location, variable} = props;
-  let searchParams = new URLSearchParams(location.search);
-  searchParams.delete(variable);
+  if(variable !== undefined){
+    searchParams.set(variable, val || "");
+  }
+  if(remove!==undefined){
+    remove.forEach((x)=>{searchParams.delete(x)});
+  }
   return searchParams.toString();
 }
 
@@ -132,15 +136,10 @@ export default class DataVisualization extends Component {
   }
 
   updateURL = (props) => {
-    const { variable, val } = props;
-    const url = setParams({ location: this.props.location, variable:variable, val: val });
+    const { variable, val, remove } = props;
+    const url = setParams({ location: this.props.location, variable:variable, val: val, remove:remove });
     this.props.history.push(`?${url}`);
   }
-  // removeFromURL = (props) =>{
-  //   const {variable} = props;
-  //   const url = deleteParam({location:this.props.location,variable:variable});
-  //   this.props.history.push(`?${url}`);
-  // }
 
   setDefaultYear = (searchYear) => {
     // Set defalut year as searchYear if given, else set to latest year
@@ -173,7 +172,7 @@ export default class DataVisualization extends Component {
     var visualizationVarOptions = [{ value: "", label: "Select Level" }].concat(removeDuplicatesFromArray(ChartsMapsCodes.map(function(x){return{value:x.varType,label:x.varLabel}})));
     var AE_States = unique_AE_States.map(function (item) { return { value: item, label: item.replace(/_/g, " ") } });
 
-    var GE_States = StateCodes.map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
+    var GE_States = StateCodes.sort(compareValues('State_Name')).map(function (item) { return { value: item.State_Name, label: item.State_Name.replace(/_/g, " ") } });
     this.state.GE_States = GE_States;
     this.state.AE_States = AE_States;
     //this.state.visualizationOptions = visualizationOptions;
@@ -276,21 +275,22 @@ export default class DataVisualization extends Component {
       ,showVisualization: false
       , showBaseMap: true
       ,showChangeMap: false
+      ,showNormalizedMap: false
       ,vizOptionsSelected: new Set()
       ,year: ""
-      , visualizationType: visualizationType }, async () => {
+      , visualizationType: visualizationType }, () => {
       //await this.fetchChartMapOptions(this.state);
       if (visualizationType === "Map") {
-        await this.fetchMapData();
+        this.fetchMapData();
         if (newValue === "partyPositionsMap" || newValue === "partyVoteShareMap") {
-          await this.fetchMapYearParties();
+          this.fetchMapYearParties();
         }
-        await this.fetchMapYearAndData(searchYear);
+        this.fetchMapYearAndData(searchYear);
       }
     });
     var visualizationVar = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].varType;
     //this.setState({visualizationVar:visualizationVar});
-    this.updateURL({variable:"viz",val:newValue});
+    this.updateURL({variable:"viz",val:newValue,remove:["an","opt"]});
 
 
 
@@ -311,7 +311,7 @@ export default class DataVisualization extends Component {
   onVisualizationVarChange = (newValue, searchYear) => {
     var visualizationOptions = [{ value: "", label: "Chart/Map" }].concat(ChartsMapsCodes.filter(x => x.varType=== newValue).map(function (item) { return { value: item.modulename, label: item.title } }));
     this.setState({ year: "",visualization:"", vizOptionsSelected: new Set(), showVisualization: false,visualizationOptions: visualizationOptions,visualizationVar:newValue });
-    this.updateURL({variable:"var",val:newValue});
+    this.updateURL({variable:"var",val:newValue,remove:["an","opt"]});
   }
 
   onStateNameChange = (newValue, searchYears) => {
@@ -334,12 +334,12 @@ export default class DataVisualization extends Component {
     }
     this.setState(
       { stateName: newValue, stateAssemblies: assemblies },
-      async() => {
+      () => {
         this.setYearsFromSearch(searchYears)
-        await this.fetchVisualizationData();
+        this.fetchVisualizationData();
       }
     );
-    this.updateURL({variable:"st",val:newValue});
+    this.updateURL({variable:"st",val:newValue,remove:["an","opt"]});
   }
 
   onElectionTypeChange = (e) => {
@@ -352,6 +352,11 @@ export default class DataVisualization extends Component {
       stateOptions = [{ value: "", label: "Select State" }, { value: "Lok_Sabha", label: "All" }].concat(this.state.GE_States);
     } else if (newValue === "AE") {
       stateOptions = [{ value: "", label: "Select State" }].concat(this.state.AE_States);
+      //this.setState({segmentWise : false});
+      // if(this.state.stateName === "Lok_Sabha"){
+      //   this.setState({stateName:""});
+      //   this.updateURL({remove:"st"})
+      // }
     }
     this.setState({ electionType: newValue
       ,stateOptions: stateOptions
@@ -359,11 +364,13 @@ export default class DataVisualization extends Component {
       ,chartMapOptions: []
       ,party: ""
       ,year: ""
+      ,segmentWise : false
       ,stateName: ""
       ,visualizationType: ""
       ,visualization: ""
      });
-    this.updateURL({variable:"et",val:newValue});
+    this.updateURL({variable:"et",val:newValue, remove:["seg","an","opt","st","viz","var"]});
+
   }
 
   fetchVisualizationData = () => {
@@ -633,12 +640,12 @@ export default class DataVisualization extends Component {
       var checked = ChartsMapsCodes.filter(function (item) { return item.modulename === visualization })[0].alloptionschecked;
       if (checked) {
 
-        this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) }, async () => {
-          await this.fetchVisualizationData();
+        this.setState({ vizOptionsSelected: new Set(resp.data.map(x => x.replace(/_/g, ""))) },  () => {
+          this.fetchVisualizationData();
           if(visualizationType==="Map"){
-            await this.fetchMapData();
+            this.fetchMapData();
           }
-          this.updateURL({variable:"opt",val:[resp.data.map(x => x.replace(/_/g, ""))]});
+          //this.updateURL({variable:"opt",val:[resp.data.map(x => x.replace(/_/g, ""))]});
 
         this.setState({ showVisualization: true });
         });
@@ -648,12 +655,12 @@ export default class DataVisualization extends Component {
         this.setState({ showVisualization: true });
       }
       else if(typeof selectedOptions != "undefined" && selectedOptions != null && selectedOptions.length != null && selectedOptions.length > 0){
-        this.setState({ vizOptionsSelected: new Set(selectedOptions.map(x => x.replace(/_/g, ""))) }, async () => {
-          await this.fetchVisualizationData();
+        this.setState({ vizOptionsSelected: new Set(selectedOptions.map(x => x.replace(/_/g, ""))) },  () => {
+          this.fetchVisualizationData();
           if(visualizationType==="Map"){
-            await this.fetchMapData();
+            this.fetchMapData();
           }
-          this.updateURL({variable:"opt",val:[selectedOptions.map(x => x.replace(/_/g, ""))]});
+          //this.updateURL({variable:"opt",val:[selectedOptions.map(x => x.replace(/_/g, ""))]});
         });
 
         this.setState({ showVisualization: true });
@@ -670,10 +677,10 @@ export default class DataVisualization extends Component {
     let visualization = this.state.visualization || viz;
     this.setState({
       vizOptionsSelected: selectedOpts
-    }, async () => {
+    },  () => {
 
       if (vis_list.includes(visualization)) {
-        await this.fetchVisualizationData();
+        this.fetchVisualizationData();
         this.setState({ showVisualization: true });
       }
     });
@@ -740,37 +747,48 @@ export default class DataVisualization extends Component {
     var assemblyNo = this.state.year;
     const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showBaseMap, showNormalizedMap, party, showVisualization, segmentWise, mapOverlay } = this.state;
 
+    if (!data) {
+      return (
+        <ErrorScreen
+          message="An error occured while trying to get this data."
+        />
+      )
+    }
+
     return (
-      <DataVizWrapper
-        visualization={visualization}
-        visualizationType={visualizationType}
-        data={data}
-        map={shape}
-        party = {party}
-        electionType={electionType}
-        assemblyNo={assemblyNo}
-        stateName={stateName}
-        showMapYearOptions={true}
-        yearOptions={yearOptions}
-        chartMapOptions={chartMapOptions}
-        dataFilterOptions={dataFilterOptions}
-        playChangeYears={this.playChangeYears}
-        onMapYearChange={this.onMapYearChange}
-        showChangeMap={showChangeMap}
-        onShowChangeMapChange={this.onShowChangeMapChange}
-        showBaseMap = {showBaseMap}
-        onShowBaseMapChange = {this.onShowBaseMapChange}
-        showNormalizedMap={showNormalizedMap}
-        onShowNormalizedMapChange={this.onShowNormalizedMapChange}
-        segmentWise={segmentWise}
-        mapOverlay = {mapOverlay}
-      />
+      <ErrorBoundary>
+        <DataVizWrapper
+          visualization={visualization}
+          visualizationType={visualizationType}
+          data={data}
+          map={shape}
+          party = {party}
+          electionType={electionType}
+          assemblyNo={assemblyNo}
+          stateName={stateName}
+          showMapYearOptions={true}
+          yearOptions={yearOptions}
+          chartMapOptions={chartMapOptions}
+          dataFilterOptions={dataFilterOptions}
+          playChangeYears={this.playChangeYears}
+          onMapYearChange={this.onMapYearChange}
+          showChangeMap={showChangeMap}
+          onShowChangeMapChange={this.onShowChangeMapChange}
+          showBaseMap = {showBaseMap}
+          onShowBaseMapChange = {this.onShowBaseMapChange}
+          showNormalizedMap={showNormalizedMap}
+          onShowNormalizedMapChange={this.onShowNormalizedMapChange}
+          segmentWise={segmentWise}
+          mapOverlay = {mapOverlay}
+        />
+      </ErrorBoundary>
     );
   }
-  onAssemblyNoChange = (newValue) => {
-    this.setState({showVisualization: false, year : newValue},async ()=>{
 
-      await this.fetchVisualizationData();
+  onAssemblyNoChange = (newValue) => {
+    this.setState({showVisualization: false, year : newValue}, ()=>{
+
+      this.fetchVisualizationData();
       // if (this.state.showVisualization === true) {
       //    this.setState({ showVisualization: false });
       //
@@ -849,19 +867,19 @@ export default class DataVisualization extends Component {
   }
   onSegment = (checked)=>{
     this.setState({ segmentWise: checked },
-      async () => {
+       () => {
         if(this.state.visualizationType === "Map"){
           this.setState({ showVisualization: false });
-          await this.fetchMapData();
+           this.fetchMapData();
           if (this.state.visualization === "partyPositionsMap" || this.state.visualization === "partyVoteShareMap") {
-            await this.fetchMapYearParties();
+             this.fetchMapYearParties();
           }
           if(checked){
-            await this.fetchMapOverlay();
+             this.fetchMapOverlay();
           }
-          await this.fetchMapYearAndData("");
+           this.fetchMapYearAndData("");
         }
-        await this.fetchVisualizationData();
+       this.fetchVisualizationData();
     });
   }
   onAcSegmentClick = (key, checked) => {

@@ -205,6 +205,13 @@ export default class MapViz extends React.Component {
     var shape = this.props.map;
     var overlay = this.props.mapOverlay;
     var state = this.props.stateName;
+    var ano = this.props.assemblyNo;
+    if(state==="Andhra_Pradesh" && ano >13 && shape.length===294 && data.length>0){
+      //shape= shape.filter(function(x){ return x.properties.ASSEMBLY>119});
+      for(var i=0; i< shape.length;i++){
+        shape[i].properties.ASSEMBLY = shape[i].properties.ASSEMBLY-119
+      }
+    }
     let joinMap = {};
     const {info} = this.state;
 

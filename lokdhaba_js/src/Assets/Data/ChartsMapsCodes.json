@@ -258,5 +258,41 @@
     "optionslabel": "Map range",
     "modulename": "notaTurnoutMap",
     "alloptionschecked": true
+  },
+  {
+    "title": "Chart: Profession of Elected",
+    "type": "Chart",
+    "varType":"ADR",
+    "varLabel":"Affidavit Information",
+    "optionslabel": "Chart",
+    "modulename": "occupationMLA",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Chart: Profession of Elected(Party-wise)",
+    "type": "Chart",
+    "varType":"ADR",
+    "varLabel":"Affidavit Information",
+    "optionslabel": "Chart",
+    "modulename": "ptyOccupationMLA",
+    "alloptionschecked": false
+  },
+  {
+    "title": "Chart: Education of Elected",
+    "type": "Chart",
+    "varType":"ADR",
+    "varLabel":"Affidavit Information",
+    "optionslabel": "Chart",
+    "modulename": "educationMLA",
+    "alloptionschecked": true
+  },
+  {
+    "title": "Chart: Education of Elected(Party-wise)",
+    "type": "Chart",
+    "varType":"ADR",
+    "varLabel":"Affidavit Information",
+    "optionslabel": "Chart",
+    "modulename": "ptyEducationMLA",
+    "alloptionschecked": false
   }
 ]

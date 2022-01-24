@@ -217,6 +217,7 @@ export default class DataVisualization extends Component {
         this.optionChange([...selected_options],viz);
         //this.fetchVisualizationData()
       }
+      this.setState({showVisualization:true});
     }
 
     if(an !== "" ){
@@ -331,7 +332,7 @@ export default class DataVisualization extends Component {
     this.updateURL({variable:"var",val:newValue,remove:["an","opt"]});
   }
 
-  onStateNameChange = (newValue, searchYears) => {
+  onStateNameChange = (newValue, searchYears, nourl=false) => {
 
     let assemblies;
     if (this.state.electionType === "AE") {
@@ -360,7 +361,10 @@ export default class DataVisualization extends Component {
 
       }
     );
-    this.updateURL({variable:"st",val:newValue,remove:["an","opt"]});
+    if(!nourl){
+      this.updateURL({variable:"st",val:newValue,remove:["an","opt"]});
+    }
+
   }
 
   onElectionTypeChange = (e) => {
@@ -834,7 +838,8 @@ export default class DataVisualization extends Component {
     this.updateURL({variable:"pty",val:newValue});
   }
   onAssemblyChange = (newValue) => {
-    this.setState({ year: newValue,electionYearDisplay:this.state.stateAssemblies.filter(x=> x.value===newValue).label });
+    var disp = this.state.stateAssemblies.filter(x=> x.value===parseInt(newValue))[0].label;
+    this.setState({ year: newValue,electionYearDisplay: disp });
 
     //this.fetchMapYearAndData("",newValue);
 
@@ -997,7 +1002,7 @@ export default class DataVisualization extends Component {
                 </ul>
                 <br></br>
                 {<LdSelect id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
-                {stateName !== "" && <LdSelect id="dv_var_selector" label="Visualize" options={visualizationVarOptions} selectedValue={visualizationVar} onChange={this.onVisualizationVarChange} />}
+                {stateName !== "" && <LdSelect id="dv_var_selector" label="Variable" options={visualizationVarOptions} selectedValue={visualizationVar} onChange={this.onVisualizationVarChange} />}
                 {visualizationVar !== "" && <LdSelect id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
                 {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && visualizationVar !="Candidate" && visualizationVar !="ADR" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <LdSelect id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}

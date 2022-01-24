@@ -1067,10 +1067,14 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "MLAs_var";
           varName ="TCPD_Prof_Main";
           layout = {
-            title: stateNameDisplay !== "" ? `Professions of elected members in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Professions of elected members in ${electionYearDisplay} ${electionTypeDisplay} `,
+            title: stateNameDisplay !== "" ? `Professions of winners in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Professions of winners in ${electionYearDisplay} ${electionTypeDisplay} `,
             xaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             },
+            height: 600,
+            legend: {x: 0,
+              y: -1,
+              "orientation": "h"},
             yaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             }
@@ -1083,10 +1087,12 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "MLAs_var";
           varName ="MyNeta_education";
           layout = {
-            title: stateNameDisplay !== "" ? `Education of elected members in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Education of elected members in ${electionYearDisplay} ${electionTypeDisplay} `,
+            title: stateNameDisplay !== "" ? `Education of winners in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Education of winners in ${electionYearDisplay} ${electionTypeDisplay} `,
             xaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             },
+            height: 600,
+            legend: {"orientation": "h"},
             yaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             }
@@ -1096,50 +1102,48 @@ export default class DataVizWrapper extends React.Component {
 
         case "ptyOccupationMLA": {
           chartType = "PartyStepBarChart";
-          vizParameter = "pty_mla_var_perc";
+          vizParameter = "MLAs_var_Party";
           varName = "TCPD_Prof_Main";
           layout = {
             barmode: 'stack',
-            title: stateNameDisplay !== "" ? `Party wise distribution of representative's Profession in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Party wise distribution of representative's Profession in ${electionYearDisplay} ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise distribution of winner's Profession in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Party wise distribution of winner's Profession in ${electionYearDisplay} ${electionTypeDisplay}`,
             xaxis: {
               title: ''
             },
             yaxis: {
-              title: '% Party MLA',
-              range: [0, 100],
-              autorange: false
+              title: 'Party winners',
+              autorange: true
             }
           };
           showAdditionalText = true;
           getAdditionalText = (category, idx) => {
-            var y_in = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.MLAs_var_Party);
+            var y_in = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.pty_mla_var_perc);
             var total_inc = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
-            return y_in[idx]+"/" + total_inc[idx]+" Elected";
+            return y_in[idx]+"% of" + total_inc[idx]+" Winners";
           }
           break;
         }
 
         case "ptyEducationMLA": {
           chartType = "PartyStepBarChart";
-          vizParameter = "pty_mla_var_perc";
+          vizParameter = "MLAs_var_Party";
           varName = "MyNeta_education";
           layout = {
             barmode: 'stack',
-            title: stateNameDisplay !== "" ? `Party wise distribution of representative's Education in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Party wise distribution of representative's Education in ${electionYearDisplay} ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise distribution of winner's Education in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Party wise distribution of winner's Education in ${electionYearDisplay} ${electionTypeDisplay}`,
             xaxis: {
               title: ''
             },
             yaxis: {
-              title: '% Party MLA',
-              range: [0, 100],
-              autorange: false
+              title: 'Party Winners',
+              autorange: true
             }
           };
           showAdditionalText = true;
           getAdditionalText = (category, idx) => {
-            var y_in = data.filter(x => x.MyNeta_education === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.MLAs_var_Party);
+            var y_in = data.filter(x => x.MyNeta_education === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.pty_mla_var_perc);
             var total_inc = data.filter(x => x.MyNeta_education === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
-            return y_in[idx]+"/" + total_inc[idx]+" Elected";
+            return y_in[idx]+"% of" + total_inc[idx]+" Winners";
           }
           break;
         }
@@ -1172,8 +1176,29 @@ export default class DataVizWrapper extends React.Component {
         )
       }
       else if (chartType === "PartyStepBarChart") {
+        let vizParameter_sec = "pty_mla_var_perc";
+        let varName_sec = visualization === "ptyOccupationMLA"?"TCPD_Prof_Main":"MyNeta_education";
+        let name = visualization === "ptyOccupationMLA"?"Profession":"Education"
+        let layout_sec = {
+          barmode: 'stack',
+          title: stateNameDisplay !== "" ? `Party Wise percentages of winner's ${name} in ${electionYearDisplay} ${stateName} ${electionTypeDisplay} ` : `Party wise percentages of winner's ${name} in ${electionYearDisplay} ${electionTypeDisplay}`,
+          xaxis: {
+            title: ''
+          },
+          yaxis: {
+            title: '% Party winners',
+            range: [0,100],
+            autorange: false
+          }
+        };
+        let showAdditionalText_sec = true;
+        let getAdditionalText_sec = (category, idx) => {
+          var y_in = data.filter(x => x[varName_sec] === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.MLAs_var_Party);
+          var total_inc = data.filter(x => x[varName_sec] === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
+          return y_in[idx]+"/" + total_inc[idx]+" MLA";
+        }
         return (
-          <PartyStepBarChart
+          <div><PartyStepBarChart
             layout={layout}
             vizParameter={vizParameter}
             data={data.filter(function (item) { return item.Assembly_No === parseInt(assemblyNo) })}
@@ -1182,6 +1207,15 @@ export default class DataVizWrapper extends React.Component {
             showAdditionalText={showAdditionalText}
             getAdditionalText={getAdditionalText}
           />
+          <PartyStepBarChart
+            layout={layout_sec}
+            vizParameter={vizParameter_sec}
+            data={data.filter(function (item) { return item.Assembly_No === parseInt(assemblyNo) })}
+            varName={varName_sec}
+            dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText_sec}
+            getAdditionalText={getAdditionalText_sec}
+          /></div>
         )
       }
       else if (chartType === "PartyScatterChart") {

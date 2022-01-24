@@ -208,8 +208,8 @@
   {
     "title": "Map: Winners by gender",
     "type": "Map",
-    "varType":"ConstMap",
-    "varLabel":"Constituency Level",
+    "varType":"Candidate",
+    "varLabel":"Candidate Level",
     "optionslabel": "Map gender type",
     "modulename": "winnerGenderMap",
     "alloptionschecked": true
@@ -260,7 +260,7 @@
     "alloptionschecked": true
   },
   {
-    "title": "Chart: Profession of Elected",
+    "title": "Chart: Profession of Winners",
     "type": "Chart",
     "varType":"ADR",
     "varLabel":"Affidavit Information",
@@ -269,7 +269,7 @@
     "alloptionschecked": true
   },
   {
-    "title": "Chart: Profession of Elected(Party-wise)",
+    "title": "Chart: Profession of Winners (Party-wise)",
     "type": "Chart",
     "varType":"ADR",
     "varLabel":"Affidavit Information",
@@ -278,7 +278,7 @@
     "alloptionschecked": false
   },
   {
-    "title": "Chart: Education of Elected",
+    "title": "Chart: Education of Winners",
     "type": "Chart",
     "varType":"ADR",
     "varLabel":"Affidavit Information",
@@ -287,7 +287,7 @@
     "alloptionschecked": true
   },
   {
-    "title": "Chart: Education of Elected(Party-wise)",
+    "title": "Chart: Education of Winners (Party-wise)",
     "type": "Chart",
     "varType":"ADR",
     "varLabel":"Affidavit Information",

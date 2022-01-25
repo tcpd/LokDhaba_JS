@@ -1071,10 +1071,8 @@ export default class DataVizWrapper extends React.Component {
             xaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             },
-            height: 600,
-            legend: {x: 0,
-              y: -1,
-              "orientation": "h"},
+            legend: {
+              "orientation": "h",align:'centre',xanchor : "center",x:0.5},
             yaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             }
@@ -1091,8 +1089,7 @@ export default class DataVizWrapper extends React.Component {
             xaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             },
-            height: 600,
-            legend: {"orientation": "h"},
+            legend: {"orientation": "h",xanchor : "center",x:0.5},
             yaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             }
@@ -1110,6 +1107,7 @@ export default class DataVizWrapper extends React.Component {
             xaxis: {
               title: ''
             },
+            legend: {"orientation": "h",xanchor : "center",x:0.5},
             yaxis: {
               title: 'Party winners',
               autorange: true
@@ -1134,6 +1132,7 @@ export default class DataVizWrapper extends React.Component {
             xaxis: {
               title: ''
             },
+            legend: {"orientation": "h",xanchor : "center",x:0.5},
             yaxis: {
               title: 'Party Winners',
               autorange: true
@@ -1185,6 +1184,7 @@ export default class DataVizWrapper extends React.Component {
           xaxis: {
             title: ''
           },
+          legend: {"orientation": "h",xanchor : "center",x:0.5},
           yaxis: {
             title: '% Party winners',
             range: [0,100],

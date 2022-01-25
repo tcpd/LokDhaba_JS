@@ -12,7 +12,8 @@ export default class PieChart extends Component {
     var data = [{
       values :vals,
       labels: labs,
-      textinfo: "value+label",
+      textinfo: 'percent',
+      hole: .4,
       type:'pie'
       //,insidetextorientation: "radial"
     }];

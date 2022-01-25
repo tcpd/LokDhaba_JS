@@ -336,7 +336,7 @@ export default class DataVisualization extends Component {
 
     let assemblies;
     if (this.state.electionType === "AE") {
-      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name === newValue }).map(function (item) { return { value: item.Assembly_No, label: item.Year+"(#"+item.Assembly_No+")",year: item.Year } });
+      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name === newValue }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
     } else if (this.state.electionType === "GE") {
       if (newValue === "Lok_Sabha") {
         assemblies = [...new Set(LokSabhaNumber.map(s => s.Assembly_No))]
@@ -345,9 +345,9 @@ export default class DataVisualization extends Component {
               Assembly_No: Assembly_No,
               Year: LokSabhaNumber.find(s => s.Assembly_No === Assembly_No).Year
             };
-          }).map(function (item) { return { value: item.Assembly_No, label: item.Year+"(#"+item.Assembly_No+")",year: item.Year } });
+          }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
       } else {
-        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name === newValue }).map(function (item) { return { value: item.Assembly_No, label: item.Year+"(#"+item.Assembly_No+")",year: item.Year } });
+        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name === newValue }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
       }
     }
     this.setState(

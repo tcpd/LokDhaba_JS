@@ -1109,7 +1109,7 @@ export default class DataVizWrapper extends React.Component {
             },
             legend: {"orientation": "h",xanchor : "center",x:0.5},
             yaxis: {
-              title: 'Party winners',
+              title: 'Number of winners',
               autorange: true
             }
           };
@@ -1134,7 +1134,7 @@ export default class DataVizWrapper extends React.Component {
             },
             legend: {"orientation": "h",xanchor : "center",x:0.5},
             yaxis: {
-              title: 'Party Winners',
+              title: 'Number of winners',
               autorange: true
             }
           };
@@ -1186,7 +1186,7 @@ export default class DataVizWrapper extends React.Component {
           },
           legend: {"orientation": "h",xanchor : "center",x:0.5},
           yaxis: {
-            title: '% Party winners',
+            title: '% winners',
             range: [0,100],
             autorange: false
           }

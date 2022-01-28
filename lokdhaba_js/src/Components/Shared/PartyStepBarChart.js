@@ -17,6 +17,11 @@ export default class PartyStepBarChart extends Component {
       var x_labels = vizData.filter(x => x[varName] === category).map(function (item) { return item.Party });
       var y_vals = new Array(x_axis_labels.length).fill(NaN);
       var y_text = new Array(x_axis_labels.length).fill(NaN);
+      var bar_width = new Array(x_axis_labels.length).fill(0.7);
+      if(x_axis_labels.length <4){
+        bar_width = new Array(x_axis_labels.length).fill(0.4);
+      }
+
       for (var i = 0; i < x_axis_labels.length; i++) {
         var label = x_axis_labels[i];
         var idx = x_labels.findIndex(function (x) { return x === label })
@@ -44,7 +49,8 @@ export default class PartyStepBarChart extends Component {
         x: x_axis_labels,
         y: y_vals,
         name: category,
-        text: y_text
+        text: y_text,
+        width: bar_width
         //,marker: {color: party_color}
       }
       data.push(trace);

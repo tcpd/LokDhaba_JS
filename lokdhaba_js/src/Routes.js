@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import DataVisualization from "./Components/DataVisualization";
 import HomePage from "./Components/HomePage";
 import BrowseData from "./Components/BrowseData";
+import ElecDash from "./Components/ElecDash";
 import Documentation from "./Components/Documentation";
 import About from "./Components/About";
 import SearchResults from "./Components/SearchResults";
@@ -12,6 +13,7 @@ export default function Routes() {
   return (
     <Switch>
       <Route path="/" exact component={HomePage} />
+      <Route path="/elec-dashboard" exact component={ElecDash} />
       <Route path="/data-vis" exact component={DataVisualization} />
       <Route path="/browse-data" exact component={BrowseData} />
       <Route path="/docs" exact component={Documentation} />

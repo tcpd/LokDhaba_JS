@@ -599,6 +599,42 @@ def get_viz_data():
             print("table not found")
             return "table not found"
 
+@app.route('/data/api/v1.0/xyz', methods=['POST'])
+@cross_origin()
+def get_report_data():
+    print("inside xyz data")
+    req = request.get_json()
+    stateNames = req.get('StateNames')  # if key doesn't exist, returns a 400, bad request error
+    assemblies = req.get('Assemblies')
+    connection = connectdb(db_config)
+    if connection.is_connected():
+        ## getting data for voter turnout
+        cursor = connection.cursor()
+        query_input = list()
+        get_table = "Select * from voter_turnout"
+        get_state = " where"+ " or ".join(["(State_Name=%s and Assembly_No=%s)"]*len(stateNames))
+        for i in range(len(stateNames)):
+            query_input.append(stateNames[i])
+            query_input.append(assemblies[i])
+
+        sql_parameterized_data_query = get_table  + get_state
+        print("Data Query : ", sql_parameterized_data_query, "\n query_input :", query_input)
+        cursor.execute(sql_parameterized_data_query, tuple(query_input))
+
+        records = cursor.fetchall()
+        row_headers = [x[0] for x in cursor.description]  # this will extract row headers
+        print(row_headers)
+        cursor.close()
+
+        connection.close()
+
+
+    vt_data = []
+    for row in records:
+        vt_data.append(dict(zip(row_headers, row)))
+
+    return jsonify({'data': vt_data})
+
 
 nlp = spacy.load('en_core_web_md')
 

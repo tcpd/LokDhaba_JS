@@ -8,7 +8,7 @@ library(data.table)
 
 
 
-git_loc = "/home/blusoul/Documents/TCPD/Projects/tcpd-data"
+git_loc = "../tcpd_data/data"
 
 db_user= "root"
 db_host = "127.0.0.1"
@@ -103,9 +103,13 @@ for (state in ae_states){
     tab_name = gsub("ae_","",x)
     tab_name = gsub("\\.csv","",tab_name)
     data = read.csv(file,na="",stringsAsFactors = F)
-    data$Election_Type = "AE"
-    if(!"State_Name" %in% names(data)){
-      data$State_Name = state
+    if(nrow(data)!=0){
+      data$Election_Type = "AE"
+      if(!"State_Name" %in% names(data)){
+        data$State_Name = state
+      }
+      #data$State_Name = "Lok_Sabha"
+      createTable(data,db_host,db,tab_name)
     }
     #data$State_Name = "Lok_Sabha"
     createTable(data,db_host,db,tab_name)

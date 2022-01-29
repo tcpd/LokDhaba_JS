@@ -137,7 +137,7 @@ export default class MapViz extends React.Component {
 
     return mapGeoJson.map((constituency) => {
       let style = {
-        fill : false,
+        fillColor: false,
         weight: 1,
         opacity: 1,
         color: 'black',

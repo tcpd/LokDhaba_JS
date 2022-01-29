@@ -221,25 +221,19 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "N_Cand";
           legendType = "Discrete";
           getMapColor = (constituency, dataFilterOptions) => {
-            if (!constituency) {
-              return Constants.mapColorCodes.dataUnavailabe.color;
-            }
-            if (!constituency.hasOwnProperty('properties')) {
-              return Constants.mapColorCodes.dataUnavailabe.color;
-            }
-            if (!constituency.properties.hasOwnProperty(vizParameter)) {
+            if (this.isDataUnavailable(vizParameter, constituency)) {
               return Constants.mapColorCodes.dataUnavailabe.color;
             }
             let val = constituency.properties[vizParameter];
             switch (true) {
               case !val:
                 return defaultColor;
-              case val < 5 && dataFilterOptions.has('<5'):
+              case val < 5:
                 return '#deebf7';
-              case val > 15 && dataFilterOptions.has('>15'):
-                return '#6baed6';
-              case val >= 5 && val <= 15 && dataFilterOptions.has('5-15'):
+              case val > 15:
                 return '#08306b';
+              case val >= 5 && val <= 15:
+                return '#6baed6';
               default:
                 return defaultColor;
             }
@@ -259,10 +253,10 @@ export default class DataVizWrapper extends React.Component {
 
           let SortedKeys = ['<5', '5-15', '>15'];
           let sortedLegend = {};
-          for (let i = 0; i < SortedKeys.length; i++) {
-            let val = SortedKeys[i];
-            if (legend[val]) {
-              sortedLegend[val] = legend[val];
+
+          for (let key of SortedKeys) {  // for each interval in the legend
+            if (legend[key]) {  // if the interval has a value in the legend
+              sortedLegend[key] = legend[key];  // put it in the sorted legend
             }
           }
 
@@ -344,13 +338,7 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Position";
           legendType = "Discrete";
           getMapColor = (constituency, dataFilterOptions) => {
-            if (!constituency) {
-              return Constants.mapColorCodes.dataUnavailabe.color;
-            }
-            if (!constituency.hasOwnProperty('properties')) {
-              return Constants.mapColorCodes.dataUnavailabe.color;
-            }
-            if (!constituency.properties.hasOwnProperty(vizParameter)) {
+            if (this.isDataUnavailable(vizParameter, constituency)) {
               return Constants.mapColorCodes.dataUnavailabe.color;
             }
             let val = constituency.properties[vizParameter];
@@ -415,13 +403,7 @@ export default class DataVizWrapper extends React.Component {
             return curriedGetMapColorFromPalette(ColorPalette, vizParameter, constituency, dataFilterOptions);
           }
           getMapChangeMapColor = (constituency, dataFilterOptions) => {
-            if (!constituency) {
-              return Constants.mapColorCodes.dataUnavailabe.color;
-            }
-            if (!constituency.hasOwnProperty('properties')) {
-              return Constants.mapColorCodes.dataUnavailabe.color;
-            }
-            if (!constituency.properties.hasOwnProperty(vizParameter)) {
+            if (this.isDataUnavailable(vizParameter, constituency)) {
               return Constants.mapColorCodes.dataUnavailabe.color;
             }
             if (constituency.properties["Party_Change"] === null) {
@@ -470,13 +452,7 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "Nota_Percentage";
           legendType = "Discrete";
           getMapColor = (constituency, dataFilterOptions) => {
-            if (!constituency) {
-              return Constants.mapColorCodes.dataUnavailabe.color;
-            }
-            if (!constituency.hasOwnProperty('properties')) {
-              return Constants.mapColorCodes.dataUnavailabe.color;
-            }
-            if (!constituency.properties.hasOwnProperty(vizParameter)) {
+            if (this.isDataUnavailable(vizParameter, constituency)) {
               return Constants.mapColorCodes.dataUnavailabe.color;
             }
             let val = constituency.properties[vizParameter];

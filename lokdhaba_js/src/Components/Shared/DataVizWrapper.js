@@ -9,6 +9,7 @@ import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColo
 import PartyColorPalette from '../../Assets/Data/PartyColourPalette.json';
 import GenderColorPalette from '../../Assets/Data/GenderColorPalette.json';
 import * as Constants from './Constants';
+import ErrorScreen from './ErrorScreen';
 
 const defaultColor = "#FFFFFF00";
 
@@ -512,6 +513,14 @@ export default class DataVizWrapper extends React.Component {
       }
 
       enableNormalizedMap = enableNormalizedMap && !showChangeMap;
+
+      // guard clauses to prevent invalid data passing through
+      if (typeof(data) === undefined || !data) {
+        return (<ErrorScreen message={"Data is not available for this configuration."}/>);
+      };
+      if (map === null) {
+        return (<ErrorScreen message={"A map is not available for this state visualization."}/>); 
+      }
 
       if (showChangeMap) {
         if (vizChangeParameter !== "") {

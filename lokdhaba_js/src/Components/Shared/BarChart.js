@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import createPlotlyComponent from 'react-plotlyjs';
 import Plotly from 'plotly.js/dist/plotly-cartesian';
+import ErrorScreen from './ErrorScreen.js';
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export default class BarChart extends Component {
@@ -30,6 +31,11 @@ export default class BarChart extends Component {
         data.push(trace);
       }
     })
+
+    // guard clause to gracefully exit to error screen if invalid data is passed
+    if (typeof(data) !== undefined && (data.length === 0 || data[0].y.length === 0)) {
+      return (<ErrorScreen message={"Data is not available for this configuration."}/>);
+    }
 
     let config = {
       showLink: false,

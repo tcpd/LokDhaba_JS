@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import ErrorScreen from './ErrorScreen.js';
 
@@ -7,16 +7,17 @@ class ErrorBoundary extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, errorObject: null };
   }
 
   componentDidCatch(error, info) {
     this.setState({ 
-      hasError: true 
+      hasError: false,
+      errorObject: error
     });
 
     // TODO: where to log errors?
-    // console.log(error, info);
+    console.log(error);
   }
 
   render() {
@@ -24,7 +25,7 @@ class ErrorBoundary extends React.Component {
       // return fallback UI
       return (
         <ErrorScreen
-          message="An error occured while trying to get this data."
+          message={"An error occured while trying to get this data."}
         />
       );    
     }    

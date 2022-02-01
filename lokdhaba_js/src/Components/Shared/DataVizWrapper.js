@@ -1215,7 +1215,8 @@ export default class DataVizWrapper extends React.Component {
             dataFilterOptions={dataFilterOptions}
             showAdditionalText={showAdditionalText_sec}
             getAdditionalText={getAdditionalText_sec}
-          /></div>
+          />
+          <p align="center"><small>Note: We have used the data made publicly available by ADR and applied TCPD categories for the purpose of analyses.</small></p></div>
         )
       }
       else if (chartType === "PartyScatterChart") {
@@ -1231,12 +1232,13 @@ export default class DataVizWrapper extends React.Component {
       }
       else if (chartType === "PieChart") {
         return (
-          <PieChart
+          <div><PieChart
             layout={layout}
             data={data.filter(function (item) { return item.Assembly_No === parseInt(assemblyNo) })}
             vizParameter={vizParameter}
             varName = {varName}
           />
+          <p align="center"><small>Note: We have used the data made publicly available by ADR and applied TCPD categories for the purpose of analyses.</small></p></div>
         )
       }
     }

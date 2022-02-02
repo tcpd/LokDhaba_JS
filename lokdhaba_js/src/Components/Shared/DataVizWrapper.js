@@ -1067,7 +1067,7 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "MLAs_var";
           varName ="TCPD_Prof_Main";
           layout = {
-            title: stateNameDisplay !== "" ? `Professions of winners in ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Professions of winners in ${electionYearDisplay} ${electionTypeDisplay} `,
+            title: stateNameDisplay !== "" ? `Profession of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Professions of winners in ${electionYearDisplay} ${electionTypeDisplay} `,
             xaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             },
@@ -1085,7 +1085,7 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "MLAs_var";
           varName ="MyNeta_education";
           layout = {
-            title: stateNameDisplay !== "" ? `Education of winners in ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Education of winners in ${electionYearDisplay} ${electionTypeDisplay} `,
+            title: stateNameDisplay !== "" ? `Education of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Education of winners in ${electionYearDisplay} ${electionTypeDisplay} `,
             xaxis: {
               showgrid: false, zeroline:false, showticklabels:false
             },
@@ -1103,7 +1103,7 @@ export default class DataVizWrapper extends React.Component {
           varName = "TCPD_Prof_Main";
           layout = {
             barmode: 'stack',
-            title: stateNameDisplay !== "" ? `Party wise distribution of winner's Profession in ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise distribution of winner's Profession in ${electionYearDisplay} ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise profession of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise distribution of winner's Profession in ${electionYearDisplay} ${electionTypeDisplay}`,
             xaxis: {
               title: ''
             },
@@ -1128,7 +1128,7 @@ export default class DataVizWrapper extends React.Component {
           varName = "MyNeta_education";
           layout = {
             barmode: 'stack',
-            title: stateNameDisplay !== "" ? `Party wise distribution of winner's Education in ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise distribution of winner's Education in ${electionYearDisplay} ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise education of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise distribution of winner's Education in ${electionYearDisplay} ${electionTypeDisplay}`,
             xaxis: {
               title: ''
             },
@@ -1180,7 +1180,7 @@ export default class DataVizWrapper extends React.Component {
         let name = visualization === "ptyOccupationMLA"?"Profession":"Education"
         let layout_sec = {
           barmode: 'stack',
-          title: stateNameDisplay !== "" ? `Party Wise percentages of winner's ${name} in ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise percentages of winner's ${name} in ${electionYearDisplay} ${electionTypeDisplay}`,
+          title: stateNameDisplay !== "" ? `Party Wise ${name} percentages of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise percentages of winner's ${name} in ${electionYearDisplay} ${electionTypeDisplay}`,
           xaxis: {
             title: ''
           },

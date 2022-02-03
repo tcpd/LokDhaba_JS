@@ -474,7 +474,7 @@ export default class DataVisualization extends Component {
 
         this.setState({ mapData: map });
         setTimeout(() => resolve(map), 500);
-      })
+      });
     });
   }
 

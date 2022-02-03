@@ -28,6 +28,19 @@ function curry(func) {
 
 export default class DataVizWrapper extends React.Component {
 
+  // accepts a constituency and a parameter and checks if the relevant data exists
+  isDataUnavailable = (vizParameter, constituency) => {
+    if (!constituency  // if constituency does not exist
+        || !(constituency.hasOwnProperty('properties'))  // if constituency does not have properties (record is incomplete/missing/corrupted)
+        || !(constituency.properties.hasOwnProperty(vizParameter))  // if constituency does not have data for the property being visualized (eg: Margin_Percentage)
+        || (constituency.properties[vizParameter] === null)
+        || !(constituency.properties[vizParameter]))   // if the value for the constituency's property being visualized is null
+    {  
+      return true;
+    }
+    return false;
+  }
+
   getColorFromRatio = (ratio, minColor, maxColor) => {
     var color1 = maxColor;
     var color2 = minColor;
@@ -48,27 +61,13 @@ export default class DataVizWrapper extends React.Component {
     return "#" + middle.toString();
   }
 
-  isDataUnavailable = (vizParameter, constituency) => {
-    if (!constituency  // if constituency does not exist
-        || !(constituency.hasOwnProperty('properties'))  // if constituency does not have properties (record is incomplete/missing/corrupted)
-        || !(constituency.properties.hasOwnProperty(vizParameter))  // if constituency does not have data for the property being visualized (eg: Margin_Percentage)
-        || (constituency.properties.vizParameter === null))   // if the value for the constituency's property being visualized is null
-    {  
-      return true;
-    }
-    return false;
-  }
-
   getColorForContinuous = (minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
     if (this.isDataUnavailable(vizParameter, constituency)) {
       return Constants.mapColorCodes.dataUnavailabe.color;
     }
 
     let val = constituency.properties[vizParameter];
-    if (val) {
-      return this.getColorFromRatio(val / 100, minColor, maxColor);
-    }
-    else return Constants.mapColorCodes.dataUnavailabe.color;
+    return this.getColorFromRatio(val / 100, minColor, maxColor);
   }
 
   getColorForNormalizedMap = (min, max, minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
@@ -77,13 +76,8 @@ export default class DataVizWrapper extends React.Component {
     }
 
     let val = constituency.properties[vizParameter];
-    if (!val) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
-    else {
-      let ratio = (val - min) / (max - min);
-      return this.getColorFromRatio(ratio, minColor, maxColor);
-    }
+    let ratio = (val - min) / (max - min);
+    return this.getColorFromRatio(ratio, minColor, maxColor);
   }
 
   getColorForChangeMap = (min, max, minColor, maxColor, vizParameter, constituency, dataFilterOptions) => {
@@ -93,9 +87,7 @@ export default class DataVizWrapper extends React.Component {
 
     let val = constituency.properties[vizParameter];
     let ratio;
-    if (!val) {
-      return Constants.mapColorCodes.dataUnavailabe.color;
-    }
+    
     if (val >= 0) {
       ratio = val / max;
       return this.getColorFromRatio(ratio, 'ffffff', maxColor);
@@ -229,11 +221,11 @@ export default class DataVizWrapper extends React.Component {
             switch (true) {
               case !val:
                 return defaultColor;
-              case val < 5:
+              case val < 5 && (dataFilterOptions.size === 0 || dataFilterOptions.has('<5')):
                 return '#deebf7';
-              case val > 15:
+              case val > 15 && (dataFilterOptions.size === 0 || dataFilterOptions.has('>15')):
                 return '#08306b';
-              case val >= 5 && val <= 15:
+              case val >= 5 && val <= 15 && (dataFilterOptions.size === 0 || dataFilterOptions.has('5-15')):
                 return '#6baed6';
               default:
                 return defaultColor;

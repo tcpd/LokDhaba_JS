@@ -221,11 +221,11 @@ export default class DataVizWrapper extends React.Component {
             switch (true) {
               case !val:
                 return defaultColor;
-              case val < 5:
+              case val < 5 && (dataFilterOptions.size === 0 || dataFilterOptions.has('<5')):
                 return '#deebf7';
-              case val > 15:
+              case val > 15 && (dataFilterOptions.size === 0 || dataFilterOptions.has('>15')):
                 return '#08306b';
-              case val >= 5 && val <= 15:
+              case val >= 5 && val <= 15 && (dataFilterOptions.size === 0 || dataFilterOptions.has('5-15')):
                 return '#6baed6';
               default:
                 return defaultColor;

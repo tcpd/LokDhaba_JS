@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import createPlotlyComponent from 'react-plotlyjs';
 import Plotly from 'plotly.js/dist/plotly-cartesian';
-import ColPalette from '../../Assets/Data/PartyColourPalette.json';
+import ColPalette from '../../Assets/Data/AffidavitColorPalette.json';
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export default class PartyStepBarChart extends Component {
@@ -41,7 +41,7 @@ export default class PartyStepBarChart extends Component {
       }
 
 
-      // var party_color = "#808080"
+      var category_color = ColPalette.filter( item => item.var ===varName && item.value===category)[0].Color;
       //
       // for (let i = 0; i < ColPalette.length; i++) {
       //   var element = ColPalette[i];
@@ -58,7 +58,7 @@ export default class PartyStepBarChart extends Component {
         name: category,
         text: y_text,
         width: bar_width
-        //,marker: {color: party_color}
+        ,marker: {color: category_color}
       }
       data.push(trace);
     });

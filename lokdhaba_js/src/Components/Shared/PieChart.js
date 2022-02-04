@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import createPlotlyComponent from 'react-plotlyjs';
 import Plotly from 'plotly.js/dist/plotly-cartesian';
+import ColPalette from '../../Assets/Data/AffidavitColorPalette.json';
+
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export default class PieChart extends Component {
@@ -15,6 +17,8 @@ export default class PieChart extends Component {
     }
     var vals = vizData.map(function (item) { return item[vizParameter]  });
     var labs = vizData.map(function (item) { return item[varName]  });
+    var colors= [];
+    labs.forEach(lab=> colors.push(ColPalette.filter( item => item.var ===varName && item.value===lab)[0].Color))
     var data = [{
       values :vals,
       labels: labs,
@@ -22,6 +26,7 @@ export default class PieChart extends Component {
       hole: .4,
       type:'pie',
       sort:false
+      ,marker: {colors: colors}
       //,insidetextorientation: "radial"
     }];
 

@@ -291,12 +291,12 @@ export default class DataVisualization extends Component {
 
       });
 
-    this.updateURL({variable:"st",val:st});
-    this.updateURL({variable:"viz",val:viz});
-    this.updateURL({variable:"var",val:vizVar});
-    this.updateURL({variable:"seg",val:seg});
-    this.updateURL({variable:"an",val:an});
-    this.updateURL({variable:"pty",val:pty});
+    {st !=="" && this.updateURL({variable:"st",val:st});}
+    {viz !=="" && this.updateURL({variable:"viz",val:viz});}
+    {vizVar !=="" && this.updateURL({variable:"var",val:vizVar});}
+    {seg !=="" && this.updateURL({variable:"seg",val:seg});}
+    {an !=="" && this.updateURL({variable:"an",val:an});}
+    {pty !=="" && this.updateURL({variable:"pty",val:pty});}
 
   }
 

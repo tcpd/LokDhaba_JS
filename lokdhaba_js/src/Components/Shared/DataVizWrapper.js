@@ -1117,7 +1117,7 @@ export default class DataVizWrapper extends React.Component {
           getAdditionalText = (category, idx) => {
             var y_in = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.pty_mla_var_perc);
             var total_inc = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
-            return y_in[idx]+"% of" + total_inc[idx]+" Winners";
+            return y_in[idx]+"% of " + total_inc[idx]+" Winners";
           }
           break;
         }
@@ -1142,7 +1142,7 @@ export default class DataVizWrapper extends React.Component {
           getAdditionalText = (category, idx) => {
             var y_in = data.filter(x => x.MyNeta_education === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.pty_mla_var_perc);
             var total_inc = data.filter(x => x.MyNeta_education === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
-            return y_in[idx]+"% of" + total_inc[idx]+" Winners";
+            return y_in[idx]+"% of " + total_inc[idx]+" Winners";
           }
           break;
         }
@@ -1195,7 +1195,7 @@ export default class DataVizWrapper extends React.Component {
         let getAdditionalText_sec = (category, idx) => {
           var y_in = data.filter(x => x[varName_sec] === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.MLAs_var_Party);
           var total_inc = data.filter(x => x[varName_sec] === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
-          return y_in[idx]+"/" + total_inc[idx]+" MLA";
+          return y_in[idx]+"/" + total_inc[idx]+" Winners";
         }
         return (
           <div><PartyStepBarChart

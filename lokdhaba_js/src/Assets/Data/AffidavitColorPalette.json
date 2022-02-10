@@ -1,5 +1,5 @@
 [
-  {"var": "TCPD_Prof_Main","value":"Other or Unspecified", "Color": "#808080"},
+  {"var": "TCPD_Prof_Main","value":"Other", "Color": "#808080"},
   {"var": "TCPD_Prof_Main","value":"Unknown", "Color": "#808080"},
   {"var": "TCPD_Prof_Main","value":"Agriculture", "Color": "#3CB44B"},
   {"var": "TCPD_Prof_Main","value":"Business", "Color": "#E6194B"},

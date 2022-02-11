@@ -132,6 +132,7 @@ export default class DataVisualization extends Component {
       showChangeMap: false,
       showNormalizedMap: false,
       showBaseMap: true,
+      electionYearDisplay:""
     };
   }
 
@@ -205,28 +206,97 @@ export default class DataVisualization extends Component {
     var an = inputs.get("an") || "";
     var pty = inputs.get("pty") || "";
     var seg = inputs.get("seg") || "";
-    if(st !== "" ){this.onStateNameChange(st);}
+    this.buildFromUrl({
+      "et":et,
+      "st":st,
+      "vizVar":vizVar,
+      "viz": viz,
+      "options":options,
+      "an":an,
+      "pty":pty,
+      "seg":seg
+    })
 
-    if(vizVar !== "" ){this.onVisualizationVarChange(vizVar);}
-    var viz = inputs.get("viz") || "";
-    if(viz !== "" ){
-      this.onVisualizationChange(viz, searchYear);
-      if(options !== ""){
-        var selected_options = new Set(options.replace(/%2C/g,",").split(","));
-        this.optionChange([...selected_options],viz);
-        //this.fetchVisualizationData()
+  }
+
+  buildFromUrl = (props)=>{
+    var {et,st,vizVar,viz,options,an,pty,seg}= props;
+    let assemblies;
+    if (et === "AE") {
+      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name === st }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
+    } else if (et === "GE") {
+      if (st === "Lok_Sabha"){
+        assemblies = [...new Set(LokSabhaNumber.map(s => s.Assembly_No))]
+          .map(Assembly_No => {
+            return {
+              Assembly_No: Assembly_No,
+              Year: LokSabhaNumber.find(s => s.Assembly_No === Assembly_No).Year
+            };
+          }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
+      }else{
+        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name === st }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
       }
     }
+    var visualizationOptions = vizVar!=="" ? [{ value: "", label: "Chart/Map" }].concat(ChartsMapsCodes.filter(x => x.varType=== vizVar).map(function (item) { return { value: item.modulename, label: item.title } })):[];
+    var visualizationType = viz !=="" ? ChartsMapsCodes.filter(function (item) { return item.modulename === viz })[0].type:"";
+    var vizOptionsSelected = options!==""? new Set(options.replace(/%2C/g,",").split(",")) : new Set();
 
-    if(an !== "" ){this.onYearChange(an);}
+    if(vizVar==="ADR" && an===""){
+      an = assemblies.sort(compareValues('value','desc'))[0].value
+    }
+    var showVisualization = viz !== "";
 
-    if(pty !== ""){this.onPartyChange(pty);}
+    var disp = an !==""? assemblies.filter(x=> x.value===parseInt(an))[0].label:"";
 
-    if(seg !== ""){this.onSegment(seg);}
+    this.setState(
+      { stateName: st, stateAssemblies: assemblies,visualizationOptions: visualizationOptions, visualizationVar:vizVar,visualizationType: visualizationType,visualization: viz,vizOptionsSelected: vizOptionsSelected,year: an,electionYearDisplay: disp,showVisualization : showVisualization},
+      () => {
+        this.setYearsFromSearch("")
+        if(visualizationType ==="Map"){
+          this.fetchMapData();
+          if (viz === "partyPositionsMap" || viz === "partyVoteShareMap") {
+            this.fetchMapYearParties();
+          }
+          this.fetchMapYearAndData("");
+          if(seg){
+             this.fetchMapOverlay();
+          }
+          const { allYearsVizData, allYearsVizLegend, allYearsVizOptionsSelected} = this.state;
+          let newData = allYearsVizData.find(function (item) {
+            return item.assemblyNo === parseInt(an);
+          })
 
+          if (typeof newData != 'undefined') {
+            this.setState({ vizData: newData.data });
+          }
 
+          let vizLegend = allYearsVizLegend.find(function (item) {
+            return item.assemblyNo === parseInt(an);
+          })
 
-    //this.fetchVisualizationData();
+          if (typeof vizLegend != 'undefined') {
+            this.setState({ chartMapOptions: vizLegend.data });
+          }
+
+          let vizOptionsSelected = allYearsVizOptionsSelected.find(function (item) {
+            return item.assemblyNo === parseInt(an);
+          })
+
+          if (typeof vizOptionsSelected != 'undefined') {
+            this.setState({ vizOptionsSelected: vizOptionsSelected.data });
+          }
+
+        }
+        this.fetchVisualizationData();
+
+      });
+
+    {st !=="" && this.updateURL({variable:"st",val:st});}
+    {viz !=="" && this.updateURL({variable:"viz",val:viz});}
+    {vizVar !=="" && this.updateURL({variable:"var",val:vizVar});}
+    {seg !=="" && this.updateURL({variable:"seg",val:seg});}
+    {an !=="" && this.updateURL({variable:"an",val:an});}
+    {pty !=="" && this.updateURL({variable:"pty",val:pty});}
 
   }
 
@@ -272,14 +342,14 @@ export default class DataVisualization extends Component {
   onVisualizationChange = (newValue, searchYear) => {
     var visualizationType = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].type;
     this.setState({ visualization: newValue
-      , showVisualization: false
+      //,showVisualization: false
       , showBaseMap: true
       , showChangeMap: false
       , showNormalizedMap: false
       , vizOptionsSelected: new Set()
       , year: ""
       , visualizationType: visualizationType }, () => {
-      //await this.fetchChartMapOptions(this.state);
+      //this.fetchChartMapOptions(this.state);
       if (visualizationType === "Map") {
         this.fetchMapData();
         if (newValue === "partyPositionsMap" || newValue === "partyVoteShareMap") {
@@ -290,8 +360,18 @@ export default class DataVisualization extends Component {
       }
     });
     var visualizationVar = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].varType;
+
     //this.setState({visualizationVar:visualizationVar});
     this.updateURL({variable:"viz",val:newValue,remove:["an","opt"]});
+
+    if(visualizationVar==="ADR" && this.state.stateAssemblies.length > 0){
+      var defaultAssembly = this.state.stateAssemblies.sort(compareValues('value','desc'))[0].value;
+      //this.onAssemblyChange(defaultAssembly);
+      var defaultAssemblyDisplay = this.state.stateAssemblies.sort(compareValues('value','desc'))[0].label;
+      this.setState({year:defaultAssembly,electionYearDisplay:defaultAssemblyDisplay});
+      // this.updateURL({variable:"an",val:defaultAssembly});
+    }
+
 
 
 
@@ -315,11 +395,11 @@ export default class DataVisualization extends Component {
     this.updateURL({variable:"var",val:newValue,remove:["an","opt"]});
   }
 
-  onStateNameChange = (newValue, searchYears) => {
+  onStateNameChange = (newValue, searchYears, nourl=false) => {
 
     let assemblies;
     if (this.state.electionType === "AE") {
-      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name.replace(/_/g, " ") === newValue }).map(function (item) { return { value: item.Assembly_No, label: item.Year+"(#"+item.Assembly_No+")" } });
+      assemblies = VidhanSabhaNumber.filter(function (item) { return item.State_Name === newValue }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
     } else if (this.state.electionType === "GE") {
       if (newValue === "Lok_Sabha") {
         assemblies = [...new Set(LokSabhaNumber.map(s => s.Assembly_No))]
@@ -328,9 +408,9 @@ export default class DataVisualization extends Component {
               Assembly_No: Assembly_No,
               Year: LokSabhaNumber.find(s => s.Assembly_No === Assembly_No).Year
             };
-          }).map(function (item) { return { value: item.Assembly_No, label: item.Year+"(#"+item.Assembly_No+")" } });
+          }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
       } else {
-        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name.replace(/_/g, " ") === newValue }).map(function (item) { return { value: item.Assembly_No, label: item.Year+"(#"+item.Assembly_No+")" } });
+        assemblies = LokSabhaNumber.filter(function (item) { return item.State_Name === newValue }).map(function (item) { return { value: item.Assembly_No, label: item.Year+" (#"+item.Assembly_No+")",year: item.Year } });
       }
     }
     this.setState(
@@ -338,9 +418,16 @@ export default class DataVisualization extends Component {
       () => {
         this.setYearsFromSearch(searchYears)
         this.fetchVisualizationData();
+        if(this.state.visualizationType ==="Map"){
+          this.fetchMapData();
+        }
+
       }
     );
-    this.updateURL({variable:"st",val:newValue,remove:["an","opt"]});
+    if(!nourl){
+      this.updateURL({variable:"st",val:newValue,remove:["an","opt"]});
+    }
+
   }
 
   onElectionTypeChange = (e) => {
@@ -684,7 +771,7 @@ export default class DataVisualization extends Component {
 
 
   optionChange = (selected,viz) => {
-    const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]
+    const vis_list=["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty","ptyOccupationMLA","ptyEducationMLA"]
     var selectedOpts = new Set(selected.map(x=>x.value || x))
     let visualization = this.state.visualization || viz;
     this.setState({
@@ -757,7 +844,7 @@ export default class DataVisualization extends Component {
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
-    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showBaseMap, showNormalizedMap, party, showVisualization, segmentWise, mapOverlay } = this.state;
+    const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showBaseMap, showNormalizedMap, party, showVisualization, segmentWise, mapOverlay,electionYearDisplay } = this.state;
 
     if (!data) {
       return (
@@ -792,6 +879,7 @@ export default class DataVisualization extends Component {
           onShowNormalizedMapChange={this.onShowNormalizedMapChange}
           segmentWise={segmentWise}
           mapOverlay = {mapOverlay}
+          electionYearDisplay = {electionYearDisplay}
         />
       </ErrorBoundary>
     );
@@ -822,6 +910,14 @@ export default class DataVisualization extends Component {
        //this.setState({ showVisualization: true });
      }
     this.updateURL({variable:"pty",val:newValue});
+  }
+  onAssemblyChange = (newValue) => {
+    var disp = this.state.stateAssemblies.filter(x=> x.value===parseInt(newValue))[0].label;
+    this.setState({ year: newValue,electionYearDisplay: disp });
+
+    //this.fetchMapYearAndData("",newValue);
+
+    this.updateURL({variable:"an",val:newValue});
   }
 
   onYearChange = (newValue) => {
@@ -919,6 +1015,11 @@ export default class DataVisualization extends Component {
     var isDataDownloadable = this.state.isDataDownloadable;
     var showTermsAndConditionsPopup = this.state.showTermsAndConditionsPopup;
 
+    var adrDataStartYear = visualization ==="occupationMLA" || visualization ==="ptyOccupationMLA"?2010:2004;
+
+    var adrAssemblies = assemblyOptions.filter(function (item) { return item.year >= adrDataStartYear }).sort(compareValues('value','desc'));
+    //var adrAssembly = adrAssemblies.filter(function(item){return item.value===year});
+
 
     var today = new Date();
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -977,10 +1078,11 @@ export default class DataVisualization extends Component {
                 </ul>
                 <br></br>
                 {<LdSelect id="dv_state_selector" label="State" options={stateOptions} selectedValue={stateName} onChange={this.onStateNameChange} />}
-                {stateName !== "" && <LdSelect id="dv_var_selector" label="Visualize" options={visualizationVarOptions} selectedValue={visualizationVar} onChange={this.onVisualizationVarChange} />}
+                {stateName !== "" && <LdSelect id="dv_var_selector" label="Variable" options={visualizationVarOptions} selectedValue={visualizationVar} onChange={this.onVisualizationVarChange} />}
                 {visualizationVar !== "" && <LdSelect id="dv_visualization_selector" label="Visualization" selectedValue={visualization} options={visualizationOptions} onChange={this.onVisualizationChange} />}
-                {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && visualizationVar !="Candidate" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
+                {electionType === "GE" && visualization !== "voterTurnoutChart" && visualization !== "voterTurnoutMap" && visualizationVar !="Candidate" && visualizationVar !="ADR" && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {(visualization === "partyPositionsMap" || visualization === "partyVoteShareMap") && <LdSelect id="dv_party_selector" label="Select Party" options={partyOptions} selectedValue={party} onChange={this.onPartyChange} />}
+                {(visualizationVar === "ADR" && visualization !=="") && <LdSelect id="dv_adr_assem_selector" label="Select Assembly" options={adrAssemblies} selectedValue={year} onChange={this.onAssemblyChange} />}
                 {((visualizationType === "Chart") || (visualizationType === "Map" && year !== "" && (visualization === "winnerMap" || visualization === "numCandidatesMap" || visualization === "partyPositionsMap" ))) && this.createOptionsSelect()}
                 <br/>
                 {showVisualization && <Button className="btn" variant="primary" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}

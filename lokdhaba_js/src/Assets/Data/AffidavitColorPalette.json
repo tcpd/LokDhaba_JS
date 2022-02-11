@@ -1,5 +1,5 @@
 [
-  {"var": "TCPD_Prof_Main","value":"Other", "Color": "#808080"},
+  {"var": "TCPD_Prof_Main","value":"Other", "Color": "#505050"},
   {"var": "TCPD_Prof_Main","value":"Unknown", "Color": "#808080"},
   {"var": "TCPD_Prof_Main","value":"Agriculture", "Color": "#3CB44B"},
   {"var": "TCPD_Prof_Main","value":"Business", "Color": "#E6194B"},
@@ -28,7 +28,7 @@
   {"var" :"MyNeta_education","value":"Post Graduate","Color":"#3CB44B"},
   {"var" :"MyNeta_education","value":"Doctorate","Color":"#E6194B"},
   {"var" :"MyNeta_education","value":"Illiterate","Color":"#FFE119"},
-  {"var" :"MyNeta_education","value":"Others","Color":"#808080"},
-  {"var" :"MyNeta_education","value":"Not Given","Color":"#808000"},
-  {"var" :"MyNeta_education","value":"Unknown","Color":"#808000"}
+  {"var" :"MyNeta_education","value":"Others","Color":"#505050"},
+  {"var" :"MyNeta_education","value":"Not Given","Color":"#202020"},
+  {"var" :"MyNeta_education","value":"Unknown","Color":"#808080"}
 ]

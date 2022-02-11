@@ -564,9 +564,11 @@ def get_viz_data():
             if module in ["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty","ptyOccupationMLA","ptyEducationMLA"]:
                 parties = req.get('Legends')
                 # parties = party.split(",")
-                get_party = " and Party in (" + ",".join(["%s"] * len(parties)) + ") "
-                for x in parties:
-                    query_input.append(x)
+                if len(parties) > 0:
+                    get_party = " and Party in (" + ",".join(["%s"] * len(parties)) + ") "
+                    for x in parties:
+                        query_input.append(x)
+
 
             get_assembly = ""
             a_no = req.get('AssemblyNo')

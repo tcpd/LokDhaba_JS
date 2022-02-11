@@ -349,7 +349,7 @@ export default class DataVisualization extends Component {
       ,vizOptionsSelected: new Set()
       ,year: ""
       , visualizationType: visualizationType }, () => {
-      //await this.fetchChartMapOptions(this.state);
+      //this.fetchChartMapOptions(this.state);
       if (visualizationType === "Map") {
         this.fetchMapData();
         if (newValue === "partyPositionsMap" || newValue === "partyVoteShareMap") {

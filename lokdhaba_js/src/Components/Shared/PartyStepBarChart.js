@@ -41,7 +41,7 @@ export default class PartyStepBarChart extends Component {
       }
 
 
-      var category_color = ColPalette.filter( item => item.var ===varName && item.value===category)[0].Color;
+      var category_color = typeof category!=='undefined' && ColPalette.filter( item => item.value===category)[0].Color;
       //
       // for (let i = 0; i < ColPalette.length; i++) {
       //   var element = ColPalette[i];

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import '../../Assets/Styles/select.css';
 
 // Fallback UI component that's displayed instead of a React error
@@ -8,7 +8,7 @@ const ErrorScreen = (props) => {
     	{/* Customizable message that must be passed to the component when calling */}
       {props.message}
       <br/>
-      Please refresh the page and try again.
+      Please try a different configuration of options.
     </div>
   )
 }

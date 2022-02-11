@@ -344,10 +344,10 @@ export default class DataVisualization extends Component {
     this.setState({ visualization: newValue
       //,showVisualization: false
       , showBaseMap: true
-      ,showChangeMap: false
-      ,showNormalizedMap: false
-      ,vizOptionsSelected: new Set()
-      ,year: ""
+      , showChangeMap: false
+      , showNormalizedMap: false
+      , vizOptionsSelected: new Set()
+      , year: ""
       , visualizationType: visualizationType }, () => {
       //this.fetchChartMapOptions(this.state);
       if (visualizationType === "Map") {
@@ -356,6 +356,7 @@ export default class DataVisualization extends Component {
           this.fetchMapYearParties();
         }
         this.fetchMapYearAndData(searchYear);
+        this.setState({showVisualization: true});
       }
     });
     var visualizationVar = ChartsMapsCodes.filter(function (item) { return item.modulename === newValue })[0].varType;
@@ -537,13 +538,24 @@ export default class DataVisualization extends Component {
       let stateName = this.state.stateName;
       var file = electionType === "GE" ? "/India_PC_json.geojson": electionType === "GA"? "/India_AC_json.geojson" :"/"+stateName+"_AC_json.geojson";
       const url = Constants.baseUrl + file;
+
+      // don't fetch if map does not exist
+      if (url.includes("Goa_Daman_&_Diu_AC_json.geojson")) {
+        this.setState({mapData: null});
+        return
+      }
       fetch(url, {
         method: "GET",
         mode:"cors",
-      }).then(response => response.json()).then(resp => {
-        if((electionType === "GE" || electionType === "GA") && stateName !== "Lok_Sabha"){
-          var map = resp.features.filter(function(item){return item.properties.State_Name=== stateName});
-        }else{
+      })
+      .then(response => response.json())
+      .then(resp => {
+        if ((electionType === "GE" || electionType === "GA") && stateName !== "Lok_Sabha"){
+          var map = resp.features.filter(function(item) {
+            return item.properties.State_Name === stateName
+          });
+        }
+        else {
           var map = resp.features;
         }
 

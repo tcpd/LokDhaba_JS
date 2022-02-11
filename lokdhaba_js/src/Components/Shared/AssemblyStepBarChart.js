@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import createPlotlyComponent from 'react-plotlyjs';
 import Plotly from 'plotly.js/dist/plotly-cartesian';
 import ColPalette from '../../Assets/Data/PartyColourPalette.json';
+import ErrorScreen from './ErrorScreen.js';
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export default class AssemblyStepBarChart extends Component {
@@ -96,6 +97,11 @@ export default class AssemblyStepBarChart extends Component {
     }]
     layout['sliders']=sliders;
     layout['updatemenus']=updatemenus;
+
+    // guard clause to gracefully exit to error screen if invalid data is passed
+    if (typeof(data) !== undefined && (data.length === 0 || data[0].y.length === 0)) {
+      return (<ErrorScreen message={"Data is not available for this configuration."}/>);
+    }
 
     let config = {
       showLink: false,

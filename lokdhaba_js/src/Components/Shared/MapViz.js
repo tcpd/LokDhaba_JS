@@ -10,6 +10,7 @@ import MapYearOptions from '../Shared/MapYearOptions';
 import FeatureInfo from '../Shared/FeatureInfo'
 import * as Constants from '../Shared/Constants';
 import L from "leaflet";
+import ErrorScreen from './ErrorScreen';
 
 export default class MapViz extends React.Component {
   constructor(props) {
@@ -137,7 +138,7 @@ export default class MapViz extends React.Component {
 
     return mapGeoJson.map((constituency) => {
       let style = {
-        fill : false,
+        fillColor: false,
         weight: 1,
         opacity: 1,
         color: 'black',
@@ -234,6 +235,11 @@ export default class MapViz extends React.Component {
     extendGeoJSON(shape, data, joinMap);
 
     var leaflet= this.renderConstituencies(shape, dataFilterOptions);
+
+    if (Object.entries(leaflet).length === 0 || leaflet.constructor === Object) {
+      return (<ErrorScreen message={"No data was found for this configuration."}/>);
+    }
+    
     var map_overlay  = this.renderOverlay(overlay);
 
     var st = state !== '' ? state : 'Lok_Sabha';

@@ -1,8 +1,9 @@
-${stateNameDisplay}import React from 'react';
+import React from 'react';
 import MapViz from './MapViz';
 import BarChart from './BarChart';
 import PartyBarChart from './PartyBarChart';
-import AssemblyStepBarChart from './AssemblyStepBarChart';
+import PartyStepBarChart from './PartyStepBarChart';
+import PieChart from './PieChart';
 //import IncumbencyProfile from './IncumbencyProfile';
 import PartyScatterChart from './PartyScatterChart';
 import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColorPalette.json';
@@ -180,7 +181,7 @@ export default class DataVizWrapper extends React.Component {
   }
 
   render() {
-    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap,showBaseMap, showNormalizedMap, segmentWise, mapOverlay } = this.props;
+    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap,showBaseMap, showNormalizedMap, segmentWise, mapOverlay,electionYearDisplay } = this.props;
     const electionTypeDisplay = electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const stateNameDisplay = stateName === 'Lok_Sabha' ? '' : stateName.replace(/_/g, " ");
 

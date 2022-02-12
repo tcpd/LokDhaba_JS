@@ -8,7 +8,7 @@ library(data.table)
 
 
 
-git_loc = "../tcpd_data/data"
+git_loc = "../tcpd/tcpd_data/data"
 
 db_user= "root"
 db_host = "127.0.0.1"

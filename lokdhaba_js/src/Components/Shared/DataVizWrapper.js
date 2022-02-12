@@ -1062,20 +1062,60 @@ export default class DataVizWrapper extends React.Component {
         }
 
 
+<<<<<<< Updated upstream
         case "occupationParty": {
           chartType = "AssemblyStepBarChart";
           vizParameter = "pty_mla_prof_perc";
           varName ="TCPD_Prof_Main";
+=======
+        case "ptyOccupationMLA": {
+          chartType = "PartyStepBarChart";
+          vizParameter = "MLAs_var_Party";
+          varName = "TCPD_Prof_Main";
+          layout = {
+            barmode: 'stack',
+            title: stateNameDisplay !== "" ? `Party wise profession of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise distribution of winner's Profession in ${electionYearDisplay} ${electionTypeDisplay}`,
+            xaxis: {
+              title: ''
+            },
+            legend: {"orientation": "h",xanchor : "center",x:0.5},
+            yaxis: {
+              title: 'Number of winners',
+              autorange: true
+            },
+            hovermode: 'closest'
+          };
+          showAdditionalText = true;
+          getAdditionalText = (category, idx) => {
+            var y_in = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.pty_mla_var_perc);
+            var total_inc = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
+            return y_in[idx]+"% of " + total_inc[idx]+" Winners";
+          }
+          break;
+        }
+
+        case "ptyEducationMLA": {
+          chartType = "PartyStepBarChart";
+          vizParameter = "MLAs_var_Party";
+          varName = "MyNeta_education";
+>>>>>>> Stashed changes
           layout = {
             title: stateNameDisplay !== "" ? `Party wise professions of elected members in ${stateName} ${electionTypeDisplay}` : `Party wise strike rate of turncoats across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Party'
             },
             yaxis: {
+<<<<<<< Updated upstream
               title: 'percentage of elected',
               range: [0, 100],
               autorange: false
             }
+=======
+              title: 'Number of winners',
+              autorange: true
+            },
+            hovermode: 'closest'
+>>>>>>> Stashed changes
           };
           break;
         }
@@ -1107,6 +1147,55 @@ export default class DataVizWrapper extends React.Component {
           />
         )
       }
+<<<<<<< Updated upstream
+=======
+      else if (chartType === "PartyStepBarChart") {
+        let vizParameter_sec = "pty_mla_var_perc";
+        let varName_sec = visualization === "ptyOccupationMLA"?"TCPD_Prof_Main":"MyNeta_education";
+        let name = visualization === "ptyOccupationMLA"?"Profession":"Education"
+        let layout_sec = {
+          barmode: 'stack',
+          title: stateNameDisplay !== "" ? `Party Wise ${name} percentages of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise percentages of winner's ${name} in ${electionYearDisplay} ${electionTypeDisplay}`,
+          xaxis: {
+            title: ''
+          },
+          legend: {"orientation": "h",xanchor : "center",x:0.5},
+          yaxis: {
+            title: '% winners',
+            range: [0,100],
+            autorange: false
+          },
+          hovermode: 'closest'
+        };
+        let showAdditionalText_sec = true;
+        let getAdditionalText_sec = (category, idx) => {
+          var y_in = data.filter(x => x[varName_sec] === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.MLAs_var_Party);
+          var total_inc = data.filter(x => x[varName_sec] === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
+          return y_in[idx]+"/" + total_inc[idx]+" Winners";
+        }
+        return (
+          <div><PartyStepBarChart
+            layout={layout}
+            vizParameter={vizParameter}
+            data={data.filter(function (item) { return item.Assembly_No === parseInt(assemblyNo) })}
+            varName={varName}
+            dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText}
+            getAdditionalText={getAdditionalText}
+          />
+          <PartyStepBarChart
+            layout={layout_sec}
+            vizParameter={vizParameter_sec}
+            data={data.filter(function (item) { return item.Assembly_No === parseInt(assemblyNo) })}
+            varName={varName_sec}
+            dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText_sec}
+            getAdditionalText={getAdditionalText_sec}
+          />
+          <p align="center"><small>Note: We have used the data made publicly available by ADR and applied TCPD categories for the purpose of analyses.</small></p></div>
+        )
+      }
+>>>>>>> Stashed changes
       else if (chartType === "PartyScatterChart") {
         return (
           <PartyScatterChart

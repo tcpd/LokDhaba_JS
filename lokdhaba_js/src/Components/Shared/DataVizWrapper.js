@@ -2,7 +2,8 @@ import React from 'react';
 import MapViz from './MapViz';
 import BarChart from './BarChart';
 import PartyBarChart from './PartyBarChart';
-import AssemblyStepBarChart from './AssemblyStepBarChart';
+import PartyStepBarChart from './PartyStepBarChart';
+import PieChart from './PieChart';
 //import IncumbencyProfile from './IncumbencyProfile';
 import PartyScatterChart from './PartyScatterChart';
 import ConstituencyTypeColorPalette from '../../Assets/Data/ConstituencyTypeColorPalette.json';
@@ -180,7 +181,7 @@ export default class DataVizWrapper extends React.Component {
   }
 
   render() {
-    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap,showBaseMap, showNormalizedMap, segmentWise, mapOverlay } = this.props;
+    const { visualization, visualizationType, data, map, electionType, chartMapOptions, dataFilterOptions, assemblyNo, stateName, party, showMapYearOptions, yearOptions, playChangeYears, onMapYearChange, showChangeMap,showBaseMap, showNormalizedMap, segmentWise, mapOverlay, electionYearDisplay } = this.props;
     const electionTypeDisplay = electionType === 'GE' ? 'Lok Sabha' : 'Vidhan Sabha';
     const stateNameDisplay = stateName === 'Lok_Sabha' ? '' : stateName.replace(/_/g, " ");
 
@@ -726,7 +727,7 @@ export default class DataVizWrapper extends React.Component {
         case "partiesPresentedChart": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Parties Contested and Represented across years in ${stateName} ${electionTypeDisplay}` : `Parties Contested and Represented across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Parties Contested and Represented across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Parties Contested and Represented across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -741,7 +742,7 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Vote_Share_in_Assembly";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise voteshare in all seats across years in ${stateName} ${electionTypeDisplay}` : `Party wise voteshare in all seats across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise voteshare in all seats across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Party wise voteshare in all seats across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -758,7 +759,7 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Vote_Share_in_Contested_Seats";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise voteshare in seats contested across years in ${stateName} ${electionTypeDisplay}` : `Party wise voteshare in seats contested across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise voteshare in seats contested across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Party wise voteshare in seats contested across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -775,7 +776,7 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Seat_Share";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise seatshare across years in ${stateName} ${electionTypeDisplay}` : `Party wise seatshare across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise seatshare across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Party wise seatshare across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -799,7 +800,7 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "Strike_Rate";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise Strike Rate across years in ${stateName} ${electionTypeDisplay}` : `Party wise Strike Rate across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise Strike Rate across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Party wise Strike Rate across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -815,7 +816,7 @@ export default class DataVizWrapper extends React.Component {
         case "contestedDepositSavedChart": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Contested and deposit lost across years in ${stateName} ${electionTypeDisplay}` : `Contested and deposit lost across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Contested and deposit lost across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Contested and deposit lost across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -829,7 +830,7 @@ export default class DataVizWrapper extends React.Component {
         case "rerunningCandidates": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Rerunning candidates across years in ${stateName} ${electionTypeDisplay}` : `Rerunning candidates across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Rerunning candidates across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Rerunning candidates across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -853,7 +854,7 @@ export default class DataVizWrapper extends React.Component {
           chartType = "BarChart";
           layout = {
             barmode:'stack',
-            title: stateNameDisplay !== "" ? `Candidates by times contested across years in ${stateName} ${electionTypeDisplay}` : `Candidates by times contested across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Candidates by times contested across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Candidates by times contested across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -876,7 +877,7 @@ export default class DataVizWrapper extends React.Component {
         case "incumbentsChart": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Rerunning Incumbents across years in ${stateName} ${electionTypeDisplay}` : `Rerunning Incumbents across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Rerunning Incumbents across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Rerunning Incumbents across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -901,7 +902,7 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "pty_incm_recontests_pct";
           layout = {
             barmode: 'stack',
-            title: stateNameDisplay !== "" ? `Rerunning Incumbents by party across years in ${stateName} ${electionTypeDisplay}` : `Rerunning Incumbents by party across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Rerunning Incumbents by party across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Rerunning Incumbents by party across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -923,7 +924,7 @@ export default class DataVizWrapper extends React.Component {
         case "incumbentsStrike": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Strike rate of incumbents across years in ${stateName} ${electionTypeDisplay}` : `Strike rate of incumbents across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Strike rate of incumbents across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Strike rate of incumbents across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -947,7 +948,7 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "pty_incm_Strike_Rate";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise strike rate of incumbents across years in ${stateName} ${electionTypeDisplay}` : `Party wise strike rate of incumbents across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise strike rate of incumbents across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Party wise strike rate of incumbents across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -970,7 +971,7 @@ export default class DataVizWrapper extends React.Component {
         case "turncoatsStrike": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `Strike rate of turncoats across years in ${stateName} ${electionTypeDisplay}` : `Strike rate of turncoats across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Strike rate of turncoats across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Strike rate of turncoats across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -993,7 +994,7 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyScatterChart";
           vizParameter = "pty_turn_Strike_Rate";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise strike rate of turncoats across years in ${stateName} ${electionTypeDisplay}` : `Party wise strike rate of turncoats across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Party wise strike rate of turncoats across years in ${stateNameDisplay} ${electionTypeDisplay}` : `Party wise strike rate of turncoats across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -1016,7 +1017,7 @@ export default class DataVizWrapper extends React.Component {
         case "firstTimeWinners": {
           chartType = "BarChart";
           layout = {
-            title: stateNameDisplay !== "" ? `First-time winners across years in ${stateName} ${electionTypeDisplay}` : `First-time winners across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `First-time winners across years in ${stateNameDisplay} ${electionTypeDisplay}` : `First-time winners across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -1041,7 +1042,7 @@ export default class DataVizWrapper extends React.Component {
           vizParameter = "pty_fist_time_winners_pct";
           layout = {
             barmode: 'stack',
-            title: stateNameDisplay !== "" ? `First-time winners by party across years in ${stateName} ${electionTypeDisplay}` : `First-time winners by party across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `First-time winners by party across years in ${stateNameDisplay} ${electionTypeDisplay}` : `First-time winners by party across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Year (Assembly Number)'
             },
@@ -1058,25 +1059,91 @@ export default class DataVizWrapper extends React.Component {
             return y_in[idx]+"/" + total_inc[idx]+" First-time winners";
           }
           break;
-          break;
         }
 
 
-        case "occupationParty": {
-          chartType = "AssemblyStepBarChart";
-          vizParameter = "pty_mla_prof_perc";
+        case "occupationMLA": {
+          chartType = "PieChart";
+          vizParameter = "MLAs_var";
           varName ="TCPD_Prof_Main";
           layout = {
-            title: stateNameDisplay !== "" ? `Party wise professions of elected members in ${stateName} ${electionTypeDisplay}` : `Party wise strike rate of turncoats across years in ${electionTypeDisplay}`,
+            title: stateNameDisplay !== "" ? `Profession of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Professions of winners in ${electionYearDisplay} ${electionTypeDisplay} `,
             xaxis: {
-              title: 'Party'
+              showgrid: false, zeroline:false, showticklabels:false
             },
+            legend: {
+              "orientation": "h",align:'centre',xanchor : "center",x:0.5},
             yaxis: {
-              title: 'percentage of elected',
-              range: [0, 100],
-              autorange: false
+              showgrid: false, zeroline:false, showticklabels:false
             }
           };
+          break;
+        }
+
+        case "educationMLA": {
+          chartType = "PieChart";
+          vizParameter = "MLAs_var";
+          varName ="MyNeta_education";
+          layout = {
+            title: stateNameDisplay !== "" ? `Education of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Education of winners in ${electionYearDisplay} ${electionTypeDisplay} `,
+            xaxis: {
+              showgrid: false, zeroline:false, showticklabels:false
+            },
+            legend: {"orientation": "h",xanchor : "center",x:0.5},
+            yaxis: {
+              showgrid: false, zeroline:false, showticklabels:false
+            }
+          };
+          break;
+        }
+
+        case "ptyOccupationMLA": {
+          chartType = "PartyStepBarChart";
+          vizParameter = "MLAs_var_Party";
+          varName = "TCPD_Prof_Main";
+          layout = {
+            barmode: 'stack',
+            title: stateNameDisplay !== "" ? `Party wise profession of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise distribution of winner's Profession in ${electionYearDisplay} ${electionTypeDisplay}`,
+            xaxis: {
+              title: ''
+            },
+            legend: {"orientation": "h",xanchor : "center",x:0.5},
+            yaxis: {
+              title: 'Number of winners',
+              autorange: true
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (category, idx) => {
+            var y_in = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.pty_mla_var_perc);
+            var total_inc = data.filter(x => x.TCPD_Prof_Main === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
+            return y_in[idx]+"% of " + total_inc[idx]+" Winners";
+          }
+          break;
+        }
+
+        case "ptyEducationMLA": {
+          chartType = "PartyStepBarChart";
+          vizParameter = "MLAs_var_Party";
+          varName = "MyNeta_education";
+          layout = {
+            barmode: 'stack',
+            title: stateNameDisplay !== "" ? `Party wise education of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise distribution of winner's Education in ${electionYearDisplay} ${electionTypeDisplay}`,
+            xaxis: {
+              title: ''
+            },
+            legend: {"orientation": "h",xanchor : "center",x:0.5},
+            yaxis: {
+              title: 'Number of winners',
+              autorange: true
+            }
+          };
+          showAdditionalText = true;
+          getAdditionalText = (category, idx) => {
+            var y_in = data.filter(x => x.MyNeta_education === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.pty_mla_var_perc);
+            var total_inc = data.filter(x => x.MyNeta_education === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
+            return y_in[idx]+"% of " + total_inc[idx]+" Winners";
+          }
           break;
         }
 
@@ -1107,6 +1174,51 @@ export default class DataVizWrapper extends React.Component {
           />
         )
       }
+      else if (chartType === "PartyStepBarChart") {
+        let vizParameter_sec = "pty_mla_var_perc";
+        let varName_sec = visualization === "ptyOccupationMLA"?"TCPD_Prof_Main":"MyNeta_education";
+        let name = visualization === "ptyOccupationMLA"?"Profession":"Education"
+        let layout_sec = {
+          barmode: 'stack',
+          title: stateNameDisplay !== "" ? `Party Wise ${name} percentages of winners in the ${electionYearDisplay} ${stateNameDisplay} ${electionTypeDisplay} ` : `Party wise percentages of winner's ${name} in ${electionYearDisplay} ${electionTypeDisplay}`,
+          xaxis: {
+            title: ''
+          },
+          legend: {"orientation": "h",xanchor : "center",x:0.5},
+          yaxis: {
+            title: '% winners',
+            range: [0,100],
+            autorange: false
+          }
+        };
+        let showAdditionalText_sec = true;
+        let getAdditionalText_sec = (category, idx) => {
+          var y_in = data.filter(x => x[varName_sec] === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.MLAs_var_Party);
+          var total_inc = data.filter(x => x[varName_sec] === category && x.Assembly_No === parseInt(assemblyNo)).map(x => x.Party_MLAs);
+          return y_in[idx]+"/" + total_inc[idx]+" Winners";
+        }
+        return (
+          <div><PartyStepBarChart
+            layout={layout}
+            vizParameter={vizParameter}
+            data={data.filter(function (item) { return item.Assembly_No === parseInt(assemblyNo) })}
+            varName={varName}
+            dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText}
+            getAdditionalText={getAdditionalText}
+          />
+          <PartyStepBarChart
+            layout={layout_sec}
+            vizParameter={vizParameter_sec}
+            data={data.filter(function (item) { return item.Assembly_No === parseInt(assemblyNo) })}
+            varName={varName_sec}
+            dataFilterOptions={dataFilterOptions}
+            showAdditionalText={showAdditionalText_sec}
+            getAdditionalText={getAdditionalText_sec}
+          />
+          <p align="center"><small>Note: We have used the data made publicly available by ADR and applied TCPD categories for the purpose of analyses.</small></p></div>
+        )
+      }
       else if (chartType === "PartyScatterChart") {
         return (
           <PartyScatterChart
@@ -1118,15 +1230,15 @@ export default class DataVizWrapper extends React.Component {
           />
         )
       }
-      else if (chartType === "AssemblyStepBarChart") {
+      else if (chartType === "PieChart") {
         return (
-          <AssemblyStepBarChart
+          <div><PieChart
             layout={layout}
-            data={data}
+            data={data.filter(function (item) { return item.Assembly_No === parseInt(assemblyNo) })}
             vizParameter={vizParameter}
             varName = {varName}
-            dataFilterOptions={dataFilterOptions}
           />
+          <p align="center"><small>Note: We have used the data made publicly available by ADR and applied TCPD categories for the purpose of analyses.</small></p></div>
         )
       }
     }

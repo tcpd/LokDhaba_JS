@@ -77,7 +77,10 @@ def module_to_table(argument):
         "turncoatsStrikeParty": "pty_incumbency",
         "firstTimeWinners": "incumbency",
         "firstTimeParty": "pty_incumbency",
-        "occupationParty": "pty_profession"
+        "occupationMLA": "profession",
+        "educationMLA": "education",
+        "ptyOccupationMLA":"pty_profession",
+        "ptyEducationMLA":"pty_education"
     }
     # get() method of dictionary data type returns
     # value of passed argument if it is present
@@ -97,7 +100,8 @@ def module_to_table_legend(argument):
         "incumbentsStrikeParty": "party_statistics",
         "turncoatsStrikeParty": "party_statistics",
         "firstTimeParty": "party_statistics",
-        "occupationParty": "party_statistics"
+        "ptyOccupationMLA": "party_statistics",
+        "ptyEducationMLA": "party_statistics"
     }
     # get() method of dictionary data type returns
     # value of passed argument if it is present
@@ -315,6 +319,8 @@ def get_select_options():
         return (jsonify({"data": ["Turncoat_Strike_Rate"]}))
     if module == "firstTimeWinners":
         return (jsonify({"data": ["No_first_time_winners_pct"]}))
+    if module == "occupationMLA" or module == "educationMLA":
+        return (jsonify({"data": []}))
     connection = connectdb(db_config)
     if connection.is_connected():
         cursor = connection.cursor()
@@ -555,12 +561,14 @@ def get_viz_data():
                     query_input.append(stateName)
 
             get_party = ""
-            if module in ["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty"]:
+            if module in ["cvoteShareChart","seatShareChart","tvoteShareChart","strikeRateChart","incumbentsParty","incumbentsStrikeParty","turncoatsStrikeParty","firstTimeParty","ptyOccupationMLA","ptyEducationMLA"]:
                 parties = req.get('Legends')
                 # parties = party.split(",")
-                get_party = " and Party in (" + ",".join(["%s"] * len(parties)) + ") "
-                for x in parties:
-                    query_input.append(x)
+                if len(parties) > 0:
+                    get_party = " and Party in (" + ",".join(["%s"] * len(parties)) + ") "
+                    for x in parties:
+                        query_input.append(x)
+
 
             get_assembly = ""
             a_no = req.get('AssemblyNo')

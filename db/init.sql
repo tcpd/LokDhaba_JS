@@ -221,6 +221,38 @@ CREATE table if not exists pty_incumbency (
 	PRIMARY KEY (Election_Type,State_Name, Assembly_No,Party_ID)
 );
 
+CREATE table if not exists profession (
+	Election_Type varchar(2) NOT NULL,
+	State_Name varchar(50) NOT NULL,
+	Assembly_No INT NOT NULL,
+	TCPD_Prof_Main varchar(255),
+	MLAs_var INT,
+	PRIMARY KEY (Election_Type,State_Name, Assembly_No,TCPD_Prof_Main)
+);
+
+CREATE table if not exists education (
+	Election_Type varchar(2) NOT NULL,
+	State_Name varchar(50) NOT NULL,
+	Assembly_No INT NOT NULL,
+	MyNeta_education varchar(255),
+	MLAs_var INT,
+	PRIMARY KEY (Election_Type,State_Name, Assembly_No,MyNeta_education)
+);
+
+CREATE table if not exists pty_education (
+	Election_Type varchar(2) NOT NULL,
+	State_Name varchar(50) NOT NULL,
+	Assembly_No INT NOT NULL,
+	Party_ID INT,
+	Party varchar(255),
+	Year INT,
+	MyNeta_education varchar(255),
+	MLAs_var_Party INT,
+	Party_MLAs INT,
+	pty_mla_var_perc REAL,
+	PRIMARY KEY (Election_Type,State_Name, Assembly_No,Party_ID,MyNeta_education)
+);
+
 CREATE table if not exists pty_profession (
 	Election_Type varchar(2) NOT NULL,
 	State_Name varchar(50) NOT NULL,
@@ -229,11 +261,12 @@ CREATE table if not exists pty_profession (
 	Party varchar(255),
 	Year INT,
 	TCPD_Prof_Main varchar(255),
-	MLAs_Prof_Party INT,
+	MLAs_var_Party INT,
 	Party_MLAs INT,
-	pty_mla_prof_perc REAL,
-	PRIMARY KEY (Election_Type,State_Name, Assembly_No,Party_ID)
+	pty_mla_var_perc REAL,
+	PRIMARY KEY (Election_Type,State_Name, Assembly_No,Party_ID,TCPD_Prof_Main)
 );
+
 
 CREATE USER 'ld_api'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
 

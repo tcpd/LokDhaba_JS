@@ -1062,12 +1062,6 @@ export default class DataVizWrapper extends React.Component {
         }
 
 
-<<<<<<< Updated upstream
-        case "occupationParty": {
-          chartType = "AssemblyStepBarChart";
-          vizParameter = "pty_mla_prof_perc";
-          varName ="TCPD_Prof_Main";
-=======
         case "ptyOccupationMLA": {
           chartType = "PartyStepBarChart";
           vizParameter = "MLAs_var_Party";
@@ -1098,24 +1092,16 @@ export default class DataVizWrapper extends React.Component {
           chartType = "PartyStepBarChart";
           vizParameter = "MLAs_var_Party";
           varName = "MyNeta_education";
->>>>>>> Stashed changes
           layout = {
             title: stateNameDisplay !== "" ? `Party wise professions of elected members in ${stateName} ${electionTypeDisplay}` : `Party wise strike rate of turncoats across years in ${electionTypeDisplay}`,
             xaxis: {
               title: 'Party'
             },
             yaxis: {
-<<<<<<< Updated upstream
-              title: 'percentage of elected',
-              range: [0, 100],
-              autorange: false
-            }
-=======
               title: 'Number of winners',
               autorange: true
             },
             hovermode: 'closest'
->>>>>>> Stashed changes
           };
           break;
         }
@@ -1147,8 +1133,6 @@ export default class DataVizWrapper extends React.Component {
           />
         )
       }
-<<<<<<< Updated upstream
-=======
       else if (chartType === "PartyStepBarChart") {
         let vizParameter_sec = "pty_mla_var_perc";
         let varName_sec = visualization === "ptyOccupationMLA"?"TCPD_Prof_Main":"MyNeta_education";
@@ -1195,7 +1179,6 @@ export default class DataVizWrapper extends React.Component {
           <p align="center"><small>Note: We have used the data made publicly available by ADR and applied TCPD categories for the purpose of analyses.</small></p></div>
         )
       }
->>>>>>> Stashed changes
       else if (chartType === "PartyScatterChart") {
         return (
           <PartyScatterChart

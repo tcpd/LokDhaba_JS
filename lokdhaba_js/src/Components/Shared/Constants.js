@@ -7,7 +7,7 @@ import ReactTooltip from 'react-tooltip'
 import Tooltip from 'rc-tooltip'
 
 
-export const baseUrl = "http://0.0.0.0:15000";
+export const baseUrl = "https://lokdhaba.ashoka.edu.in/api";
 
 
 export const tableColumns = [

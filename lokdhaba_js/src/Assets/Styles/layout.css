@@ -56,3 +56,12 @@ a.disabled, .btn.disabled {
   background-color: #B83027;
   color: white;
 }
+
+iframe {
+ display: block;
+ width: 100%;
+ height: auto;
+ border: none;
+ overflow-y: scroll;
+ overflow-x: auto;
+}

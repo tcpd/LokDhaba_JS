@@ -19,6 +19,9 @@ export default class NavBar extends Component {
         <div className="collapse navbar-collapse" id="navbarContent">
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">
+              <a className="nav-link" href="/dash">Election Dashboard</a>
+            </li>
+            <li className="nav-item">
               <a className="nav-link" href="/data-vis?et=GE">Data Visualization</a>
             </li>
             <li className="nav-item">

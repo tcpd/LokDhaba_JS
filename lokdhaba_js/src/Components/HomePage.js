@@ -8,7 +8,7 @@ export default class HomePage extends Component {
           <p> Welcome to Lok Dhaba!</p>
           <p> Lok Dhaba is a repository of Indian election results - both Vidhan Sabha (state level) and Lok Sabha
                 (national level) - beginning 1962.</p>
-          <p> We have updated Lok Dhaba with all contesting candidates and their information for the 2022 state assembly elections of Goa, Manipur, Punjab, Uttar Pradesh and Uttarakhand. The results reflect the status as on 11 March, 0115 IST. (2 seats are undeclared for UP).</p>
+          <p> We have recently updated Lok Dhaba with the results of the Goa, Manipur, Punjab, Uttar Pradesh and Uttarakhand Vidhan Sabha 2022 elections. These results are provisional, and will be finalized once the Election Commission of India issues its final reports.</p>
           <p> We have built a data <a href="/dash">dashboard</a> that builds on the data available via Lok Dhaba to provide a broad overview of the 5 states. The available metrics show change between 2017 and 2022 for the states.</p>
           <p> The data in Lok Dhaba comes originally from the <a href="https://www.eci.gov.in/statistical-report/statistical-reports/">statistical reports </a>
             published by the Election Commission of India. We have cleaned and treated the data and organized it

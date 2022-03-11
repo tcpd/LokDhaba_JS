@@ -48,9 +48,6 @@ ge_mastersheet$Election_Type = "GE"
 ae_mastersheet = read.csv(paste(git_loc,"AE/Analysis_Data/Consolidated_AE_mastersheet_socio.csv",sep="/"),stringsAsFactors = F,na="")
 ae_mastersheet$Election_Type = "AE"
 
-test=subset(ae_mastersheet,State_Name=="Manipur",Year==2022)
-print(test)
-
 createTable(ae_mastersheet,db_host,db,"mastersheet")
 createTable(ge_mastersheet,db_host,db,"mastersheet")
 ## <<<<<<<<<< needs further work for combining AE and GE field names

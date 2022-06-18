@@ -126,9 +126,6 @@ export default class DataVisualization extends Component {
       showTermsAndConditionsPopup: false,
       vizOptionsNames : {},
       stateOptions :[],
-      allYearsVizData: [],
-      allYearsVizLegend: [],
-      allYearsVizOptionsSelected: [],
       showChangeMap: false,
       showNormalizedMap: false,
       showBaseMap: true,
@@ -508,7 +505,7 @@ export default class DataVisualization extends Component {
       let electionType = this.state.electionType;
       let segmentwise = this.state.segmentWise;
       let stateName = this.state.stateName;
-      var file = electionType === "GE" ? "/India_PC_json.geojson": "/"+stateName+"_AC_json.geojson";
+      var file = electionType === "GE" ? "/India_PC_json.geojson": "/"+stateName+"_all_ac.geojson";
       const url = Constants.baseUrl + file;
       fetch(url, {
         method: "GET",
@@ -535,7 +532,7 @@ export default class DataVisualization extends Component {
         electionType = "GA"
       }
       let stateName = this.state.stateName;
-      var file = electionType === "GE" ? "/India_PC_json.geojson": electionType === "GA"? "/India_AC_json.geojson" :"/"+stateName+"_AC_json.geojson";
+      var file = electionType === "GE" ? "/India_PC_json.geojson": electionType === "GA"? "/India_AC_json.geojson" :"/"+stateName+"_all_ac.geojson";
       const url = Constants.baseUrl + file;
       fetch(url, {
         method: "GET",
@@ -547,7 +544,17 @@ export default class DataVisualization extends Component {
           var map = resp.features;
         }
 
-        this.setState({ mapData: map });
+        var max = -10000000;
+        for (var i=0 ; i<resp.features.length ; i++) {
+          max = Math.max(parseInt(resp.features[i]["properties"]["Max_Assembly"]), max);
+        }
+        var min = 10000000;
+        for (var i=0 ; i<resp.features.length ; i++) {
+          min = Math.min(parseInt(resp.features[i]["properties"]["Min_Assembly"]), min);
+        }
+        var options =  this.state.stateAssemblies.filter(item => item.value >= min && item.value <= max)
+
+        this.setState({ mapData: map, yearOptions: options });
         setTimeout(() => resolve(map), 500);
       });
     });
@@ -580,35 +587,35 @@ export default class DataVisualization extends Component {
     });
   }
 
-  fetchMapYearOptions = (searchYear) => {
-    let electionType = this.state.electionType;
-    let stateName = this.state.stateName;
-    let visualization = this.state.visualization;
-    let visualizationType = this.state.visualizationType;
-    const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
-    fetch(url, {
-      method: "POST",
-      mode:"cors",
-      headers: new Headers({
-        "content-type": "application/json"
-      }),
-      body: JSON.stringify({
-        ElectionType: electionType,
-        StateName: stateName,
-        ModuleName: visualization,
-        VizType: visualizationType
-      })
-    }).then(response => response.json()).then(resp => {
-      var data = [{ value: "", label: "Select Year" }];
-      var data = data.concat(resp.data.map(function (item) { return { label: `${item.Year} (#${item.Assembly_No})`, value: item.Assembly_No } }));
-      this.setState(
-        { yearOptions: data },
-        () => {
-          this.setDefaultYear(searchYear);
-        }
-      );
-    });
-  }
+  // fetchMapYearOptions = (searchYear) => {
+  //   let electionType = this.state.electionType;
+  //   let stateName = this.state.stateName;
+  //   let visualization = this.state.visualization;
+  //   let visualizationType = this.state.visualizationType;
+  //   const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
+  //   fetch(url, {
+  //     method: "POST",
+  //     mode:"cors",
+  //     headers: new Headers({
+  //       "content-type": "application/json"
+  //     }),
+  //     body: JSON.stringify({
+  //       ElectionType: electionType,
+  //       StateName: stateName,
+  //       ModuleName: visualization,
+  //       VizType: visualizationType
+  //     })
+  //   }).then(response => response.json()).then(resp => {
+  //     var data = [{ value: "", label: "Select Year" }];
+  //     var data = data.concat(resp.data.map(function (item) { return { label: `${item.Year} (#${item.Assembly_No})`, value: item.Assembly_No } }));
+  //     this.setState(
+  //       { yearOptions: data },
+  //       () => {
+  //         this.setDefaultYear(searchYear);
+  //       }
+  //     );
+  //   });
+  // }
 
   fetchMapYearAndData = (searchYear, party=this.state.party) => {
     return new Promise((resolve, reject) => {
@@ -825,13 +832,14 @@ export default class DataVisualization extends Component {
   }
 
   renderVisualization = () => {
-    const data = this.state.vizData;
-    var shape = this.state.mapData;
     var dataFilterOptions = this.state.vizOptionsSelected;
     var electionType = this.state.electionType;
     var stateName = this.state.stateName;
     var visualization = this.state.visualization;
     var assemblyNo = this.state.year;
+    const data = this.state.vizData.filter(item => item.Assembly_No === assemblyNo);
+    var shape = this.state.mapData.filter(item => item.properties.Min_Assembly >= assemblyNo && item.properties.Max_Assembly <= assemblyNo);
+
     const { visualizationType, yearOptions, chartMapOptions, showChangeMap, showBaseMap, showNormalizedMap, party, showVisualization, segmentWise, mapOverlay,electionYearDisplay } = this.state;
 
     if (!data) {

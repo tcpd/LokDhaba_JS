@@ -141,7 +141,7 @@ export default class MapViz extends React.Component {
         weight: 1,
         opacity: 1,
         color: 'black',
-        fillOpacity: 0
+        fillOpacity: 1
       };
 
       return (

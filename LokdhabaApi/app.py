@@ -14,7 +14,7 @@ import operator
 
 app = Flask(__name__,
             static_url_path="",
-            static_folder="Maps/json")
+            static_folder="Maps/allMaps")
 CORS(app)
 # Dummy json to check api is running or not.
 tasks = [
@@ -573,9 +573,9 @@ def get_viz_data():
             get_assembly = ""
             a_no = req.get('AssemblyNo')
             print('an', a_no)
-            if type == "Map":
-                get_assembly = " and Assembly_No = %s"
-                query_input.append(a_no)
+            #if type == "Map":
+            #    get_assembly = " and Assembly_No = %s"
+            #    query_input.append(a_no)
             if type == "IP":
                 get_assembly = " and Incm_Assembly_No = %s"
                 query_input.append(a_no)

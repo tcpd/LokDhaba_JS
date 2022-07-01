@@ -19,10 +19,11 @@ services:
       - db
     ports:
       - "15000:5000"  
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_DEBUG=1
-    command : flask run --host=0.0.0.0
+    # environment:
+    #   - FLASK_APP=app.py
+    #   - FLASK_DEBUG=1
+    # command : flask run --host=0.0.0.0
+    command: gunicorn app:app --workers 2 -b 0.0.0.0:5000
   node:
     container_name : ld_ui
     build : ./lokdhaba_js
@@ -33,3 +34,5 @@ services:
       - '3001:3000'
     links :
       - api
+    # command: npm run
+    command: serve -s build -l 3000

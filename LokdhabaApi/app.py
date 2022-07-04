@@ -123,6 +123,8 @@ def get_tasks_data():
 @app.route('/data/api/v2.0/getDerivedData', methods=['POST'])
 @cross_origin()
 def get_paginated_data():
+    # TO-FIX:
+    # 1. AC-Segment-wise query is not fetching correct data
     connection = connectdb(db_config)
     if connection.is_connected():
         db_Info = connection.get_server_info()
@@ -262,6 +264,14 @@ def get_derived_data():
         records = cursor.fetchall()
         row_headers = [x[0] for x in cursor.description]  # this will extract row headers
         print(row_headers)
+
+        # TO-DO: 
+        # 1. Try pandas to parse through the records? It may be more efficient than a for loop
+        # 2. Why is the file size increasing so much? 96mb raw csv served as 186mb file
+        # Reference for 2. is AC-segmentwise-all GA data
+        # 3. No check for when the data requested is too much
+        # Even if the front end has a check for it, the backend should protect itself from potentially harmful user requests (tweaking URLs, exposing the underlying API)
+        # 4. How to handle/serve big datasets through LD? 
         csv_data = []
         csv_data.append(row_headers)
         for row in records:

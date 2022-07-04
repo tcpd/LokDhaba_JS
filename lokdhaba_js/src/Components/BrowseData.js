@@ -47,7 +47,8 @@ function setParams(props ) {
   return searchParams.toString();
 }
 
-
+// Add pages as variable in state
+// Why? AC-SEGMENTWISE checkbox does not update page number in table
 export default class BrowseData extends Component {
   constructor(props) {
     super(props);
@@ -251,11 +252,21 @@ export default class BrowseData extends Component {
     });
   }
 
+  // no UI option for 'all states' when electionType = AE
+  // BUT the function does parse requests if someone tweaks the URL/sends that API request
+  // We need to protect against that here and in the backend, both
+  // Do this for fetchDownloadData as well
   fetchTableData = (pageSize = 100, page = 0, sorted = [], filtered = []) => {
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
+
+      // Cannot fetch table data if assemblies are not selected. No need to make API call.
+      if(assemblyNumber.length === 0) {
+        return 1;
+      }
+
       let segmentwise = this.state.segmentWise;
       if(segmentwise && electionType ==="GE"){
         electionType = "GA"
@@ -299,7 +310,10 @@ export default class BrowseData extends Component {
       assembliesChecked.delete(key);
     }
     this.setState({ assembliesChecked: assembliesChecked });
-    assembliesChecked.size > 0 && this.fetchTableData();
+    // assembliesChecked.size > 0 && this.fetchTableData();
+    // ^This is not needed as the component already fetches data
+    // When the assembliesChecked variable changes.
+    // This line is leading to duplicated API calls when selecting the assemblyNumber
     this.setState({ isDataDownloadable: false });
     this.updateURL({variable:"an",val:[...assembliesChecked]});
   }

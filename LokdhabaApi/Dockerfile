@@ -14,6 +14,7 @@ ENV PYTHONFAULTHANDLER 1
 # re-install all python packages defined in requirements.txt
 # whenever any source code change is made)
 COPY requirements.txt /app
+
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 RUN python -m spacy download en_core_web_md

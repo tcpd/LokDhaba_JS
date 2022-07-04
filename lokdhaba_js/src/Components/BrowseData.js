@@ -47,7 +47,8 @@ function setParams(props ) {
   return searchParams.toString();
 }
 
-
+// Add pages as variable in state
+// Why? AC-SEGMENTWISE checkbox does not update page number in table
 export default class BrowseData extends Component {
   constructor(props) {
     super(props);
@@ -251,6 +252,10 @@ export default class BrowseData extends Component {
     });
   }
 
+  // no UI option for 'all states' when electionType = AE
+  // BUT the function does parse requests if someone tweaks the URL/sends that API request
+  // We need to protect against that here and in the backend, both
+  // Do this for fetchDownloadData as well
   fetchTableData = (pageSize = 100, page = 0, sorted = [], filtered = []) => {
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;

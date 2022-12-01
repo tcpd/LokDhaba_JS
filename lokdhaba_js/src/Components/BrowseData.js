@@ -256,6 +256,12 @@ export default class BrowseData extends Component {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
       let assemblyNumber = [...this.state.assembliesChecked].join(",");
+
+      // Cannot fetch table data if assemblies are not selected. No need to make API call.
+      if(assemblyNumber.length === 0) {
+        return 1;
+      }
+
       let segmentwise = this.state.segmentWise;
       if(segmentwise && electionType ==="GE"){
         electionType = "GA"
@@ -299,7 +305,10 @@ export default class BrowseData extends Component {
       assembliesChecked.delete(key);
     }
     this.setState({ assembliesChecked: assembliesChecked });
-    assembliesChecked.size > 0 && this.fetchTableData();
+    // assembliesChecked.size > 0 && this.fetchTableData();
+    // ^This is not needed as the component already fetches data
+    // When the assembliesChecked variable changes.
+    // This line is leading to duplicated API calls when selecting the assemblyNumber
     this.setState({ isDataDownloadable: false });
     this.updateURL({variable:"an",val:[...assembliesChecked]});
   }

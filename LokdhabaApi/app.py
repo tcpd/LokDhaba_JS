@@ -117,9 +117,7 @@ def module_to_table_legend(argument):
 @app.route('/data/api/v1.0/tasks', methods=['GET'])
 @cross_origin()
 def get_tasks_data():
-    response = jsonify({'tasks': tasks})
-    response.headers.add("Access-Control-Allow-Origin","*")
-    return response
+    return jsonify({'tasks': tasks})
 
 
 @app.route('/data/api/v2.0/getDerivedData', methods=['POST'])
@@ -211,10 +209,7 @@ def get_paginated_data():
 
         cursor.close()
         connection.close()
-        response = jsonify({'pages': total_pages, 'data': json_data})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
-
+        return (jsonify({'pages': total_pages, 'data': json_data}))
 
 @app.route('/data/api/v1.0/DataDownload', methods=['POST'])
 @cross_origin()
@@ -273,9 +268,7 @@ def get_derived_data():
             csv_data.append(list(row))
         cursor.close()
         connection.close()
-        response = jsonify({'data': csv_data})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({'data': csv_data}))
 
 
 @app.route('/data/api/v1.0/getVizLegend', methods=['POST'])
@@ -292,75 +285,42 @@ def get_select_options():
     type = req.get('VizType')
     print('type', type)
     if module == "voterTurnoutChart":
-        response = jsonify({'data': ["male", "female", "total"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({'data': ["male", "female", "total"]}))
     if module == "partiesPresentedChart":
-        response = jsonify({'data': ["Parties_Contested", "Parties_Represented"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({'data': ["Parties_Contested", "Parties_Represented"]}))
     if module == "contestedDepositSavedChart":
-        response = jsonify({'data': ["Total_Candidates", "Deposit_Lost"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({'data': ["Total_Candidates", "Deposit_Lost"]}))
     if module == "winnerCasteMap":
-        response = jsonify({"data": ["General", "SC", "ST"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["General", "SC", "ST"]}))
     if module == "numCandidatesMap":
-        response = jsonify({"data": ["<5", "5-15", ">15"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["<5", "5-15", ">15"]}))
     if module == "voterTurnoutMap":
-        response = jsonify({"data": ["<50%", "50%-60%", "60%-70%", "70%-75%", "75%-80%", "80%-85%", "85%-90%", "90%-95%", ">95%"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify(
+            {"data": ["<50%", "50%-60%", "60%-70%", "70%-75%", "75%-80%", "80%-85%", "85%-90%", "90%-95%", ">95%"]}))
     if module == "winnerGenderMap":
-        response = jsonify({"data": ["Male", "Female", "Others"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["Male", "Female", "Others"]}))
     if module == "winnerMarginMap":
-        response = jsonify({"data": ["<5%", "5%-10%", "10%-20%", ">20%"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["<5%", "5%-10%", "10%-20%", ">20%"]}))
     if module in ["winnerVoteShareMap", "partyVoteShareMap"]:
-        response = jsonify({"data": ["<20%", "20%-30%", "30%-40%", "40%-50%", "50%-60%", ">60%"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["<20%", "20%-30%", "30%-40%", "40%-50%", "50%-60%", ">60%"]}))
     if module == "partyPositionsMap":
-        response = jsonify({"data": ["1", "2", "3", ">3"]})
+        return (jsonify({"data": ["1", "2", "3", ">3"]}))
     if module == "notaTurnoutMap":
-        response = jsonify({"data": ["<1%", "1%-3%", "3%-5%", ">5%"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["<1%", "1%-3%", "3%-5%", ">5%"]}))
     if module == "rerunningCandidates":
-        response = jsonify({"data": ["Recontesting_Candidates_pct"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["Recontesting_Candidates_pct"]}))
     if module == "timesContested":
-        response = jsonify({"data": ["First_Contests_pct","Second_Contests_pct","Multiple_Contests_pct"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["First_Contests_pct","Second_Contests_pct","Multiple_Contests_pct"]}))
     if module == "incumbentsChart":
-        response = jsonify({"data": ["Contesting_Incumbents_pct","Successful_Incumbents_pct"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["Contesting_Incumbents_pct","Successful_Incumbents_pct"]}))
     if module == "incumbentsStrike":
-        response = jsonify({"data": ["Incumbent_Strike_Rate"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["Incumbent_Strike_Rate"]}))
     if module == "turncoatsStrike":
-        response = jsonify({"data": ["Turncoat_Strike_Rate"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["Turncoat_Strike_Rate"]}))
     if module == "firstTimeWinners":
-        response = jsonify({"data": ["No_first_time_winners_pct"]})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": ["No_first_time_winners_pct"]}))
     if module == "occupationMLA" or module == "educationMLA":
-        response = jsonify({"data": []})
-        response.headers.add("Access-Control-Allow-Origin","*")
-        return response
+        return (jsonify({"data": []}))
     connection = connectdb(db_config)
     if connection.is_connected():
         cursor = connection.cursor()
@@ -424,9 +384,7 @@ def get_select_options():
                     print(name)
                     print(full_name)
                     full_party_names.update({name: full_name})
-                response = jsonify({'data': options, 'selected': selected_options, 'total_parties': total_parties, 'parties_displayed': shown_parties, 'names': full_party_names})
-                response.headers.add("Access-Control-Allow-Origin","*")
-                return response
+                return jsonify({'data': options, 'selected': selected_options, 'total_parties': total_parties, 'parties_displayed': shown_parties, 'names': full_party_names})
 
         if type == "Map":
             a_no = req.get('AssemblyNo')
@@ -457,11 +415,7 @@ def get_select_options():
                 for (row,) in records:
                     options.append(row)
                 options.sort()
-                response = jsonify({'data': options})
-                response.headers.add("Access-Control-Allow-Origin","*")
-                return response
-
-
+                return jsonify({'data': options})
 
 
 @app.route('/data/api/v1.0/getMapYear', methods=['POST'])
@@ -508,10 +462,7 @@ def get_year_options():
                 connection.close()
                 for row in records:
                     json_data.append(dict(zip(row_headers, row)))
-                response = jsonify({'data': json_data})
-                response.headers.add("Access-Control-Allow-Origin","*")
-                return response
-
+                return (jsonify({'data': json_data}))
 
 
 @app.route('/data/api/v1.0/getMapYearParty', methods=['POST'])
@@ -562,9 +513,7 @@ def get_party_options():
                 connection.close()
                 for (row,) in records:
                     parties.append(row)
-                response = jsonify({'data': parties})
-                response.headers.add("Access-Control-Allow-Origin","*")
-                return response
+                return (jsonify({'data': parties}))
 
 
 @app.route('/data/api/v1.0/getVizData', methods=['POST'])
@@ -653,13 +602,10 @@ def get_viz_data():
             for row in records:
                 json_data.append(dict(zip(row_headers, row)))
 
-            response = jsonify({'data': json_data})
-            response.headers.add("Access-Control-Allow-Origin","*")
-            return response
+            return jsonify({'data': json_data})
         else:
-            response = "table not found"
-            response.headers.add("Access-Control-Allow-Origin","*")
-            return response
+            print("table not found")
+            return "table not found"
 
 
 nlp = spacy.load('en_core_web_md')
@@ -797,9 +743,7 @@ def get_search_result():
     results["similarModules"] = sorted_modules
     results["party"] = party
 
-    response = jsonify({'results': results})
-    response.headers.add("Access-Control-Allow-Origin","*")
-    return response
+    return jsonify({'results': results})
 
 
 if __name__ == '__main__':

@@ -51,10 +51,10 @@ ae_mastersheet <- as.data.table(ae_mastersheet)
 
 
 # Provisional results for HP and GJ
-provisional = TRUE
-if(provisional) {
-  ae_mastersheet[(Assembly_No == 14 & State_Name %in% c('Gujarat', 'Himachal_Pradesh')), Position := -Position]
-}
+# provisional = TRUE
+# if(provisional) {
+#   ae_mastersheet[(Assembly_No == 14 & State_Name %in% c('Gujarat', 'Himachal_Pradesh')), Position := -Position]
+# }
 
 createTable(ae_mastersheet,db_host,db,"mastersheet")
 createTable(ge_mastersheet,db_host,db,"mastersheet")

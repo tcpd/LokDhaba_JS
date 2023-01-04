@@ -47,3 +47,13 @@ button:hover {
 .data-vis{
   padding: 0 20px;
 }
+
+.ld_footer{
+  height: 80px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+#ashoka_logo {
+  text-align: center;
+}

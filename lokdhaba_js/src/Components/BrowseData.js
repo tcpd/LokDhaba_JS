@@ -236,7 +236,7 @@ export default class BrowseData extends Component {
     // let assemblyNumber = [...this.state.assembliesChecked].join(",");
 
     var today = new Date();
-    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getFullYear();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
 
     let segmentwise = this.state.segmentWise;
     if(segmentwise && electionType ==="GE"){
@@ -245,7 +245,7 @@ export default class BrowseData extends Component {
     if(stateName === "all") {
       stateName = "All_States";
     }
-    var filename = `TCPD_${electionType}_${stateName}_${date}.csv.gz`;
+    let filename = `TCPD_${electionType}_${stateName}_${date}.csv.gz`;
     this.setState({isDataDownloadable : checked});
     const new_url = Constants.downloadUrl + `/${stateName}/${stateName}_${electionType}.csv.gz`;
     let d_button = document.querySelector("#downloadUrl");

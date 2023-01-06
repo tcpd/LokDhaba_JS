@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { CSVLink } from "react-csv";
 import Select from './Shared/Select.js';
 import Checkbox from './Shared/Checkbox.js';
 import Popup from './Shared/Popup.js';
@@ -67,6 +66,7 @@ export default class BrowseData extends Component {
       showTermsAndConditionsPopup: false,
       csvData: [],
       isDataDownloadable: false,
+      downloadUrl : '',
       filters: []
     };
   }
@@ -164,6 +164,9 @@ export default class BrowseData extends Component {
 
   CloseTermsAndConditionsPopup = () => {
     this.setState({ showTermsAndConditionsPopup: false });
+    let d_button = document.querySelector("#downloadUrl");
+    d_button.click();
+
   }
 
   showTermsAndConditionsPopup = () => {
@@ -178,11 +181,13 @@ export default class BrowseData extends Component {
       // this.updateURL({variable:"an",val:""});
       this.state.electionType = newValue;
       let stateOptions;
-      if (newValue === "GE") {
-        stateOptions = [{ value: "", label: "Select State" }, { value: "all", label: "All" }].concat(this.state.GE_States);
-      } else if (newValue === "AE") {
-        stateOptions = [{ value: "", label: "Select State" }].concat(this.state.AE_States);
-      }
+      let state_list = (newValue === "GE") ? this.state.GE_States : this.state.AE_States;
+      stateOptions = [{ value: "", label: "Select State" }, { value: "all", label: "All" }].concat(state_list);
+      // if (newValue === "GE") {
+      //   stateOptions = [{ value: "", label: "Select State" }, { value: "all", label: "All" }].concat(this.state.GE_States);
+      // } else if (newValue === "AE") {
+      //   stateOptions = [{ value: "", label: "Select State" }].concat(this.state.AE_States);
+      // }
       this.setState({ stateName: "" });
       this.setState({ stateOptions: stateOptions });
       this.setState({ isDataDownloadable: false });
@@ -227,28 +232,42 @@ export default class BrowseData extends Component {
   fetchDownloadData = (checked) => {
     let electionType = this.state.electionType;
     let stateName = this.state.stateName;
-    let filters = this.state.filters;
-    let assemblyNumber = [...this.state.assembliesChecked].join(",");
+    // let filters = this.state.filters;
+    // let assemblyNumber = [...this.state.assembliesChecked].join(",");
+
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getFullYear();
+
     let segmentwise = this.state.segmentWise;
     if(segmentwise && electionType ==="GE"){
       electionType = "GA"
     }
-    const url = Constants.baseUrl + "/data/api/v1.0/DataDownload";
-    fetch(url, {
-      method: "POST",
-      headers: new Headers({
-        "content-type": "application/json"
-      }),
-      body: JSON.stringify({
-        ElectionType: electionType,
-        StateName: stateName,
-        AssemblyNo: assemblyNumber,
-        Filters: filters
-      })
-    }).then(response => response.json()).then(resp => {
-      this.setState({ isDataDownloadable: checked });
-      this.setState({ csvData: resp.data });
-    });
+    if(stateName === "all") {
+      stateName = "All_States";
+    }
+    var filename = `TCPD_${electionType}_${stateName}_${date}.csv.gz`;
+    this.setState({isDataDownloadable : checked});
+    const new_url = Constants.downloadUrl + `/${stateName}/${stateName}_${electionType}.csv.gz`;
+    let d_button = document.querySelector("#downloadUrl");
+    d_button.setAttribute('href', new_url);
+    d_button.setAttribute("download", filename);
+
+    // const url = Constants.baseUrl + "/data/api/v1.0/DataDownload";
+    // fetch(url, {
+    //   method: "POST",
+    //   headers: new Headers({
+    //     "content-type": "application/json"
+    //   }),
+    //   body: JSON.stringify({
+    //     ElectionType: electionType,
+    //     StateName: stateName,
+    //     AssemblyNo: assemblyNumber,
+    //     Filters: filters
+    //   })
+    // }).then(response => response.json()).then(resp => {
+    //   this.setState({ isDataDownloadable: checked });
+    //   this.setState({ csvData: resp.data });
+    // });
   }
 
   fetchTableData = (pageSize = 100, page = 0, sorted = [], filtered = []) => {
@@ -334,20 +353,16 @@ export default class BrowseData extends Component {
     var stateName = this.state.stateName;
     var assembliesChecked = this.state.assembliesChecked;
     var stateOptions = this.state.stateOptions;
-    var csvData = this.state.csvData;
     var isDataDownloadable = this.state.isDataDownloadable;
     var showTermsAndConditionsPopup = this.state.showTermsAndConditionsPopup;
     var electionTypeOptions = [{ value: "", label: "Select Election Type" },
     { value: "GE", label: "General Elections" },
     { value: "AE", label: "Assembly Elections" }];
     var columns = this.state.segmentWise? Constants.segmentTableColumns:Constants.tableColumns;
-    var today = new Date();
     let segmentwise = this.state.segmentWise;
     if(segmentwise && electionType ==="GE"){
       electionType = "GA"
     }
-    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    var filename = `TCPD_${electionType}_${this.state.stateName}_${date}.csv`;
     const modalBody = <div><p>Lok Dhaba is an online web interface provided by the Trivedi Centre for
         Political Data. In these terms of use of the data provided by the Centre, 'Data'
         includes all visualizations, texts, graphics and compilations of data and other
@@ -379,11 +394,10 @@ export default class BrowseData extends Component {
       <Button className="btn-lg" variant="secondary" onClick={this.CancelTermsAndConditionsPopup}>
         Cancel
                         </Button>
-      <CSVLink className={buttonClass} data={csvData} filename={filename}>
+      <a id="downloadUrl"></a>
         <Button className={buttonClass} variant="primary" onClick={this.CloseTermsAndConditionsPopup}>
           Download
-                          </Button>
-      </CSVLink>
+        </Button>
     </div>
 
     return (
@@ -398,7 +412,7 @@ export default class BrowseData extends Component {
                 {(electionType === "GE"||electionType === "GA") && <Checkbox id="assembly_segments" label="Show AC segment wise results" checked= {this.state.segmentWise} onChange={this.onAcSegmentClick} />}
                 {stateName !== "" && this.createAssemblyCheckboxes()}
 
-                {assembliesChecked.size > 0 && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
+                {stateName !== "" && <Button className="btn-lg" onClick={this.showTermsAndConditionsPopup}> Download Data</Button>}
               </form>
             </div>
             <div className="col-xs-9 table" style={{ width: "80%" }}>

@@ -22,10 +22,10 @@ services:
     # environment:
     #   - FLASK_APP=app.py
     #   - FLASK_DEBUG=1
-    # command : flask run --host=0.0.0.0
+    command : flask run --host=0.0.0.0
     # --workers 2 -b 0.0.0.0:5000 --timeout 60
     # command: gunicorn app:app -c gunicorn_config.py 
-    command: gunicorn -c gunicorn_config.py app:app
+    # command: gunicorn -c gunicorn_config.py app:app
   node:
     container_name : ld_ui
     build : ./lokdhaba_js

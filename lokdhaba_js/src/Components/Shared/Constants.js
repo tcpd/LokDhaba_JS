@@ -8,6 +8,7 @@ import Tooltip from 'rc-tooltip'
 
 
 export const baseUrl = "https://lokdhaba.ashoka.edu.in/api";
+export const downloadUrl = "https://lokdhaba.ashoka.edu.in/downloads";
 
 
 export const tableColumns = [

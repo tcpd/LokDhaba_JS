@@ -9,13 +9,15 @@ export default class HomePage extends Component {
           <p> Lok Dhaba is a repository of Indian election results - both Vidhan Sabha (state level) and Lok Sabha
                 (national level) - beginning 1962.</p>
           <p> 
-            We have recently updated Lok Dhaba with the results of the Gujarat and Himachal Pradesh 
-            Vidhan Sabha 2022 elections. These results are provisional, and will be finalized once the 
+            We have recently updated Lok Dhaba with the results of the Nagaland, Tripura and Meghalaya
+            Vidhan Sabha 2023 elections. These results are provisional, and will be finalized once the 
             Election Commission of India issues its final reports.
 
             Please note that the detailed data for voter turnout across these states is also released later by
             the Election Commission. As a result, you will find voter turnout visualizations for these elections to 
-            show null data for now.
+            show null data for now. However, for individual constituencies, ECI has released the turnout data. Using this,
+            we've calculated the electors. You can see the constituency-level turnout data for these states in our visualizations,
+            but not the aggregate turnout for the entire state.
           </p>
           {/* <p>
             We're updating Lok Dhaba with the vote counts from 2022 Himachal Pradesh and Gujarat assembly elections,
@@ -26,7 +28,7 @@ export default class HomePage extends Component {
           <p> 
             We have built a data <a href="/dash">dashboard</a> that builds on the data available 
             via Lok Dhaba to provide a broad overview of the 7 states for which elections have taken place
-            this year. The available metrics show change between 2017 and 2022 for the states of Goa, Manipur, Punjab,
+            last year. The available metrics show change between 2017 and 2022 for the states of Goa, Manipur, Punjab,
             Uttarakhand, Uttar Pradesh, Himachal Pradesh and Gujarat.
           </p>
           <p> The data in Lok Dhaba comes originally from the <a href="https://www.eci.gov.in/statistical-report/statistical-reports/">statistical reports </a>

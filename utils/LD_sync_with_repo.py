@@ -19,6 +19,10 @@ AE_column_map = {
 AE_master_df[list(AE_column_map.keys())] = AE_master_df[list(AE_column_map.values())]
 AE_master_df = AE_master_df[list(AE_column_map.keys())]
 
+AE_master_df = AE_master_df[AE_master_df['Assembly_No'] > 0].copy()
+AE_master_df['Year'] = AE_master_df['Year'].astype("int")
+AE_master_df['month'] = AE_master_df['month'].astype("int")
+
 AE_out = [v for k,v in AE_master_df.T.to_dict().items()]
 AE_out_path = "../lokdhaba_js/src/Assets/Data/VidhanSabhaNumber.json"
 

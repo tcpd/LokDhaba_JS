@@ -460,8 +460,13 @@ def get_year_options():
                 json_data = []
                 cursor.close()
                 connection.close()
+                # For AP and Telangana, only show post-split maps. Temporary patch since we don't have schema yet to show multiple maps within same delimitation
                 for row in records:
-                    json_data.append(dict(zip(row_headers, row)))
+                    record = dict(zip(row_headers, row))
+                    if stateName in ['Telangana', 'Andhra_Pradesh']:
+                        if record['Year']<=2014:
+                            continue
+                    json_data.append(record)
                 return (jsonify({'data': json_data}))
 
 

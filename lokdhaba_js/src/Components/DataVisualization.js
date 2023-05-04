@@ -415,7 +415,8 @@ export default class DataVisualization extends Component {
     this.setState(
       { stateName: newValue, stateAssemblies: assemblies },
       () => {
-        this.setYearsFromSearch(searchYears)
+        this.fetchMapYearAndData();
+        this.setYearsFromSearch(searchYears);
         this.fetchVisualizationData();
         if(this.state.visualizationType ==="Map"){
           this.fetchMapData();
@@ -461,6 +462,7 @@ export default class DataVisualization extends Component {
   }
 
   fetchVisualizationData = () => {
+    console.log('fetchVisualizationData')
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
@@ -554,6 +556,7 @@ export default class DataVisualization extends Component {
   }
 
   fetchMapYearParties = () => {
+    console.log("fetchMapYearParties")
     let electionType = this.state.electionType;
     let stateName = this.state.stateName;
     let visualization = this.state.visualization;
@@ -581,6 +584,7 @@ export default class DataVisualization extends Component {
   }
 
   fetchMapYearOptions = (searchYear) => {
+    console.log('fetchMapYearOptions')
     let electionType = this.state.electionType;
     let stateName = this.state.stateName;
     let visualization = this.state.visualization;
@@ -611,6 +615,7 @@ export default class DataVisualization extends Component {
   }
 
   fetchMapYearAndData = (searchYear, party=this.state.party) => {
+    console.log("fetch map year and data")
     return new Promise((resolve, reject) => {
       let electionType = this.state.electionType;
       let stateName = this.state.stateName;
@@ -620,7 +625,7 @@ export default class DataVisualization extends Component {
       //let party = this.state.party;
       let legends = this.state.vizOptionsSelected;
 
-
+      
       const url = Constants.baseUrl + "/data/api/v1.0/getMapYear";
       fetch(url, {
         method: "POST",

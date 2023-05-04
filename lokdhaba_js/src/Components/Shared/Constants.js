@@ -8,6 +8,10 @@ import Tooltip from 'rc-tooltip'
 
 
 export const baseUrl = "https://lokdhaba.ashoka.edu.in/api";
+//  For local dev uncomment the line below
+// export const baseUrl = "http://localhost:15000";
+
+
 export const downloadUrl = "https://lokdhaba.ashoka.edu.in/downloads";
 
 

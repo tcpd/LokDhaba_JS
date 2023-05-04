@@ -2525,5 +2525,26 @@
         "Assembly_No": 14,
         "State_Name": "Himachal_Pradesh",
         "Year": 2022
+    },
+    {
+        "month": 3,
+        "DelimID": 4,
+        "Assembly_No": 11,
+        "State_Name": "Meghalaya",
+        "Year": 2023
+    },
+    {
+        "month": 3,
+        "DelimID": 4,
+        "Assembly_No": 12,
+        "State_Name": "Tripura",
+        "Year": 2023
+    },
+    {
+        "month": 3,
+        "DelimID": 4,
+        "Assembly_No": 14,
+        "State_Name": "Nagaland",
+        "Year": 2023
     }
 ]

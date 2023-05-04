@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import json
 
-TCPD_DATA_REPO_PATH = "../tcpd_data/data"
+TCPD_DATA_REPO_PATH = "/home/ubuntu/tcpd/tcpd_data/data"
 
 # Update AE assembly numbers so that LD/Browse_Data shows correct options
 AE_master_path = os.path.join(TCPD_DATA_REPO_PATH, "AE", "VidhaSabhaNumber.csv")

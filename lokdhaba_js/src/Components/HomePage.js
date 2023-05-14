@@ -9,7 +9,7 @@ export default class HomePage extends Component {
           <p> Lok Dhaba is a repository of Indian election results - both Vidhan Sabha (state level) and Lok Sabha
                 (national level) - beginning 1962.</p>
           <p> 
-            We have recently updated Lok Dhaba with the results of the Nagaland, Tripura and Meghalaya
+            We have recently updated Lok Dhaba with the results of the Karnataka 
             Vidhan Sabha 2023 elections. These results are provisional, and will be finalized once the 
             Election Commission of India issues its final reports.
 

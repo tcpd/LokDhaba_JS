@@ -2546,5 +2546,12 @@
         "Assembly_No": 14,
         "State_Name": "Nagaland",
         "Year": 2023
+    },
+    {
+        "month": 5,
+        "DelimID": 4,
+        "Assembly_No": 11,
+        "State_Name": "Karnataka",
+        "Year": 2023
     }
 ]
